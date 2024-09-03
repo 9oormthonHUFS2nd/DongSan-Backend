@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  mysql:
+    image: mysql:latest
+    container_name: dongsan-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      TZ: Asia/Seoul
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+    networks:
+      - dongsan-network
+
+
+  redis:
+    image: redis:7
+    container_name: dongsan-redis
+    ports:
+      - "6378:6379"
+    volumes:
+      - ./redis_data:/data
+    networks:
+      - dongsan-network
+
+
+volumes:
+  mysql_data:
+  redis_data:
+
+
+networks:
+  dongsan-network:
+    driver: bridge
+    name: dongsan-network

@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class DongSanApplication {
+public class DongsanApiApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(DongSanApplication.class, args);
+        SpringApplication.run(DongsanApiApplication.class, args);
     }
 
 }
