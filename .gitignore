@@ -35,3 +35,12 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### .env
+/infrastructure/database/.env
+
+### yml
+/*/**/resources/*.yml
+
+### volumns
+infrastructure/database/*_data
