@@ -38,8 +38,17 @@ subprojects {
         compileOnly 'org.projectlombok:lombok'
         annotationProcessor 'org.projectlombok:lombok'
 
+        // servlet
+        implementation 'jakarta.servlet:jakarta.servlet-api:6.0.0'
+
+        // spring boot starter
+        implementation 'org.springframework.boot:spring-boot-starter'
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
         // Spring Boot Test
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+        testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     }
 
     test {

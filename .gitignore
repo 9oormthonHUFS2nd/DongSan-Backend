@@ -44,3 +44,6 @@ out/
 
 ### volumns
 infrastructure/database/*_data
+
+### spy
+*.log

@@ -33,10 +33,11 @@ dependencies {
     // mysql
     runtimeOnly 'com.mysql:mysql-connector-j'
 
+    // p6spy
+    implementation "p6spy:p6spy:3.9.1"
+
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 // application.yml 설정 파일 복사
