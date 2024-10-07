@@ -18,6 +18,9 @@ repositories {
 }
 
 dependencies {
+    // JTS
+    api 'org.locationtech.jts:jts-core:1.20.0'
+
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
     implementation 'org.springframework.boot:spring-boot-starter'
