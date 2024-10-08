@@ -5,18 +5,23 @@ import com.dongsan.domains.user.usecase.UserProfileUsecase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+// TODO: 마이페이지로 통합
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/users/profile")
 public class UserProfileController {
 
     private final UserProfileUsecase userProfileUsecase;
 
-    @GetMapping("")
+    @GetMapping("/users/profile")
     public ResponseEntity<?> getUserProfile() {
         return ResponseFactory.ok(userProfileUsecase.getUserProfile(1L));
+    }
+
+    @GetMapping("/users/bookmarks/title")
+    public ResponseEntity<?> getUserBookmarks(@RequestParam Long bookmarkId, @RequestParam(required = false) Integer size) {
+        return ResponseFactory.ok(userProfileUsecase.getUserBookmarks(1L, bookmarkId, size));
     }
 }
