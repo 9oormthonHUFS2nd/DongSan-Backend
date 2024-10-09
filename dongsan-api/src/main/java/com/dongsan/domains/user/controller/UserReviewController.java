@@ -2,16 +2,21 @@ package com.dongsan.domains.user.controller;
 
 import com.dongsan.apiResponse.ResponseFactory;
 import com.dongsan.apiResponse.SuccessResponse;
+import com.dongsan.common.validation.annotation.ExistReview;
 import com.dongsan.domains.user.dto.response.GetReview;
 import com.dongsan.domains.user.usecase.UserReviewUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController("/users/reviews")
+@RestController
+@RequestMapping("/users/reviews")
 @RequiredArgsConstructor
+@Validated
 public class UserReviewController {
     private final UserReviewUseCase userReviewUsecase;
 
@@ -21,7 +26,7 @@ public class UserReviewController {
     @GetMapping()
     public ResponseEntity<SuccessResponse<GetReview>> getReviews(
             @RequestParam(defaultValue = "5") Integer limit,
-            @RequestParam Integer reviewId  // TODO 검증 어노테이션 생성
+            @ExistReview @RequestParam Long reviewId
     ){
         Long memberId = 1L;  // (하드 코딩 수정)
         GetReview response = userReviewUsecase.getReviews(limit, reviewId, memberId);

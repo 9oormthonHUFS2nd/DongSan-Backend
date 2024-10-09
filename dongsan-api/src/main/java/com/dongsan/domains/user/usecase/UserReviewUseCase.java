@@ -15,7 +15,7 @@ public class UserReviewUseCase {
     private final ReviewQueryService reviewQueryService;
 
     @Transactional(readOnly = true)
-    public GetReview getReviews(Integer limit, Integer reviewId, Long memberId) {
+    public GetReview getReviews(Integer limit, Long reviewId, Long memberId) {
         List<Review> reviews = reviewQueryService.getReviews(limit, reviewId, memberId);
         return UserReviewMapper.toGetReview(reviews);
     }
