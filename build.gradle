@@ -48,6 +48,12 @@ subprojects {
         // Spring Boot Test
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
+        // JTS
+        implementation 'org.locationtech.jts:jts-core:1.20.0'
+
+        // JDBC
+        implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+
         testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     }
 
