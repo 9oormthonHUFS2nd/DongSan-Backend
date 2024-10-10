@@ -1,7 +1,11 @@
 package fixture;
 
+import com.dongsan.domains.common.entity.BaseEntity;
 import com.dongsan.domains.member.entity.Member;
+import com.dongsan.domains.review.entity.Review;
+
 import java.lang.reflect.Field;
+import java.time.LocalDateTime;
 
 public class MemberFixture {
     private static final String EMAIL = "abc@gmail.com";
@@ -26,21 +30,19 @@ public class MemberFixture {
 
     public static Member createMemberWithId(Long id){
         Member member = createMember();
-
-        try {
-            Field idField = Member.class.getDeclaredField("id");
-            idField.setAccessible(true);
-            idField.set(member, id);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
+        reflectId(id, member);
+        reflectCreatedAt(LocalDateTime.now(), member);
         return member;
     }
 
     public static Member createMemberWithId(Long id, String email, String nickname, String profileImageUrl){
         Member member = createMember(email, nickname, profileImageUrl);
+        reflectId(id, member);
+        reflectCreatedAt(LocalDateTime.now(), member);
+        return member;
+    }
 
+    private static void reflectId(Long id, Member member){
         try {
             Field idField = Member.class.getDeclaredField("id");
             idField.setAccessible(true);
@@ -48,8 +50,16 @@ public class MemberFixture {
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
+    }
 
-        return member;
+    private static void reflectCreatedAt(LocalDateTime createdAt, Member member){
+        try {
+            Field createdAtField = BaseEntity.class.getDeclaredField("createdAt");
+            createdAtField.setAccessible(true);
+            createdAtField.set(member, createdAt);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
 }

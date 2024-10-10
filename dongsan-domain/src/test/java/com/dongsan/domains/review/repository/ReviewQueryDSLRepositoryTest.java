@@ -10,8 +10,10 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static fixture.MemberFixture.createMember;
@@ -20,6 +22,7 @@ import static fixture.WalkwayFixture.createWalkway;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RepositoryTest
+@Transactional
 class ReviewQueryDSLRepositoryTest {
     @Autowired
     private TestEntityManager entityManager;
@@ -30,14 +33,19 @@ class ReviewQueryDSLRepositoryTest {
     @Nested
     @DisplayName("getReviews 메소드는")
     class Describe_getReviews{
+        Member member;
+        Walkway walkway;
+        List<Review> reviews = new ArrayList<>();
+
         @BeforeEach
         void setUp(){
-            Member member = createMember();
+            member = createMember();
+            walkway = createWalkway(member);
             entityManager.persist(member);
-            Walkway walkway = createWalkway(member);
             entityManager.persist(walkway);
             for(int i =0; i<6; i++){
                 Review review = createReview(member, walkway);
+                reviews.add(review);
                 entityManager.persist(review);
             }
         }
@@ -48,7 +56,7 @@ class ReviewQueryDSLRepositoryTest {
             // given
             Integer limit = 5;
             Long reviewId = null;
-            Long memberId = 1L;
+            Long memberId = member.getId();
 
             // when
             List<Review> result = reviewQueryDSLRepository.getReviews(limit, reviewId, memberId);
@@ -63,18 +71,18 @@ class ReviewQueryDSLRepositoryTest {
         }
 
         @Test
-        @DisplayName("reviewId가 null이 아니면 reviewId 보다 작은 리뷰를 reviewId 내림차순으로 가져온다.")
+        @DisplayName("reviewId가 null이 아니면 reviewId 보다 일찍 작성한 리뷰(id가 더 작음)를 reviewId 내림차순으로 가져온다.")
         void it_returns_next_reviews(){
             // given
             Integer limit = 5;
-            Long reviewId = 4L;
-            Long memberId = 1L;
+            Long reviewId = reviews.get(2).getId();
+            Long memberId = member.getId();
 
             // when
             List<Review> result = reviewQueryDSLRepository.getReviews(limit, reviewId, memberId);
 
             // then
-            assertThat(result.size()).isEqualTo(3);
+            assertThat(result.size()).isEqualTo(2);
             for(int i=1; i<result.size(); i++){
                 LocalDateTime after = result.get(i - 1).getCreatedAt();
                 LocalDateTime prev = result.get(i).getCreatedAt();
@@ -88,8 +96,8 @@ class ReviewQueryDSLRepositoryTest {
         void it_returns_empty_list(){
             // given
             Integer limit = 5;
-            Long reviewId = 5L;
-            Long memberId = 2L;
+            Long reviewId = reviews.get(5).getId();
+            Long memberId = member.getId() + 1;
 
             // when
             List<Review> result = reviewQueryDSLRepository.getReviews(limit, reviewId, memberId);
