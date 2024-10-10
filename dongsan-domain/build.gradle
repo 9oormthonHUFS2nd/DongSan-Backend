@@ -24,6 +24,8 @@ repositories {
 }
 
 dependencies {
+    api 'org.springframework.boot:spring-boot-starter-data-jpa'
+
     // querydsl
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
     annotationProcessor 'com.querydsl:querydsl-apt:5.0.0:jakarta'
@@ -36,10 +38,8 @@ dependencies {
     // p6spy
     implementation "p6spy:p6spy:3.9.1"
 
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-
-
+    // h2
+    testRuntimeOnly 'com.h2database:h2'
 
 }
 

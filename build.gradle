@@ -35,18 +35,20 @@ subprojects {
 
     dependencies {
         // Lombok
-        compileOnly 'org.projectlombok:lombok'
-        annotationProcessor 'org.projectlombok:lombok'
+        compileOnly 'org.projectlombok:lombok:1.18.24'
+        annotationProcessor 'org.projectlombok:lombok:1.18.24'
 
         // servlet
         implementation 'jakarta.servlet:jakarta.servlet-api:6.0.0'
 
         // spring boot starter
         implementation 'org.springframework.boot:spring-boot-starter'
-        testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
         // Spring Boot Test
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+        // Fixture Monkey
+        testImplementation 'com.navercorp.fixturemonkey:fixture-monkey-starter:1.0.23'
 
         // JTS
         implementation 'org.locationtech.jts:jts-core:1.20.0'
@@ -54,6 +56,7 @@ subprojects {
         // JDBC
         implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 
+        // JUnit5
         testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     }
 

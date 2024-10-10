@@ -32,6 +32,7 @@ public class Walkway extends BaseEntity {
     @Column(nullable = false)
     private Integer time;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private AccessLevel accessLevel;
 

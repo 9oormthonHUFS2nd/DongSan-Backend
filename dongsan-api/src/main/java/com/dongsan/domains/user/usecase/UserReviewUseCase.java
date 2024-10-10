@@ -19,4 +19,6 @@ public class UserReviewUseCase {
         List<Review> reviews = reviewQueryService.getReviews(limit, reviewId, memberId);
         return UserReviewMapper.toGetReview(reviews);
     }
+
+
 }
