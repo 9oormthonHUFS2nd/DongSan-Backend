@@ -2,29 +2,36 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.3.3'
     id 'io.spring.dependency-management' version '1.1.6'
+    // test fixture
+    id "java-library"
+    id "java-test-fixtures"
+    id "maven-publish"
 }
 
-group = 'com.dongsan'
-version = '0.0.1-SNAPSHOT'
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
-}
-
-configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
-    }
-}
-
+//group = 'com.dongsan'
+//version = '0.0.1-SNAPSHOT'
+//
+//java {
+//    toolchain {
+//        languageVersion = JavaLanguageVersion.of(17)
+//    }
+//}
+//
+//configurations {
+//    compileOnly {
+//        extendsFrom annotationProcessor
+//    }
+//}
+//
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    // JPA
     api 'org.springframework.boot:spring-boot-starter-data-jpa'
+    // LineString
+    api 'org.hibernate:hibernate-spatial:6.2.2.Final'
 
     // querydsl
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
@@ -41,6 +48,10 @@ dependencies {
     // h2
     testRuntimeOnly 'com.h2database:h2'
 
+    // testFixtures
+    testFixturesImplementation 'org.junit.jupiter:junit-jupiter-api'
+    testFixturesImplementation 'org.locationtech.jts:jts-core:1.20.0'
+
 }
 
 // application.yml 설정 파일 복사
@@ -50,12 +61,21 @@ tasks.register('copyConfig', Copy){
     into 'src/main/resources'
 }
 
+processResources.dependsOn('copyConfig')
+
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+sourceSets {
+    testFixtures {
+        java {
+            srcDir 'src/testFixtures/java'
+        }
+    }
 }
 
 bootJar {
     enabled = false
 }
 
-processResources.dependsOn('copyConfig')

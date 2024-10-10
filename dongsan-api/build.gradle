@@ -4,20 +4,20 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.6'
 }
 
-group = 'com.dongsan'
-version = '0.0.1-SNAPSHOT'
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
-}
-
-configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
-    }
-}
+//group = 'com.dongsan'
+//version = '0.0.1-SNAPSHOT'
+//
+//java {
+//    toolchain {
+//        languageVersion = JavaLanguageVersion.of(17)
+//    }
+//}
+//
+//configurations {
+//    compileOnly {
+//        extendsFrom annotationProcessor
+//    }
+//}
 
 repositories {
     mavenCentral()
@@ -26,6 +26,7 @@ repositories {
 dependencies {
     implementation project(":dongsan-domain")
     implementation project(":dongsan-common")
+    testImplementation(testFixtures(project(":dongsan-domain")))
 
     // spring boot web
     implementation 'org.springframework.boot:spring-boot-starter-web'
@@ -44,6 +45,8 @@ tasks.register('copyConfig', Copy){
     into 'src/main/resources'
 }
 
+processResources.dependsOn('copyConfig')
+
 tasks.named('test') {
     useJUnitPlatform()
 }
@@ -55,5 +58,3 @@ tasks.named('bootJar'){ // bootJar 세팅을 켜기
 tasks.named('jar'){ // jar 설정은 끄기
     enabled = false
 }
-
-processResources.dependsOn('copyConfig')

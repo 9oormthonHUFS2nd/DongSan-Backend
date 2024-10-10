@@ -1,16 +1,8 @@
 package com.dongsan.domains.review.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import com.dongsan.domains.review.entity.Review;
 import com.dongsan.domains.review.repository.ReviewQueryDSLRepository;
 import com.dongsan.domains.review.repository.ReviewRepository;
-import com.navercorp.fixturemonkey.FixtureMonkey;
-import com.navercorp.fixturemonkey.api.introspector.ConstructorPropertiesArbitraryIntrospector;
-import java.util.Collections;
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -18,6 +10,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static fixture.ReviewFixture.createReview;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("ReviewQueryServiceTest Unit Test")
@@ -40,10 +42,10 @@ class ReviewQueryServiceTest {
             Long reviewId = 1L;
             Long memberId = 1L;
 
-            FixtureMonkey fixtureMonkey= FixtureMonkey.builder()
-                    .objectIntrospector(ConstructorPropertiesArbitraryIntrospector.INSTANCE)
-                    .build();
-            List<Review> reviews = fixtureMonkey.giveMe(Review.class, 5);
+            List<Review> reviews = new ArrayList<>();
+            for(int i =0; i<5; i++){
+                reviews.add(createReview(null, null));
+            }
 
             when(reviewQueryDSLRepository.getReviews(limit, reviewId, memberId)).thenReturn(reviews);
 
