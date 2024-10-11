@@ -14,7 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,7 +35,7 @@ class UserProfileUsecaseTest {
 
     @Test
     @DisplayName("마이페이지 유저 프로필 조회")
-    void UserProfileUsecase_getUserProfile_ReturnUserProfileRes() {
+    void getUserProfile() {
         // Given
         Long memberId = 1L;
 
@@ -47,13 +47,13 @@ class UserProfileUsecaseTest {
 
         UserProfileDto.UserProfileRes userProfileRes = UserProfileDto.UserProfileRes.of(member);
 
-        when(memberService.readMember(memberId)).thenReturn(Optional.ofNullable(member));
+        when(memberService.readMember(memberId)).thenReturn(Optional.of(member));
 
         // When
-        UserProfileDto.UserProfileRes userProfileResReturn = userProfileUsecase.getUserProfile(memberId);
+        UserProfileDto.UserProfileRes profileReturn = userProfileUsecase.getUserProfile(memberId);
 
         // Then
-        Assertions.assertThat(userProfileResReturn)
+        Assertions.assertThat(profileReturn)
                 .isNotNull()
                 .isEqualTo(userProfileRes);
     }
@@ -69,27 +69,27 @@ class UserProfileUsecaseTest {
 
         Member member = Member.builder().build();
 
-        Bookmark bookmark1 = Bookmark.builder()
-                .name("test1")
-                .build();
+        List<Bookmark> bookmarkList = new ArrayList<>();
 
-        Bookmark bookmark2 = Bookmark.builder()
-                .name("test2")
-                .build();
+        for(long id = 2L; id != 0L; id--) {
+            Bookmark bookmark = Bookmark.builder()
+                    .name("test"+id)
+                    .build();
 
-        List<Bookmark> bookmarkList = Arrays.asList(bookmark2, bookmark1);
+            bookmarkList.add(bookmark);
+        }
 
         when(memberService.readMember(userId)).thenReturn(Optional.of(member));
         when(bookmarkService.readUserBookmarks(bookmarkId, member, size)).thenReturn(bookmarkList);
 
         // When
-        UserBookmarkDto.UserBookmarksRes userBookmarksResReturn =
+        UserBookmarkDto.UserBookmarksRes bookmarksReturn =
                 userProfileUsecase.getUserBookmarks(userId, bookmarkId, size);
 
         // Then
-        Assertions.assertThat(userBookmarksResReturn.bookmarks().size()).isEqualTo(size);
-        Assertions.assertThat(userBookmarksResReturn.bookmarks().get(0).title()).isEqualTo(bookmark2.getName());
-        Assertions.assertThat(userBookmarksResReturn.bookmarks().get(1).title()).isEqualTo(bookmark1.getName());
+        Assertions.assertThat(bookmarksReturn.bookmarks().size()).isEqualTo(size);
+        Assertions.assertThat(bookmarksReturn.bookmarks().get(0).title()).isEqualTo(bookmarkList.get(0).getName());
+        Assertions.assertThat(bookmarksReturn.bookmarks().get(1).title()).isEqualTo(bookmarkList.get(1).getName());
 
     }
 }

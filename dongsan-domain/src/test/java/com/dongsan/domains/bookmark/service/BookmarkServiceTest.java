@@ -13,7 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Mockito.when;
@@ -32,22 +32,22 @@ class BookmarkServiceTest {
     void readUserBookmarks() {
 
         // Given
-        Bookmark bookmark1 = Bookmark.builder()
-                .name("test1")
-                .build();
+        List<Bookmark> bookmarkList = new ArrayList<>();
 
-        Bookmark bookmark2 = Bookmark.builder()
-                .name("test2")
-                .build();
+        for(long id = 2L; id != 0; id--) {
+            Bookmark bookmark = Bookmark.builder()
+                    .name("test"+id)
+                    .build();
 
-        List<Bookmark> mockBookmarks = Arrays.asList(bookmark2, bookmark1);
+            bookmarkList.add(bookmark);
+        }
 
         Long bookmarkId = 3L;
         Integer size = 2;
         Member member = Member.builder().build();
         Pageable pageable = PageRequest.of(0, size);
 
-        when(bookmarkRepository.findBookmarksByIdAndMember(bookmarkId, member, pageable)).thenReturn(mockBookmarks);
+        when(bookmarkRepository.findBookmarksByIdAndMember(bookmarkId, member, pageable)).thenReturn(bookmarkList);
 
         // When
         List<Bookmark> bookmarkListReturn = bookmarkService.readUserBookmarks(bookmarkId, member, size);
@@ -55,7 +55,7 @@ class BookmarkServiceTest {
         // Then
         Assertions.assertThat(bookmarkListReturn).isNotNull();
         Assertions.assertThat(bookmarkListReturn.size()).isEqualTo(size);
-        Assertions.assertThat(bookmarkListReturn.get(0).getName()).isEqualTo(bookmark2.getName());
-        Assertions.assertThat(bookmarkListReturn.get(1).getName()).isEqualTo(bookmark1.getName());
+        Assertions.assertThat(bookmarkListReturn.get(0).getName()).isEqualTo(bookmarkList.get(0).getName());
+        Assertions.assertThat(bookmarkListReturn.get(1).getName()).isEqualTo(bookmarkList.get(1).getName());
     }
 }

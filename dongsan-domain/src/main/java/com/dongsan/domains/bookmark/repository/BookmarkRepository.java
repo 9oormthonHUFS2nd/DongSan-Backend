@@ -14,7 +14,7 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
 
     @Query("SELECT b FROM Bookmark b WHERE "
             + "(b.member = :member) AND "
-            + "(:bookmarkId IS NULL OR b.id < :bookmarkId)"
+            + "(:bookmarkId = 0 OR b.id < :bookmarkId)"
             + "ORDER BY b.id DESC")
     List<Bookmark> findBookmarksByIdAndMember(Long bookmarkId, Member member, Pageable pageable);
 }

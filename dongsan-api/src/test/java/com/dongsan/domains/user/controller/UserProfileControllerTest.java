@@ -1,6 +1,7 @@
 package com.dongsan.domains.user.controller;
 
 import com.dongsan.domains.user.dto.UserBookmarkDto;
+import com.dongsan.domains.user.dto.UserBookmarkDto.UserBookmarksRes.UserBookmarkRes;
 import com.dongsan.domains.user.dto.UserProfileDto;
 import com.dongsan.domains.user.usecase.UserProfileUsecase;
 import org.hamcrest.CoreMatchers;
@@ -16,7 +17,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -37,7 +39,7 @@ class UserProfileControllerTest {
 
     @Test
     @DisplayName("마이페이지 프로필 조회")
-    void UserProfileController_getUserProfile_ReturnUserProfileRes() throws Exception {
+    void getUserProfile() throws Exception {
 
         // Given
         UserProfileDto.UserProfileRes userProfileRes =
@@ -58,14 +60,15 @@ class UserProfileControllerTest {
     @DisplayName("마이페이지 북마크 조회")
     void getUserBookmarks() throws Exception {
         // Given
-        UserBookmarkDto.UserBookmarkRes userBookmarkRes1 =
-                new UserBookmarkDto.UserBookmarkRes(1L, "test1");
+        List<UserBookmarkRes> bookmarkList = new ArrayList<>();
 
-        UserBookmarkDto.UserBookmarkRes userBookmarkRes2 =
-                new UserBookmarkDto.UserBookmarkRes(2L, "test2");
+        for(long id = 2L; id != 0L; id--) {
+            UserBookmarkRes bookmark = new UserBookmarkRes(id, "test"+id);
+            bookmarkList.add(bookmark);
+        }
 
         UserBookmarkDto.UserBookmarksRes userBookmarksRes =
-                new UserBookmarkDto.UserBookmarksRes(Arrays.asList(userBookmarkRes2, userBookmarkRes1));
+                new UserBookmarkDto.UserBookmarksRes(bookmarkList);
 
         Integer size = 2;
         Long userId = 1L;
@@ -75,14 +78,16 @@ class UserProfileControllerTest {
 
         // When
         ResultActions response = mockMvc.perform(get("/users/bookmarks/title")
-                        .contentType(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
                 .param("bookmarkId", "3")
                 .param("size", "2"));
+
 
         // Then
         response.andExpect(status().isOk())
                 .andExpect(jsonPath("$.result.bookmarks.size()", CoreMatchers.is(size)))
-                .andExpect(jsonPath("$.result.bookmarks[0].title").value(userBookmarkRes2.title()))
-                .andExpect(jsonPath("$.result.bookmarks[1].title").value(userBookmarkRes1.title()));
+                .andExpect(jsonPath("$.result.bookmarks[0].title").value(bookmarkList.get(0).title()))
+                .andExpect(jsonPath("$.result.bookmarks[1].title").value(bookmarkList.get(1).title()));
+
     }
 }

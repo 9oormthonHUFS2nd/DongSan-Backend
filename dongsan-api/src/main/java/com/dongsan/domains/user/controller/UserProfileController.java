@@ -21,7 +21,7 @@ public class UserProfileController {
     }
 
     @GetMapping("/users/bookmarks/title")
-    public ResponseEntity<?> getUserBookmarks(@RequestParam Long bookmarkId, @RequestParam(required = false) Integer size) {
+    public ResponseEntity<?> getUserBookmarks(@RequestParam(defaultValue = "0") Long bookmarkId, @RequestParam(defaultValue = "10") Integer size) {
         return ResponseFactory.ok(userProfileUsecase.getUserBookmarks(1L, bookmarkId, size));
     }
 }

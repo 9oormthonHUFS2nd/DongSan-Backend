@@ -34,10 +34,10 @@ public class UserProfileUsecase {
         // TODO: 에러 코드 적용
         Member member = memberService.readMember(userId).orElseThrow();
 
-        List<Bookmark> bookmarkList = bookmarkService.readUserBookmarks(bookmarkId, member, (size == null ? 10 : size));
+        List<Bookmark> bookmarkList = bookmarkService.readUserBookmarks(bookmarkId, member, size);
 
         return new UserBookmarkDto.UserBookmarksRes(bookmarkList.stream()
-                        .map(UserBookmarkDto.UserBookmarkRes::of)
+                        .map(UserBookmarkDto.UserBookmarksRes.UserBookmarkRes::of)
                         .collect(Collectors.toList()));
     }
 
