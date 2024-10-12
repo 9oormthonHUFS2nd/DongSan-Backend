@@ -35,7 +35,7 @@ class UserReviewUseCaseTest {
     @DisplayName("getReviews 메소드는")
     class Describe_getReviews{
         @Test
-        @DisplayName("리뷰를 DTO로 변환한다.")
+        @DisplayName("리뷰가 존재하면 리뷰를 DTO로 변환한다.")
         void it_returns_responseDTO(){
             // given
             Integer limit = 5;

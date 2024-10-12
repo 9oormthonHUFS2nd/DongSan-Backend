@@ -35,7 +35,7 @@ class ReviewQueryServiceTest {
     @DisplayName("getReviews 메소드는")
     class Describe_getReviews{
         @Test
-        @DisplayName("리뷰 목록을 반환한다.")
+        @DisplayName("리뷰가 존재하면 리뷰 목록을 반환한다.")
         void it_returns_reviews(){
             // given
             Integer limit = 5;
@@ -58,7 +58,7 @@ class ReviewQueryServiceTest {
         }
 
         @Test
-        @DisplayName("비어 있는 리뷰 목록을 반환한다.")
+        @DisplayName("리뷰가 존재하지 않으면 비어 있는 리뷰 목록을 반환한다.")
         void it_returns_empty_review(){
             // given
             Integer limit = 5;

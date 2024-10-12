@@ -39,7 +39,7 @@ class UserReviewControllerTest {
     class Describe_getReviews{
 
         @Test
-        @DisplayName("작성한 리뷰를 생성 날짜를 기준으로 내림차순으로 조회한다.")
+        @DisplayName("리뷰가 존재하면 작성한 리뷰를 생성 날짜를 기준으로 내림차순으로 조회한다.")
         void it_returns_reviews() throws Exception{
             // given
             int limit = 5;
