@@ -3,8 +3,8 @@ package com.dongsan.domains.user.usecase;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.review.entity.Review;
 import com.dongsan.domains.review.service.ReviewQueryService;
-import com.dongsan.domains.user.dto.response.GetReview;
-import com.dongsan.domains.user.dto.response.GetReview.ReviewInfo;
+import com.dongsan.domains.user.dto.response.GetReviewResponse;
+import com.dongsan.domains.user.dto.response.GetReviewResponse.ReviewInfo;
 import com.dongsan.domains.walkway.entity.Walkway;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -51,7 +51,7 @@ class UserReviewUseCaseTest {
             when(reviewQueryService.getReviews(limit, reviewId, memberId)).thenReturn(reviews);
 
             // when
-            GetReview result = userReviewUseCase.getReviews(limit, reviewId, memberId);
+            GetReviewResponse result = userReviewUseCase.getReviews(limit, reviewId, memberId);
 
             // then
             assertThat(result.reviews().size()).isEqualTo(5);

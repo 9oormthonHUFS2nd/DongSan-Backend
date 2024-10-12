@@ -8,7 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.dongsan.domains.review.service.ReviewQueryService;
-import com.dongsan.domains.user.dto.response.GetReview;
+import com.dongsan.domains.user.dto.response.GetReviewResponse;
 import com.dongsan.domains.user.usecase.UserReviewUseCase;
 import java.util.Collections;
 import org.junit.jupiter.api.DisplayName;
@@ -45,9 +45,9 @@ class UserReviewControllerTest {
             int limit = 5;
             long reviewId = 10L;
             long memberId = 1L;
-            GetReview.ReviewInfo reviewInfo = new GetReview.ReviewInfo(
+            GetReviewResponse.ReviewInfo reviewInfo = new GetReviewResponse.ReviewInfo(
                     1L, 10L, "Sample Walkway", "2024-10-10", 5, "This is a great walkway!");
-            GetReview response = GetReview.builder()
+            GetReviewResponse response = GetReviewResponse.builder()
                     .reviews(Collections.singletonList(reviewInfo))
                     .build();
 

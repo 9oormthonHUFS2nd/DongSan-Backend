@@ -4,7 +4,7 @@ import java.util.List;
 import lombok.Builder;
 
 @Builder
-public record GetReview(
+public record GetReviewResponse(
         List<ReviewInfo> reviews
 ) {
     @Builder
