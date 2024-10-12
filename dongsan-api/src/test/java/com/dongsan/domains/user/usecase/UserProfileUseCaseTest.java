@@ -1,9 +1,9 @@
 package com.dongsan.domains.user.usecase;
 
 import com.dongsan.domains.bookmark.entity.Bookmark;
-import com.dongsan.domains.bookmark.service.BookmarkService;
+import com.dongsan.domains.bookmark.service.BookmarkQueryService;
 import com.dongsan.domains.member.entity.Member;
-import com.dongsan.domains.member.service.MemberService;
+import com.dongsan.domains.member.service.MemberQueryService;
 import com.dongsan.domains.user.dto.UserBookmarkDto;
 import com.dongsan.domains.user.dto.UserProfileDto;
 import org.assertj.core.api.Assertions;
@@ -21,16 +21,16 @@ import java.util.Optional;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class UserProfileUsecaseTest {
+class UserProfileUseCaseTest {
 
     @Mock
-    private MemberService memberService;
+    private MemberQueryService memberQueryService;
 
     @Mock
-    private BookmarkService bookmarkService;
+    private BookmarkQueryService bookmarkQueryService;
 
     @InjectMocks
-    private UserProfileUsecase userProfileUsecase;
+    private UserProfileUseCase userProfileUsecase;
 
 
     @Test
@@ -47,7 +47,7 @@ class UserProfileUsecaseTest {
 
         UserProfileDto.UserProfileRes userProfileRes = UserProfileDto.UserProfileRes.of(member);
 
-        when(memberService.readMember(memberId)).thenReturn(Optional.of(member));
+        when(memberQueryService.readMember(memberId)).thenReturn(Optional.of(member));
 
         // When
         UserProfileDto.UserProfileRes profileReturn = userProfileUsecase.getUserProfile(memberId);
@@ -79,8 +79,8 @@ class UserProfileUsecaseTest {
             bookmarkList.add(bookmark);
         }
 
-        when(memberService.readMember(userId)).thenReturn(Optional.of(member));
-        when(bookmarkService.readUserBookmarks(bookmarkId, member, size)).thenReturn(bookmarkList);
+        when(memberQueryService.readMember(userId)).thenReturn(Optional.of(member));
+        when(bookmarkQueryService.readUserBookmarks(bookmarkId, member, size)).thenReturn(bookmarkList);
 
         // When
         UserBookmarkDto.UserBookmarksRes bookmarksReturn =

@@ -3,7 +3,7 @@ package com.dongsan.domains.user.controller;
 import com.dongsan.domains.user.dto.UserBookmarkDto;
 import com.dongsan.domains.user.dto.UserBookmarkDto.UserBookmarksRes.UserBookmarkRes;
 import com.dongsan.domains.user.dto.UserProfileDto;
-import com.dongsan.domains.user.usecase.UserProfileUsecase;
+import com.dongsan.domains.user.usecase.UserProfileUseCase;
 import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,7 @@ class UserProfileControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private UserProfileUsecase userProfileUsecase;
+    private UserProfileUseCase userProfileUsecase;
 
 
     @Test

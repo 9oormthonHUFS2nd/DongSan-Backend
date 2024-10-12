@@ -19,13 +19,13 @@ import java.util.List;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class BookmarkServiceTest {
+class BookmarkQueryServiceTest {
 
     @Mock
     private BookmarkRepository bookmarkRepository;
 
     @InjectMocks
-    private BookmarkService bookmarkService;
+    private BookmarkQueryService bookmarkQueryService;
 
     @Test
     @DisplayName("사용자 북마크 리스트(페이징)")
@@ -50,7 +50,7 @@ class BookmarkServiceTest {
         when(bookmarkRepository.findBookmarksByIdAndMember(bookmarkId, member, pageable)).thenReturn(bookmarkList);
 
         // When
-        List<Bookmark> bookmarkListReturn = bookmarkService.readUserBookmarks(bookmarkId, member, size);
+        List<Bookmark> bookmarkListReturn = bookmarkQueryService.readUserBookmarks(bookmarkId, member, size);
 
         // Then
         Assertions.assertThat(bookmarkListReturn).isNotNull();

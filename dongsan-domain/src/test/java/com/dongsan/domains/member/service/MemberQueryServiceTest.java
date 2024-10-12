@@ -15,13 +15,13 @@ import java.util.Optional;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class MemberServiceTest {
+class MemberQueryServiceTest {
 
     @Mock
     private MemberRepository memberRepository;
 
     @InjectMocks
-    private MemberService memberService;
+    private MemberQueryService memberQueryService;
 
     @Test
     @DisplayName("사용자 정보 조회")
@@ -35,7 +35,7 @@ class MemberServiceTest {
         when(memberRepository.findById(memberId)).thenReturn(Optional.ofNullable(member));
 
         // When
-        Optional<Member> memberReturn = memberService.readMember(memberId);
+        Optional<Member> memberReturn = memberQueryService.readMember(memberId);
 
         // Then
         Assertions.assertThat(memberReturn).isNotNull();
