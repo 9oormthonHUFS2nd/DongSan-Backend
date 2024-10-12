@@ -4,10 +4,12 @@ import com.dongsan.domains.bookmark.entity.Bookmark;
 import com.dongsan.domains.bookmark.service.BookmarkQueryService;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.member.service.MemberQueryService;
-import com.dongsan.domains.user.dto.UserBookmarkDto;
-import com.dongsan.domains.user.dto.UserProfileDto;
+import com.dongsan.domains.user.dto.response.GetBookmarksResponse;
+import com.dongsan.domains.user.dto.response.GetProfileResponse;
+import com.dongsan.domains.user.mapper.UserProfileMapper;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,7 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static fixture.BookmarkFixture.createBookmark;
+import static fixture.MemberFixture.createMemberWithId;
 import static org.mockito.Mockito.when;
+import static fixture.MemberFixture.createMember;
 
 @ExtendWith(MockitoExtension.class)
 class UserProfileUseCaseTest {
@@ -32,64 +37,66 @@ class UserProfileUseCaseTest {
     @InjectMocks
     private UserProfileUseCase userProfileUsecase;
 
+    @Nested
+    @DisplayName("getUserProfile 메서드는")
+    class Describe_getUserProfile {
+        @Test
+        @DisplayName("유저가 존재하면 유저 프로필을 DTO로 반환한다.")
+        void it_returns_responseDTO() {
+            // Given
+            Long memberId = 1L;
 
-    @Test
-    @DisplayName("마이페이지 유저 프로필 조회")
-    void getUserProfile() {
-        // Given
-        Long memberId = 1L;
+            Member member = createMemberWithId(memberId);
 
-        Member member = Member.builder()
-                .profileImageUrl("Test Url")
-                .nickname("Test Nickname")
-                .email("test@gmail.com")
-                .build();
+            GetProfileResponse getProfileResponse = UserProfileMapper.toGetProfileResponse(member);
 
-        UserProfileDto.UserProfileRes userProfileRes = UserProfileDto.UserProfileRes.of(member);
+            when(memberQueryService.readMember(memberId)).thenReturn(Optional.of(member));
 
-        when(memberQueryService.readMember(memberId)).thenReturn(Optional.of(member));
+            // When
+            GetProfileResponse result = userProfileUsecase.getUserProfile(memberId);
 
-        // When
-        UserProfileDto.UserProfileRes profileReturn = userProfileUsecase.getUserProfile(memberId);
-
-        // Then
-        Assertions.assertThat(profileReturn)
-                .isNotNull()
-                .isEqualTo(userProfileRes);
+            // Then
+            Assertions.assertThat(result)
+                    .isNotNull()
+                    .isEqualTo(getProfileResponse);
+        }
     }
 
-    @Test
-    @DisplayName("마이페이지 유저 북마크 리스트")
-    void getUserBookmarks() {
 
-        // Given
-        Long userId = 1L;
-        Long bookmarkId = 3L;
-        Integer size = 2;
+    @Nested
+    @DisplayName("getUserBookmarks 메서드는")
+    class Describe_getUserBookmarks {
+        @Test
+        @DisplayName("북마크가 존재하면 북마크 리스트를 DTO로 반환한다.")
+        void getUserBookmarks() {
 
-        Member member = Member.builder().build();
+            // Given
+            Long userId = 1L;
+            Long bookmarkId = 3L;
+            Integer limit = 2;
 
-        List<Bookmark> bookmarkList = new ArrayList<>();
+            Member member = createMember();
 
-        for(long id = 2L; id != 0L; id--) {
-            Bookmark bookmark = Bookmark.builder()
-                    .name("test"+id)
-                    .build();
+            List<Bookmark> bookmarkList = new ArrayList<>();
 
-            bookmarkList.add(bookmark);
+            for(long id = 2L; id != 0L; id--) {
+                Bookmark bookmark = createBookmark(member, "test"+id);
+
+                bookmarkList.add(bookmark);
+            }
+
+            when(bookmarkQueryService.readUserBookmarks(bookmarkId, userId, limit)).thenReturn(bookmarkList);
+
+            // When
+            GetBookmarksResponse result =
+                    userProfileUsecase.getUserBookmarks(userId, bookmarkId, limit);
+
+            // Then
+            Assertions.assertThat(result.bookmarks().size()).isEqualTo(limit);
+            Assertions.assertThat(result.bookmarks().get(0).title()).isEqualTo(bookmarkList.get(0).getName());
+            Assertions.assertThat(result.bookmarks().get(1).title()).isEqualTo(bookmarkList.get(1).getName());
+
         }
-
-        when(memberQueryService.readMember(userId)).thenReturn(Optional.of(member));
-        when(bookmarkQueryService.readUserBookmarks(bookmarkId, member, size)).thenReturn(bookmarkList);
-
-        // When
-        UserBookmarkDto.UserBookmarksRes bookmarksReturn =
-                userProfileUsecase.getUserBookmarks(userId, bookmarkId, size);
-
-        // Then
-        Assertions.assertThat(bookmarksReturn.bookmarks().size()).isEqualTo(size);
-        Assertions.assertThat(bookmarksReturn.bookmarks().get(0).title()).isEqualTo(bookmarkList.get(0).getName());
-        Assertions.assertThat(bookmarksReturn.bookmarks().get(1).title()).isEqualTo(bookmarkList.get(1).getName());
 
     }
 }

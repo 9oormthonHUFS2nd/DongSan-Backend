@@ -10,11 +10,11 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class MemberQueryService {
 
     private final MemberRepository memberRepository;
 
-    @Transactional(readOnly = true)
     public Optional<Member> readMember(Long id) {
         return memberRepository.findById(id);
     }

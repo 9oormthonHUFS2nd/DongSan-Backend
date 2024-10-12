@@ -10,11 +10,11 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class BookmarkQueryService {
 
     private final BookmarkQueryDSLRepository bookmarkQueryDSLRepository;
 
-    @Transactional(readOnly = true)
     public List<Bookmark> readUserBookmarks(Long bookmarkId, Long memberId, Integer limit) {
         return bookmarkQueryDSLRepository.getBookmarks(bookmarkId, memberId, limit);
     }

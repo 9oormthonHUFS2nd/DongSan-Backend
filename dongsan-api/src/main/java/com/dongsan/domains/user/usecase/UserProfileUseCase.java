@@ -1,5 +1,6 @@
 package com.dongsan.domains.user.usecase;
 
+import com.dongsan.common.annotation.UseCase;
 import com.dongsan.domains.bookmark.entity.Bookmark;
 import com.dongsan.domains.bookmark.service.BookmarkQueryService;
 import com.dongsan.domains.member.entity.Member;
@@ -11,13 +12,11 @@ import com.dongsan.domains.user.mapper.UserProfileMapper;
 import com.dongsan.error.code.MemberErrorCode;
 import com.dongsan.error.exception.CustomException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-// TODO: 마이페이지로 통합
-@Service
+@UseCase
 @RequiredArgsConstructor
 public class UserProfileUseCase {
 
