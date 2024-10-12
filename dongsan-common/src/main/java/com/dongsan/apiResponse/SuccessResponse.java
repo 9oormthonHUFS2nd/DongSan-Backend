@@ -12,13 +12,13 @@ public class SuccessResponse<T> {
     private final Boolean isSuccess;
     private final String message;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private final T result;
+    private final T data;
 
     @Builder
-    private SuccessResponse(String message, T result){
+    private SuccessResponse(String message, T data){
         this.isSuccess = true;
         this.message = message;
-        this.result = result;
+        this.data = data;
     }
 
 }

@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-public enum AccessLevel {
+public enum ExposeLevel {
     PRIVATE("비공개"),
     PUBLIC("공개")
     ;
