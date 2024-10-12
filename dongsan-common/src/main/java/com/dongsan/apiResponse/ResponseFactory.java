@@ -14,22 +14,22 @@ public class ResponseFactory {
         throw new UnsupportedOperationException("ResponseFactory는 인스턴스를 생성할 수 없습니다.");
     }
 
-    public static <T> ResponseEntity<SuccessResponse<T>> ok(T result){
-        return onSuccess(HttpStatus.OK, OK_MESSAGE, result);
+    public static <T> ResponseEntity<SuccessResponse<T>> ok(T data){
+        return onSuccess(HttpStatus.OK, OK_MESSAGE, data);
     }
 
-    public static <T> ResponseEntity<SuccessResponse<T>> created(T result){
-        return onSuccess(HttpStatus.CREATED, CREATED_MESSAGE ,result);
+    public static <T> ResponseEntity<SuccessResponse<T>> created(T data){
+        return onSuccess(HttpStatus.CREATED, CREATED_MESSAGE ,data);
     }
 
     public static ResponseEntity<Void> noContent(){
         return ResponseEntity.noContent().build();
     }
 
-    private static <T> ResponseEntity<SuccessResponse<T>> onSuccess(HttpStatus httpStatus, String message, T result){
+    private static <T> ResponseEntity<SuccessResponse<T>> onSuccess(HttpStatus httpStatus, String message, T data){
         SuccessResponse<T> body = SuccessResponse.<T>builder()
                 .message(message)
-                .result(result)
+                .data(data)
                 .build();
 
         return ResponseEntity.status(httpStatus).body(body);
