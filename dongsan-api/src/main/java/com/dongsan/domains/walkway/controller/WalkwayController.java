@@ -24,6 +24,6 @@ public class WalkwayController {
     public ResponseEntity<SuccessResponse<CreateWalkwayResponse>> createWalkway(
             @Validated @RequestBody CreateWalkwayRequest createWalkwayRequest
     ) {
-        return ResponseFactory.ok(walkwayUseCase.createWalkway(createWalkwayRequest, 1L));
+        return ResponseFactory.created(walkwayUseCase.createWalkway(createWalkwayRequest, 1L));
     }
 }
