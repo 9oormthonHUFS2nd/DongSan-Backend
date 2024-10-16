@@ -1,19 +1,27 @@
 plugins {
     id 'java'
+    id 'java-library'
     id 'org.springframework.boot' version '3.3.3'
     id 'io.spring.dependency-management' version '1.1.6'
+    id 'jacoco'
 }
 
 group = 'com.dongsan'
 version = '1.0.0'
 
 allprojects {
-    sourceCompatibility = '17'
-    targetCompatibility = '17'
+    tasks.withType(JavaCompile).configureEach {
+        sourceCompatibility = '17'
+        targetCompatibility = '17'
+    }
 
     repositories {
         mavenCentral()
     }
+}
+
+jacoco{
+    toolVersion = '0.8.12'
 }
 
 tasks.withType(Test).configureEach {
@@ -24,9 +32,11 @@ tasks.withType(Test).configureEach {
 }
 
 subprojects {
+    apply plugin: 'java'
     apply plugin: 'java-library'
     apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'jacoco'
 
     configurations {
         compileOnly {
@@ -40,12 +50,14 @@ subprojects {
         }
     }
 
+    test {
+        useJUnitPlatform()
+    }
+
     dependencies {
-        // lombok plugin
+        // lombok
         implementation('org.projectlombok:lombok')
         annotationProcessor('org.projectlombok:lombok')
-
-        // lombok (test)
         testImplementation('org.projectlombok:lombok')
         testAnnotationProcessor('org.projectlombok:lombok')
 
@@ -72,18 +84,75 @@ subprojects {
         testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     }
 
-    test {
-        useJUnitPlatform()
+}
+
+import java.util.stream.Collectors
+
+def excludeFromCoverage = new ArrayList<String>()
+file('coverage-exclude.asap').withInputStream() { it ->
+    excludeFromCoverage.addAll(new BufferedReader(new InputStreamReader(it))
+            .lines()
+            .parallel()
+            .map(s -> s.substring(7).strip())
+            .collect(Collectors.toList()))
+}
+
+// 커버리지 결과를 리포트로 생성하는 작업
+tasks.register('jacocoRootTestReport', JacocoReport) {
+    dependsOn subprojects.collect {
+        it.tasks.named('test')
+    }
+
+    //executionData fileTree(includes: ['**/build/jacoco/*.exec'])
+
+    // 서브프로젝트의 .exec 파일을 포함
+    executionData.from(fileTree(dir: '.', include: '**/build/jacoco/*.exec'))
+
+    reports {
+        xml.required = true
+        html.required = true
+        csv.required = false
+        html.outputLocation = file('build/jacocoTestReportHtml')
+        xml.outputLocation = file('build/reports/jacoco/test/jacocoTestReport.xml')
+    }
+
+    classDirectories.setFrom(files(subprojects.collect {
+        // 서브 프로젝트들의 컴파일된 클래스 파일이 저장되는 디렉토리
+        it.sourceSets.main.output
+    }).asFileTree.matching {
+        exclude excludeFromCoverage.stream()
+                .map(s -> s + ".class")
+                .collect(Collectors.toList())
+    })
+
+    finalizedBy 'jacocoTestVerification'
+}
+
+
+// 커버리지 측정을 위한 조건을 명시하는 task
+tasks.register('jacocoTestVerification') {
+    dependsOn 'jacocoRootTestReport' // 리포트 생성 후 실행
+
+    doLast {
+        // 커버리지 검증 로직 추가
+        def coverageRules = [
+                [
+                        enabled: true,
+                        element: 'CLASS',
+                        limits: [
+                                [counter: 'LINE', value: 'COVEREDRATIO', minimum: 0.0],
+                                [counter: 'METHOD', value: 'COVEREDRATIO', minimum: 0.0]
+                        ],
+                        excludes: excludeFromCoverage.stream()
+                                .map(s -> s.replace("/", "."))
+                                .collect(Collectors.toList())
+                ]
+        ]
+
     }
 }
 
-sourceSets {
-    testFixtures {
-        java {
-            srcDir 'src/testFixtures/java'
-        }
-    }
-}
+test.dependsOn 'jacocoRootTestReport'
 
 if (project == rootProject) {
     bootJar {
