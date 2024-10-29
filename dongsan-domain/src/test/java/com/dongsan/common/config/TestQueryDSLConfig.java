@@ -2,6 +2,7 @@ package com.dongsan.common.config;
 
 import com.dongsan.domains.bookmark.repository.BookmarkQueryDSLRepository;
 import com.dongsan.domains.review.repository.ReviewQueryDSLRepository;
+import com.dongsan.domains.walkway.repository.WalkwayQueryDSLRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -26,5 +27,10 @@ public class TestQueryDSLConfig {
     @Bean
     public BookmarkQueryDSLRepository bookmarkQueryDSLRepository(JPAQueryFactory jpaQueryFactory){
         return new BookmarkQueryDSLRepository(jpaQueryFactory);
+    }
+
+    @Bean
+    public WalkwayQueryDSLRepository walkwayQueryDSLRepository(JPAQueryFactory jpaQueryFactory){
+        return new WalkwayQueryDSLRepository(jpaQueryFactory);
     }
 }
