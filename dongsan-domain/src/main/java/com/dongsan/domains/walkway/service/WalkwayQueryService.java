@@ -1,10 +1,8 @@
 package com.dongsan.domains.walkway.service;
 
-import com.dongsan.domains.walkway.entity.QLikedWalkway;
-import com.dongsan.domains.walkway.entity.QWalkway;
-import com.dongsan.domains.walkway.repository.WalkwayQueryDSLRepository;
-import com.querydsl.core.Tuple;
-import java.util.Map;
+import com.dongsan.domains.walkway.entity.Walkway;
+import com.dongsan.domains.walkway.repository.WalkwayRepository;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,13 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class WalkwayQueryService {
 
-    private final WalkwayQueryDSLRepository walkwayQueryDSLRepository;
+    private final WalkwayRepository walkwayRepository;
 
-    public Map<String, Object> getWalkwayWithLiked(Long walkwayId, Long memberId) {
-        Tuple walkwayWithLiked = walkwayQueryDSLRepository.getWalkwayWithLiked(walkwayId, memberId);
-        return Map.of(
-                "walkway", walkwayWithLiked.get(QWalkway.walkway),
-                "likedWalkway", walkwayWithLiked.get(QLikedWalkway.likedWalkway)
-        );
+    public Optional<Walkway> getWalkway(Long walkwayId) {
+        return walkwayRepository.findById(walkwayId);
     }
 }

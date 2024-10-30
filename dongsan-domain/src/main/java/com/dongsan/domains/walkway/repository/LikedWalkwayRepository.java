@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LikedWalkwayRepository extends JpaRepository<LikedWalkway, Long> {
+    Boolean existsByWalkway_IdAndMember_Id(Long walkwayId, Long memberId);
 }

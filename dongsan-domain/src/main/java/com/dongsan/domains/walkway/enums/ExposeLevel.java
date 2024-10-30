@@ -20,4 +20,8 @@ public enum ExposeLevel {
                 .findFirst()
                 .orElse(ExposeLevel.PRIVATE);
     }
+
+    public Boolean toBoolean() {
+        return this.description.equals("공개");
+    }
 }

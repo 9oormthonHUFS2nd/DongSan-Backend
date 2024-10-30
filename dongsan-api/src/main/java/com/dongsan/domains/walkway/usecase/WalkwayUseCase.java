@@ -10,25 +10,30 @@ import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.member.service.MemberQueryService;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.response.CreateWalkwayResponse;
+import com.dongsan.domains.walkway.dto.response.GetWalkwayWithLikedResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.mapper.HashtagMapper;
 import com.dongsan.domains.walkway.mapper.HashtagWalkwayMapper;
 import com.dongsan.domains.walkway.mapper.WalkwayMapper;
+import com.dongsan.domains.walkway.service.LikedWalkwayQueryService;
 import com.dongsan.domains.walkway.service.WalkwayCommandService;
+import com.dongsan.domains.walkway.service.WalkwayQueryService;
 import com.dongsan.error.code.MemberErrorCode;
+import com.dongsan.error.code.WalkwayErrorCode;
 import com.dongsan.error.exception.CustomException;
-import lombok.RequiredArgsConstructor;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 @UseCase
 @RequiredArgsConstructor
 public class WalkwayUseCase {
 
     private final WalkwayCommandService walkwayCommandService;
+    private final WalkwayQueryService walkwayQueryService;
+    private final LikedWalkwayQueryService likedWalkwayQueryService;
 
     private final MemberQueryService memberQueryService;
 
@@ -83,4 +88,20 @@ public class WalkwayUseCase {
 
         return hashtagWalkwayCommandService.createHashtagWalkways(hashtagWalkways);
     }
+
+    @Transactional(readOnly = true)
+    public GetWalkwayWithLikedResponse getWalkwayWithLiked(Long walkwayId, Long memberId) {
+        Walkway walkway = walkwayQueryService.getWalkway(walkwayId)
+                .orElseThrow(() -> new CustomException(WalkwayErrorCode.INVALID_COURSE));
+
+        Boolean isLikedWalkway = likedWalkwayQueryService.existByWalkwayIdAndMemberId(walkwayId, memberId);
+
+        List<Hashtag> hashtags = hashtagQueryService.getHashtagsByWalkwayId(walkwayId);
+
+        return WalkwayMapper.toGetWalkwayWithLikedResponse(
+                walkway,
+                isLikedWalkway,
+                hashtags);
+    }
+
 }

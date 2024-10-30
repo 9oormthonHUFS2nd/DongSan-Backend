@@ -1,16 +1,20 @@
 package com.dongsan.domains.walkway.mapper;
 
+import static com.dongsan.domains.walkway.mapper.LineStringMapper.toLineString;
+import static com.dongsan.domains.walkway.mapper.LineStringMapper.toList;
+
+import com.dongsan.domains.hashtag.entity.Hashtag;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.response.CreateWalkwayResponse;
+import com.dongsan.domains.walkway.dto.response.GetWalkwayWithLikedResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.enums.ExposeLevel;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LineString;
-
 import java.awt.geom.Point2D;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import org.locationtech.jts.geom.LineString;
 
 public class WalkwayMapper {
 
@@ -25,15 +29,7 @@ public class WalkwayMapper {
         Point2D.Double endLocation = new Point2D.Double(end.get(0), end.get(1));
 
         // 경로
-        GeometryFactory geometryFactory = new GeometryFactory();
-        Coordinate[] coordinateList = new Coordinate[course.size()];
-
-        for(int i = 0; i < course.size(); i++) {
-            List<Double> point = course.get(i);
-            coordinateList[i] = new Coordinate(point.get(0), point.get(1));
-        }
-
-        LineString courseResult = geometryFactory.createLineString(coordinateList);
+        LineString courseResult = toLineString(course);
 
         return Walkway.builder()
                 .member(member)
@@ -52,6 +48,29 @@ public class WalkwayMapper {
     public static CreateWalkwayResponse toCreateWalkwayResponse(Walkway walkway) {
         return CreateWalkwayResponse.builder()
                 .walkwayId(walkway.getId())
+                .build();
+    }
+
+    public static GetWalkwayWithLikedResponse toGetWalkwayWithLikedResponse(
+            Walkway walkway,
+            Boolean isLikedWalkway,
+            List<Hashtag> hashtags
+    ) {
+
+        return GetWalkwayWithLikedResponse.builder()
+                .date(walkway.getCreatedAt().toLocalDate().toString())
+                .time(walkway.getTime().toString())
+                .distance(walkway.getDistance())
+                .name(walkway.getName())
+                .memo(walkway.getMemo())
+                .rating(walkway.getRating())
+                .isLiked(!Objects.isNull(isLikedWalkway))
+                .reviewCount(walkway.getReviewCount())
+                .hashTags(hashtags.stream()
+                        .map(Hashtag::getName).
+                        collect(Collectors.toList()))
+                .accessLevel(walkway.getExposeLevel().toBoolean())
+                .course(toList(walkway.getCourse()))
                 .build();
     }
 }
