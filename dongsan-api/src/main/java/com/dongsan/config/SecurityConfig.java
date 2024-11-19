@@ -114,13 +114,13 @@ public class SecurityConfig {
                         UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests((auth) -> auth
                         // 헬스 체크 경로는 jwt 인증 비활성화
-                        .requestMatchers("/api/v1/admin/**")
+                        .requestMatchers("/admin/**")
                         .hasRole("ADMIN")
                         // 헬스 체크 경로는 jwt 인증 비활성화
                         .requestMatchers(
-                                "/api/v1",
-                                "/api/v1/health",
-                                "/api/v1/dev/**"
+                                "/",
+                                "/health",
+                                "/dev/**"
                         )
                         .permitAll()
                         // 이외 요청 모두 jwt 필터를 타도록 설정
