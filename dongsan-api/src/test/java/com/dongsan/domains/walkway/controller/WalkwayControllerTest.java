@@ -3,7 +3,7 @@ package com.dongsan.domains.walkway.controller;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.response.CreateWalkwayResponse;
 import com.dongsan.domains.walkway.usecase.WalkwayUseCase;
-import com.dongsan.error.code.SystemErrorStatus;
+import com.dongsan.error.code.SystemErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -92,6 +92,6 @@ class WalkwayControllerTest {
 
         // Then
         response.andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.code").value(SystemErrorStatus.INVALID_ARGUMENT_ERROR.getCode()));
+                .andExpect(jsonPath("$.code").value(SystemErrorCode.INVALID_ARGUMENT_ERROR.getCode()));
     }
 }

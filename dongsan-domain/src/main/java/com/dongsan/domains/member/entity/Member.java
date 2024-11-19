@@ -1,6 +1,7 @@
 package com.dongsan.domains.member.entity;
 
 import com.dongsan.domains.common.entity.BaseEntity;
+import com.dongsan.domains.member.enums.MemberRole;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,11 +27,14 @@ public class Member extends BaseEntity {
 
     private String profileImageUrl;
 
+    private MemberRole role;
+
     @Builder
-    private Member(String email, String nickname, String profileImageUrl){
+    private Member(String email, String nickname, String profileImageUrl, MemberRole role){
         this.email = email;
         this.nickname = nickname;
         this.profileImageUrl = profileImageUrl;
+        this.role = role;
     }
 
 }

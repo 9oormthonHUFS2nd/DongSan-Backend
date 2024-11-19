@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
-public enum SystemErrorStatus implements BaseErrorCode {
+public enum SystemErrorCode implements BaseErrorCode {
 
     // 일반적인 응답
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "SYSTEM-001", "서버 내부 오류가 발생했습니다. 다시 시도해주세요."),
