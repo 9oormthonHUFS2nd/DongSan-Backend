@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/dev")
-@Tag(name = "👩🏻‍💻개발용 API", description = "Develop API")
+@Tag(name = "👩🏻‍💻 개발용 API", description = "Develop API")
 @RequiredArgsConstructor
 @Validated
 @Slf4j
