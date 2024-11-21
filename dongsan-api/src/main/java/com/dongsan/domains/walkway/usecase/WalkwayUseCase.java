@@ -10,6 +10,7 @@ import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.member.service.MemberQueryService;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.response.CreateWalkwayResponse;
+import com.dongsan.domains.walkway.dto.response.GetWalkwaySearchResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayWithLikedResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.mapper.HashtagMapper;
@@ -47,12 +48,12 @@ public class WalkwayUseCase {
     public CreateWalkwayResponse createWalkway(CreateWalkwayRequest createWalkwayRequest, Long memberId) {
 
         Member member = memberQueryService.readMember(memberId)
-                .orElseThrow(()-> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
 
         Walkway walkway = walkwayCommandService.createWalkway(WalkwayMapper.toWalkway(createWalkwayRequest, member));
 
         // 해쉬태그 추가
-        if(!createWalkwayRequest.hashTags().isEmpty()) {
+        if (!createWalkwayRequest.hashTags().isEmpty()) {
             createHashtagWalkways(walkway, createWalkwayRequest.hashTags());
         }
 
@@ -67,7 +68,7 @@ public class WalkwayUseCase {
         List<HashtagWalkway> hashtagWalkways = new ArrayList<>();
         List<Hashtag> hashtags = hashtagQueryService.getHashtagsByName(hashtagNames);
 
-        for(String hashtagName: hashtagNames) {
+        for (String hashtagName : hashtagNames) {
 
             Optional<Hashtag> hashtagCheck = hashtags.stream()
                     .filter(hashtag -> hashtag.getName().equals(hashtagName))
@@ -76,7 +77,7 @@ public class WalkwayUseCase {
             HashtagWalkway hashtagWalkway;
 
             // 해쉬태그가 존재하지 않으면 생성 후 추가
-            if(hashtagCheck.isPresent()) {
+            if (hashtagCheck.isPresent()) {
                 hashtagWalkway = HashtagWalkwayMapper.toHashtagWalkway(hashtagCheck.get(), walkway);
             } else {
                 Hashtag hashtag = HashtagMapper.toHashtag(hashtagName);
@@ -104,4 +105,33 @@ public class WalkwayUseCase {
                 hashtags);
     }
 
+    @Transactional(readOnly = true)
+    public GetWalkwaySearchResponse getWalkwaysSearch(
+            Long userId,
+            String type,
+            Double latitude,
+            Double longitude,
+            Double distance,
+            String hashtags,
+            Long lastId,
+            Double lastRating,
+            Integer lastLikes,
+            int size
+    ) {
+        List<String> hashtagsList = List.of(hashtags.split(","));
+
+        int distanceInt = (int) (distance * 1000);
+
+        List<Walkway> walkways = switch (type) {
+            case "liked" -> walkwayQueryService.getWalkwaysPopular(userId, latitude, longitude, distanceInt, hashtagsList,
+                    lastId,
+                    lastLikes, size);
+            case "rating" ->
+                    walkwayQueryService.getWalkwaysRating(userId, latitude, longitude, distanceInt, hashtagsList, lastId,
+                            lastRating, size);
+            default -> throw new CustomException(WalkwayErrorCode.INVALID_SEARCH_TYPE);
+        };
+
+        return WalkwayMapper.toGetWalkwaySearchResponse(walkways, size);
+    }
 }
