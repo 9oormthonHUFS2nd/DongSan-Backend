@@ -4,7 +4,7 @@ import com.dongsan.apiResponse.ErrorResponse;
 import com.dongsan.apiResponse.ResponseFactory;
 import com.dongsan.apiResponse.ValidationError;
 import com.dongsan.error.code.BaseErrorCode;
-import com.dongsan.error.code.SystemErrorStatus;
+import com.dongsan.error.code.SystemErrorCode;
 import com.dongsan.error.exception.CustomException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +31,7 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception e) {
         log.error("[Exception] cause: {} , message: {}", NestedExceptionUtils.getMostSpecificCause(e), e.getMessage());
-        BaseErrorCode errorCode = SystemErrorStatus.INTERNAL_SERVER_ERROR;
+        BaseErrorCode errorCode = SystemErrorCode.INTERNAL_SERVER_ERROR;
         return ResponseFactory.onFailure(errorCode);
     }
 
@@ -47,7 +47,7 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException e){
         log.error("[IlleagalArgumentException] cause: {} , message: {}", NestedExceptionUtils.getMostSpecificCause(e),e.getMessage());
-        BaseErrorCode errorCode = SystemErrorStatus.ILLEGAL_ARGUMENT_ERROR;
+        BaseErrorCode errorCode = SystemErrorCode.ILLEGAL_ARGUMENT_ERROR;
         String errorMessage = String.format("%s %s", errorCode.getMessage(), NestedExceptionUtils.getMostSpecificCause(e).getMessage());
         return ResponseFactory.onFailure(errorCode, errorMessage);
     }
@@ -56,7 +56,7 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
     @ExceptionHandler
     public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException e) {
         log.error("[ConstraintViolationException] cause: {} , message: {}", NestedExceptionUtils.getMostSpecificCause(e),e.getMessage());
-        BaseErrorCode errorCode = SystemErrorStatus.INVALID_ARGUMENT_ERROR;
+        BaseErrorCode errorCode = SystemErrorCode.INVALID_ARGUMENT_ERROR;
         List<ValidationError> errors = e.getConstraintViolations()
                 .stream()
                 .map(violation -> new ValidationError(violation.getPropertyPath()
@@ -71,7 +71,7 @@ public class ExceptionAdvice extends ResponseEntityExceptionHandler {
             MethodArgumentNotValidException e, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         log.error("[MethodArgumentNotValidException] cause: {} , message: {}", NestedExceptionUtils.getMostSpecificCause(e), e.getMessage());
 
-        BaseErrorCode errorCode = SystemErrorStatus.INVALID_ARGUMENT_ERROR;
+        BaseErrorCode errorCode = SystemErrorCode.INVALID_ARGUMENT_ERROR;
 
         List<FieldError> fieldErrors = e.getBindingResult()
                 .getFieldErrors();

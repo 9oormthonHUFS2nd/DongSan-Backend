@@ -19,4 +19,10 @@ public class HealthController {
     public ResponseEntity<SuccessResponse<String>> health(){
         return ResponseFactory.ok("Server is Healthy!");
     }
+
+    @Operation(summary = "홈 헬스체크")
+    @GetMapping("/")
+    public ResponseEntity<SuccessResponse<String>> home(){
+        return ResponseFactory.ok("It's Home!");
+    }
 }
