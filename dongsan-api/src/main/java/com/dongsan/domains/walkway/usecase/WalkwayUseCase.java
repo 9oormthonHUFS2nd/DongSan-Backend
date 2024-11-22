@@ -92,8 +92,10 @@ public class WalkwayUseCase {
 
     @Transactional(readOnly = true)
     public GetWalkwayWithLikedResponse getWalkwayWithLiked(Long walkwayId, Long memberId) {
-        Walkway walkway = walkwayQueryService.getWalkway(walkwayId)
-                .orElseThrow(() -> new CustomException(WalkwayErrorCode.INVALID_COURSE));
+        Walkway walkway = walkwayQueryService.getWalkway(memberId, walkwayId);
+        if (walkway == null) {
+            throw new CustomException(WalkwayErrorCode.INVALID_COURSE);
+        }
 
         Boolean isLikedWalkway = likedWalkwayQueryService.existByWalkwayIdAndMemberId(walkwayId, memberId);
 

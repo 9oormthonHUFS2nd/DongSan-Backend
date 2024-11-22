@@ -5,10 +5,10 @@ import static org.mockito.Mockito.when;
 
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.walkway.entity.Walkway;
+import com.dongsan.domains.walkway.repository.WalkwayQueryDSLRepository;
 import com.dongsan.domains.walkway.repository.WalkwayRepository;
 import fixture.MemberFixture;
 import fixture.WalkwayFixture;
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -22,6 +22,8 @@ class WalkwayQueryServiceTest {
 
     @Mock
     private WalkwayRepository walkwayRepository;
+    @Mock
+    private WalkwayQueryDSLRepository walkwayQueryDSLRepository;
 
     @InjectMocks
     private WalkwayQueryService walkwayQueryService;
@@ -38,13 +40,13 @@ class WalkwayQueryServiceTest {
             Walkway walkway = WalkwayFixture.createWalkwayWithId(1L, member);
 
             // Mocking Tuple 반환값 설정
-            when(walkwayRepository.findById(walkway.getId())).thenReturn(Optional.of(walkway));
+            when(walkwayQueryDSLRepository.getWalkway(member.getId(), walkway.getId())).thenReturn(walkway);
 
             // when
-            Optional<Walkway> result = walkwayQueryService.getWalkway(walkway.getId());
+            Walkway result = walkwayQueryService.getWalkway(member.getId(), walkway.getId());
 
             // then
-            assertThat(result.get()).isEqualTo(walkway);
+            assertThat(result).isEqualTo(walkway);
         }
     }
 }

@@ -20,6 +20,16 @@ public class WalkwayQueryDSLRepository {
 
     private QWalkway walkway = QWalkway.walkway;
 
+    public Walkway getWalkway (Long userId, Long walkwayId) {
+        return queryFactory.selectFrom(walkway)
+                .leftJoin(walkway.hashtagWalkways, hashtagWalkway)
+                .leftJoin(hashtagWalkway)
+                .leftJoin(walkway.likedWalkways)
+                .on(likedWalkway.member.id.eq(userId))
+                .where(walkway.id.eq(walkwayId))
+                .fetchOne();
+    }
+
     public List<Walkway> getWalkwaysPopular(
             Long userId,
             Double longitude,

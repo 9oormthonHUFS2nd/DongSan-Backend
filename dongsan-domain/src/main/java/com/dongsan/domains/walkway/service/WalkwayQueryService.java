@@ -4,7 +4,6 @@ import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.repository.WalkwayQueryDSLRepository;
 import com.dongsan.domains.walkway.repository.WalkwayRepository;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,8 +16,8 @@ public class WalkwayQueryService {
     private final WalkwayRepository walkwayRepository;
     private final WalkwayQueryDSLRepository walkwayQueryDSLRepository;
 
-    public Optional<Walkway> getWalkway(Long walkwayId) {
-        return walkwayRepository.findById(walkwayId);
+    public Walkway getWalkway(Long userId, Long walkwayId) {
+        return walkwayQueryDSLRepository.getWalkway(userId, walkwayId);
     }
 
     public List<Walkway> getWalkwaysPopular (

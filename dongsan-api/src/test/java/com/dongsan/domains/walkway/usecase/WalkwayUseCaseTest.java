@@ -141,7 +141,7 @@ class WalkwayUseCaseTest {
         @DisplayName("walkwayId에 해당하는 산책로가 없으면 예외처리 한다.")
         void it_returns_exception_not_found_walkway() {
             // given
-            when(walkwayQueryService.getWalkway(1L)).thenReturn(Optional.empty());
+            when(walkwayQueryService.getWalkway(1L, 1L)).thenReturn(null);
 
             // when & then
             org.junit.jupiter.api.Assertions.assertThrows(CustomException.class, () -> {
@@ -157,7 +157,7 @@ class WalkwayUseCaseTest {
             Walkway walkway = WalkwayFixture.createWalkwayWithId(1L, member);
             List<Hashtag> hashtags = List.of(HashtagFixture.createHashtag());
 
-            when(walkwayQueryService.getWalkway(any())).thenReturn(Optional.of(walkway));
+            when(walkwayQueryService.getWalkway(any(), any())).thenReturn(walkway);
             when(likedWalkwayQueryService.existByWalkwayIdAndMemberId(any(), any())).thenReturn(true);
             when(hashtagQueryService.getHashtagsByWalkwayId(any())).thenReturn(hashtags);
 
