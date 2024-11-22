@@ -125,11 +125,13 @@ public class WalkwayUseCase {
         int distanceInt = (int) (distance * 1000);
 
         List<Walkway> walkways = switch (type) {
-            case "liked" -> walkwayQueryService.getWalkwaysPopular(userId, latitude, longitude, distanceInt, hashtagsList,
-                    lastId,
-                    lastLikes, size);
+            case "liked" ->
+                    walkwayQueryService.getWalkwaysPopular(userId, latitude, longitude, distanceInt, hashtagsList,
+                            lastId,
+                            lastLikes, size);
             case "rating" ->
-                    walkwayQueryService.getWalkwaysRating(userId, latitude, longitude, distanceInt, hashtagsList, lastId,
+                    walkwayQueryService.getWalkwaysRating(userId, latitude, longitude, distanceInt, hashtagsList,
+                            lastId,
                             lastRating, size);
             default -> throw new CustomException(WalkwayErrorCode.INVALID_SEARCH_TYPE);
         };
