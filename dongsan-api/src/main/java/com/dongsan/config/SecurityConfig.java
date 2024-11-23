@@ -6,7 +6,6 @@ import com.dongsan.domains.auth.security.handler.CustomAuthenticationEntryPoint;
 import com.dongsan.domains.auth.security.oauth2.handler.CustomSuccessHandler;
 import com.dongsan.domains.auth.security.oauth2.service.CustomOAuthUserService;
 import com.dongsan.domains.auth.service.JwtService;
-import jakarta.servlet.http.HttpServlet;
 import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

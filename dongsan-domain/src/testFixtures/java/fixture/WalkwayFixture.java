@@ -2,26 +2,24 @@ package fixture;
 
 import com.dongsan.domains.common.entity.BaseEntity;
 import com.dongsan.domains.member.entity.Member;
-import com.dongsan.domains.review.entity.Review;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.enums.ExposeLevel;
-import java.awt.geom.Point2D;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
-
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.Point;
 
 public class WalkwayFixture {
     private static final String NAME = "Sample Walkway";
     private static final Double DISTANCE = 2.5;
     private static final Integer TIME = 30; // minutes
     private static final ExposeLevel EXPOSE_LEVEL = ExposeLevel.PUBLIC;
-    private static final Point2D.Double START_LOCATION = new Point2D.Double(0.0, 0.0);
-    private static final Point2D.Double END_LOCATION = new Point2D.Double(1.0, 1.0);
     private static final String MEMO = "A beautiful walkway.";
     private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
+    private static final Point START_LOCATION = GEOMETRY_FACTORY.createPoint(new Coordinate(0.0, 0.0));
+    private static final Point END_LOCATION = GEOMETRY_FACTORY.createPoint(new Coordinate(1.0, 1.0));
     private static final LineString COURSE = GEOMETRY_FACTORY.createLineString(new Coordinate[]{
             new Coordinate(0.0, 0.0),
             new Coordinate(1.0, 1.0),
