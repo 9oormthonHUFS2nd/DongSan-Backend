@@ -18,7 +18,6 @@ import com.dongsan.domains.walkway.dto.response.GetWalkwaySearchResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayWithLikedResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.mapper.WalkwayMapper;
-import com.dongsan.domains.walkway.service.LikedWalkwayQueryService;
 import com.dongsan.domains.walkway.service.WalkwayCommandService;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
 import com.dongsan.error.exception.CustomException;
@@ -54,8 +53,6 @@ class WalkwayUseCaseTest {
     private HashtagQueryService hashtagQueryService;
     @Mock
     private HashtagCommandService hashtagCommandService;
-    @Mock
-    private LikedWalkwayQueryService likedWalkwayQueryService;
     @InjectMocks
     private WalkwayUseCase walkwayUseCase;
 
