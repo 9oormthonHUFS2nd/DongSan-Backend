@@ -14,7 +14,7 @@ import com.dongsan.domains.walkway.dto.response.GetWalkwayWithLikedResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.mapper.WalkwayMapper;
 import com.dongsan.domains.walkway.usecase.WalkwayUseCase;
-import com.dongsan.error.code.SystemErrorStatus;
+import com.dongsan.error.code.SystemErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fixture.MemberFixture;
 import fixture.WalkwayFixture;
@@ -103,6 +103,7 @@ class WalkwayControllerTest {
                     .andExpect(jsonPath("$.code").value(SystemErrorStatus.INVALID_ARGUMENT_ERROR.getCode()));
         }
     }
+
 
 
     @Nested

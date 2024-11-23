@@ -28,11 +28,11 @@ import org.springframework.test.web.servlet.MockMvc;
 @DisplayName("UserReviewController Unit Test")
 class UserReviewControllerTest {
     @Autowired
-    private MockMvc mockMvc;
+    MockMvc mockMvc;
     @MockBean
-    private UserReviewUseCase userReviewUseCase;
+    UserReviewUseCase userReviewUseCase;
     @MockBean
-    private ReviewQueryService reviewQueryService;
+    ReviewQueryService reviewQueryService;
 
     @Nested
     @DisplayName("getReviews 메소드는")
@@ -50,12 +50,10 @@ class UserReviewControllerTest {
             GetReviewResponse response = GetReviewResponse.builder()
                     .reviews(Collections.singletonList(reviewInfo))
                     .build();
-
-            // when
             when(reviewQueryService.existsByReviewId(reviewId)).thenReturn(true);
             when(userReviewUseCase.getReviews(limit, reviewId, memberId)).thenReturn(response);
 
-            // then
+            // when & then
             mockMvc.perform(get("/users/reviews")
                             .param("limit", String.valueOf(limit))
                             .param("reviewId", String.valueOf(reviewId))
@@ -72,11 +70,9 @@ class UserReviewControllerTest {
             // given
             int limit = 5;
             long reviewId = 10L;
-
-            // when
             when(reviewQueryService.existsByReviewId(reviewId)).thenReturn(false);
 
-            // then
+            // when & then
             mockMvc.perform(get("/users/reviews")
                             .param("limit", String.valueOf(limit))
                             .param("reviewId", String.valueOf(reviewId))

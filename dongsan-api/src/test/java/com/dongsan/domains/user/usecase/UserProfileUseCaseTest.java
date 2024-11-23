@@ -1,5 +1,10 @@
 package com.dongsan.domains.user.usecase;
 
+import static fixture.BookmarkFixture.createBookmark;
+import static fixture.MemberFixture.createMember;
+import static fixture.MemberFixture.createMemberWithId;
+import static org.mockito.Mockito.when;
+
 import com.dongsan.domains.bookmark.entity.Bookmark;
 import com.dongsan.domains.bookmark.service.BookmarkQueryService;
 import com.dongsan.domains.member.entity.Member;
@@ -7,6 +12,9 @@ import com.dongsan.domains.member.service.MemberQueryService;
 import com.dongsan.domains.user.dto.response.GetBookmarksResponse;
 import com.dongsan.domains.user.dto.response.GetProfileResponse;
 import com.dongsan.domains.user.mapper.UserProfileMapper;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -15,15 +23,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static fixture.BookmarkFixture.createBookmark;
-import static fixture.MemberFixture.createMemberWithId;
-import static org.mockito.Mockito.when;
-import static fixture.MemberFixture.createMember;
 
 @ExtendWith(MockitoExtension.class)
 class UserProfileUseCaseTest {

@@ -7,6 +7,8 @@ import com.dongsan.domains.walkway.dto.response.CreateWalkwayResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwaySearchResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayWithLikedResponse;
 import com.dongsan.domains.walkway.usecase.WalkwayUseCase;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -20,11 +22,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/walkways")
+@Tag(name = "🚶🏻‍산책로", description = "Walkway")
 @RequiredArgsConstructor
 public class WalkwayController {
 
     private final WalkwayUseCase walkwayUseCase;
 
+    @Operation(summary = "산책로 등록")
     @PostMapping("")
     public ResponseEntity<SuccessResponse<CreateWalkwayResponse>> createWalkway(
             @Validated @RequestBody CreateWalkwayRequest createWalkwayRequest
