@@ -20,7 +20,4 @@ public class HashtagQueryService {
         return hashtagRepository.findByNameIn(hashtagNames);
     }
 
-    public List<Hashtag> getHashtagsByWalkwayId(Long walkwayId) {
-        return hashtagDSLRepository.getHashtagsByWalkwayId(walkwayId);
-    }
 }

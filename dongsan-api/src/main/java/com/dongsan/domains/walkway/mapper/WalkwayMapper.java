@@ -3,7 +3,6 @@ package com.dongsan.domains.walkway.mapper;
 import static com.dongsan.domains.walkway.mapper.LineStringMapper.toLineString;
 import static com.dongsan.domains.walkway.mapper.LineStringMapper.toList;
 
-import com.dongsan.domains.hashtag.entity.Hashtag;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.response.CreateWalkwayResponse;
@@ -12,7 +11,6 @@ import com.dongsan.domains.walkway.dto.response.GetWalkwayWithLikedResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.enums.ExposeLevel;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -60,9 +58,7 @@ public class WalkwayMapper {
     }
 
     public static GetWalkwayWithLikedResponse toGetWalkwayWithLikedResponse(
-            Walkway walkway,
-            Boolean isLikedWalkway,
-            List<Hashtag> hashtags
+            Walkway walkway
     ) {
 
         return GetWalkwayWithLikedResponse.builder()
@@ -72,11 +68,11 @@ public class WalkwayMapper {
                 .name(walkway.getName())
                 .memo(walkway.getMemo())
                 .rating(walkway.getRating())
-                .isLiked(!Objects.isNull(isLikedWalkway))
+                .isLiked(!walkway.getLikedWalkways().isEmpty())
                 .reviewCount(walkway.getReviewCount())
-                .hashTags(hashtags.stream()
-                        .map(Hashtag::getName).
-                        collect(Collectors.toList()))
+                .hashTags(walkway.getHashtagWalkways().stream()
+                        .map(hashtagWalkway -> hashtagWalkway.getHashtag().getName())
+                        .collect(Collectors.toList()))
                 .accessLevel(walkway.getExposeLevel().toBoolean())
                 .course(toList(walkway.getCourse()))
                 .build();

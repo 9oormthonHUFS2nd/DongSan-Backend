@@ -158,16 +158,11 @@ class WalkwayUseCaseTest {
             // given
             Member member = MemberFixture.createMember();
             Walkway walkway = WalkwayFixture.createWalkwayWithId(1L, member);
-            List<Hashtag> hashtags = List.of(HashtagFixture.createHashtag());
 
             when(walkwayQueryService.getWalkway(any(), any())).thenReturn(walkway);
-            when(likedWalkwayQueryService.existByWalkwayIdAndMemberId(any(), any())).thenReturn(true);
-            when(hashtagQueryService.getHashtagsByWalkwayId(any())).thenReturn(hashtags);
 
-            GetWalkwayWithLikedResponse getWalkwayWithLikedResponse = WalkwayMapper.toGetWalkwayWithLikedResponse(
-                    walkway,
-                    true,
-                    hashtags);
+            GetWalkwayWithLikedResponse getWalkwayWithLikedResponse
+                    = WalkwayMapper.toGetWalkwayWithLikedResponse(walkway);
 
             // when
             GetWalkwayWithLikedResponse result = walkwayUseCase.getWalkwayWithLiked(walkway.getId(), member.getId());

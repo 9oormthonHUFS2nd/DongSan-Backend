@@ -16,7 +16,6 @@ import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.mapper.HashtagMapper;
 import com.dongsan.domains.walkway.mapper.HashtagWalkwayMapper;
 import com.dongsan.domains.walkway.mapper.WalkwayMapper;
-import com.dongsan.domains.walkway.service.LikedWalkwayQueryService;
 import com.dongsan.domains.walkway.service.WalkwayCommandService;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
 import com.dongsan.error.code.MemberErrorCode;
@@ -34,7 +33,6 @@ public class WalkwayUseCase {
 
     private final WalkwayCommandService walkwayCommandService;
     private final WalkwayQueryService walkwayQueryService;
-    private final LikedWalkwayQueryService likedWalkwayQueryService;
 
     private final MemberQueryService memberQueryService;
 
@@ -97,14 +95,7 @@ public class WalkwayUseCase {
             throw new CustomException(WalkwayErrorCode.INVALID_COURSE);
         }
 
-        Boolean isLikedWalkway = likedWalkwayQueryService.existByWalkwayIdAndMemberId(walkwayId, memberId);
-
-        List<Hashtag> hashtags = hashtagQueryService.getHashtagsByWalkwayId(walkwayId);
-
-        return WalkwayMapper.toGetWalkwayWithLikedResponse(
-                walkway,
-                isLikedWalkway,
-                hashtags);
+        return WalkwayMapper.toGetWalkwayWithLikedResponse(walkway);
     }
 
     @Transactional(readOnly = true)
