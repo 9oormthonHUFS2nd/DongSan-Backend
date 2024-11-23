@@ -100,7 +100,7 @@ class WalkwayControllerTest {
 
             // Then
             response.andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.code").value(SystemErrorStatus.INVALID_ARGUMENT_ERROR.getCode()));
+                    .andExpect(jsonPath("$.code").value(SystemErrorCode.INVALID_ARGUMENT_ERROR.getCode()));
         }
     }
 
