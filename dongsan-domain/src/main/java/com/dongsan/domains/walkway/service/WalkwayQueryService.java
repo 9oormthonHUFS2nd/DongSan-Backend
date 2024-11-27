@@ -63,4 +63,12 @@ public class WalkwayQueryService {
                 size
         );
     }
+
+    public List<Walkway> getUserWalkWay(Long memberId, Integer limit, Long walkwayId){
+        return walkwayQueryDSLRepository.getUserWalkway(memberId, limit, walkwayId);
+    }
+
+    public boolean existsByWalkwayId(Long value) {
+        return walkwayRepository.existsById(value);
+    }
 }

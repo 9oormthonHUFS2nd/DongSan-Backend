@@ -25,9 +25,12 @@ public class ReviewQueryDSLRepository{
                 .fetch();
     }
 
+    /**
+     * reviewId보다 작은 reviewId를 검색하는 조건
+     * @param reviewId 마지막으로 가져온 reviewId
+     * @return 조건 만족 안하면 null 반환, where 절에서 null은 무시된다.
+     */
     private BooleanExpression reviewIdLt(Long reviewId){
-        // 조건 만족 안하면 null 반환
-        // where 절에서 null은 무시된다.
         return reviewId != null ? review.id.lt(reviewId) : null;
     }
 }

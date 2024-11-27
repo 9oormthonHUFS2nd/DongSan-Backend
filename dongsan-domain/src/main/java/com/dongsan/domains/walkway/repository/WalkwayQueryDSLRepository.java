@@ -6,6 +6,7 @@ import static com.dongsan.domains.walkway.entity.QLikedWalkway.likedWalkway;
 
 import com.dongsan.domains.walkway.entity.QWalkway;
 import com.dongsan.domains.walkway.entity.Walkway;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
@@ -95,5 +96,21 @@ public class WalkwayQueryDSLRepository {
     }
 
 
+    public List<Walkway> getUserWalkway(Long userId, Integer limit, Long walkwayId){
+        return queryFactory.selectFrom(walkway)
+                .where(walkway.member.id.eq(userId), walkwayIdLt(walkwayId))
+                .orderBy(walkway.createdAt.desc())
+                .limit(limit)
+                .fetch();
+    }
+
+    /**
+     * walkwayId보다 작은 walkwayId를 검색하는 조건
+     * @param walkwayId 마지막으로 가져온 walkwayId
+     * @return 조건 만족 안하면 null 반환, where 절에서 null은 무시된다.
+     */
+    private BooleanExpression walkwayIdLt(Long walkwayId){
+        return walkwayId != null ? walkway.id.lt(walkwayId) : null;
+    }
 
 }
