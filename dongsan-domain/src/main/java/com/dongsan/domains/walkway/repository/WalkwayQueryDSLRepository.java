@@ -96,11 +96,11 @@ public class WalkwayQueryDSLRepository {
     }
 
 
-    public List<Walkway> getUserWalkway(Long userId, Integer limit, Long walkwayId){
+    public List<Walkway> getUserWalkway(Long userId, Integer size, Long walkwayId){
         return queryFactory.selectFrom(walkway)
                 .where(walkway.member.id.eq(userId), walkwayIdLt(walkwayId))
                 .orderBy(walkway.createdAt.desc())
-                .limit(limit)
+                .limit(size)
                 .fetch();
     }
 
@@ -112,5 +112,4 @@ public class WalkwayQueryDSLRepository {
     private BooleanExpression walkwayIdLt(Long walkwayId){
         return walkwayId != null ? walkway.id.lt(walkwayId) : null;
     }
-
 }

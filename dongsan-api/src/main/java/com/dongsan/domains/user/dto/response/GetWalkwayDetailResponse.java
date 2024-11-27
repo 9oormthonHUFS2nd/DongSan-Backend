@@ -1,20 +1,22 @@
 package com.dongsan.domains.user.dto.response;
 
-import java.time.LocalDate;
-import java.util.List;
 import lombok.Builder;
 
+import java.time.LocalDate;
+import java.util.List;
+
 @Builder
-public record GetUserWalkwaySummary(
-        List<UserWalkwaySummaryInfo> walkways
+public record GetWalkwayDetailResponse(
+        List<GetWalkwayDetailInfo> walkways
 ) {
+
     @Builder
-    public record UserWalkwaySummaryInfo(
+    public record GetWalkwayDetailInfo(
             Long walkwayId,
             String name,
             LocalDate date,
             Double distance,
+            List<String> hashtags,
             String courseImageUrl
-    ){}
-
+    ){ }
 }
