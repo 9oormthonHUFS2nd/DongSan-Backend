@@ -1,6 +1,6 @@
 package com.dongsan.domains.bookmark.repository;
 
-import com.dongsan.common.annotation.RepositoryTest;
+import com.dongsan.common.support.RepositoryTest;
 import com.dongsan.domains.bookmark.entity.Bookmark;
 import com.dongsan.domains.member.entity.Member;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,8 +17,7 @@ import static fixture.BookmarkFixture.createBookmark;
 import static fixture.MemberFixture.createMember;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RepositoryTest
-class BookmarkQueryDSLRepositoryTest {
+class BookmarkQueryDSLRepositoryTest extends RepositoryTest {
 
     @Autowired
     private TestEntityManager entityManager;
@@ -31,7 +30,7 @@ class BookmarkQueryDSLRepositoryTest {
     List<Bookmark> bookmarkList = new ArrayList<>();
 
     @BeforeEach
-    void setUp(){
+    void setUpData(){
         member1 = createMember();
         member2 = createMember();
         entityManager.persist(member1);

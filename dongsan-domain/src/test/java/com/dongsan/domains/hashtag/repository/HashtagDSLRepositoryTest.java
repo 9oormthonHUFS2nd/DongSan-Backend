@@ -1,24 +1,24 @@
 package com.dongsan.domains.hashtag.repository;
 
-import static fixture.HashtagFixture.createHashtag;
-import static fixture.HashtagWalkwayFixture.createHashtagWalkway;
-import static fixture.MemberFixture.createMember;
-import static fixture.WalkwayFixture.createWalkway;
-import static org.assertj.core.api.Assertions.assertThat;
-
-import com.dongsan.common.annotation.RepositoryTest;
+import com.dongsan.common.support.RepositoryTest;
 import com.dongsan.domains.hashtag.entity.Hashtag;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.walkway.entity.Walkway;
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
-@RepositoryTest
-class HashtagDSLRepositoryTest {
+import java.util.List;
+
+import static fixture.HashtagFixture.createHashtag;
+import static fixture.HashtagWalkwayFixture.createHashtagWalkway;
+import static fixture.MemberFixture.createMember;
+import static fixture.WalkwayFixture.createWalkway;
+import static org.assertj.core.api.Assertions.assertThat;
+
+class HashtagDSLRepositoryTest extends RepositoryTest {
 
     @Autowired
     private TestEntityManager entityManager;

@@ -1,6 +1,6 @@
 package com.dongsan.domains.review.repository;
 
-import com.dongsan.common.annotation.RepositoryTest;
+import com.dongsan.common.support.RepositoryTest;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.review.entity.Review;
 import com.dongsan.domains.walkway.entity.Walkway;
@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,9 +20,9 @@ import static fixture.ReviewFixture.createReview;
 import static fixture.WalkwayFixture.createWalkway;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RepositoryTest
-@Transactional
-class ReviewQueryDSLRepositoryTest {
+
+@DisplayName("ReviewQueryDSLRepository Unit Test")
+class ReviewQueryDSLRepositoryTest extends RepositoryTest {
     @Autowired
     private TestEntityManager entityManager;
 

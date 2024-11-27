@@ -1,6 +1,6 @@
 package com.dongsan.domains.hashtag.repository;
 
-import com.dongsan.common.annotation.RepositoryTest;
+import com.dongsan.common.support.RepositoryTest;
 import com.dongsan.domains.hashtag.entity.Hashtag;
 import fixture.HashtagFixture;
 import org.assertj.core.api.Assertions;
@@ -14,8 +14,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import java.util.ArrayList;
 import java.util.List;
 
-@RepositoryTest
-class HashtagRepositoryTest {
+class HashtagRepositoryTest extends RepositoryTest {
 
     @Autowired
     private TestEntityManager entityManager;
@@ -24,7 +23,7 @@ class HashtagRepositoryTest {
     private HashtagRepository hashtagRepository;
 
     @BeforeEach
-    void setUp() {
+    void setUpContext() {
         for(int i=0; i<10; i++) {
             Hashtag hashtag = HashtagFixture.createHashtag("tag"+i);
             entityManager.persist(hashtag);
