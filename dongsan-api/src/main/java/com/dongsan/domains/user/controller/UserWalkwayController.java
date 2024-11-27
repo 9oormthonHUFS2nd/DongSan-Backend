@@ -41,7 +41,6 @@ public class UserWalkwayController {
             @ExistWalkway @RequestParam(required = false) Long walkwayId,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ){
-        log.info("[userid] ", customOAuth2User.getMemberId());
         GetWalkwaySummaryResponse response = userWalkwayUseCase.getUserWalkwaySummary(customOAuth2User.getMemberId(), size, walkwayId);
         return ResponseFactory.ok(response);
     }
