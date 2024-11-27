@@ -24,10 +24,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("ReviewQueryDSLRepository Unit Test")
 class ReviewQueryDSLRepositoryTest extends RepositoryTest {
     @Autowired
-    private TestEntityManager entityManager;
+    TestEntityManager em;
 
     @Autowired
-    private ReviewQueryDSLRepository reviewQueryDSLRepository;
+    ReviewQueryDSLRepository reviewQueryDSLRepository;
 
     @Nested
     @DisplayName("getReviews 메소드는")
@@ -40,18 +40,18 @@ class ReviewQueryDSLRepositoryTest extends RepositoryTest {
         void setUp(){
             member = createMember();
             walkway = createWalkway(member);
-            entityManager.persist(member);
-            entityManager.persist(walkway);
+            em.persist(member);
+            em.persist(walkway);
             for(int i =0; i<6; i++){
                 Review review = createReview(member, walkway);
                 reviews.add(review);
-                entityManager.persist(review);
+                em.persist(review);
             }
         }
 
         @Test
-        @DisplayName("reviewId가 null이면 첫 Page의 리뷰를 reviewId 내림차순으로 가져온다.")
-        void it_returns_first_page_reviews(){
+        @DisplayName("reviewId가 null이면 가장 최근의 review들을 내림차순으로 가져온다.")
+        void it_returns_most_recent_reviews(){
             // given
             Integer limit = 5;
             Long reviewId = null;

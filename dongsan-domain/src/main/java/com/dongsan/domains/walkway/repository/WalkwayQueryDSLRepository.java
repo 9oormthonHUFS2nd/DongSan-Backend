@@ -96,9 +96,9 @@ public class WalkwayQueryDSLRepository {
     }
 
 
-    public List<Walkway> getUserWalkway(Long userId, Integer size, Long walkwayId){
+    public List<Walkway> getUserWalkway(Long memberId, Integer size, Long walkwayId){
         return queryFactory.selectFrom(walkway)
-                .where(walkway.member.id.eq(userId), walkwayIdLt(walkwayId))
+                .where(walkway.member.id.eq(memberId), walkwayIdLt(walkwayId))
                 .orderBy(walkway.createdAt.desc())
                 .limit(size)
                 .fetch();
