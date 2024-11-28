@@ -1,18 +1,27 @@
 package com.dongsan.domains.walkway.controller;
 
 import static fixture.MemberFixture.createMemberWithId;
+import static fixture.ReviewFixture.createReviewWithId;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.dongsan.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.domains.member.entity.Member;
+import com.dongsan.domains.review.entity.Review;
 import com.dongsan.domains.walkway.dto.request.CreateReviewRequest;
 import com.dongsan.domains.walkway.dto.response.CreateReviewResponse;
+import com.dongsan.domains.walkway.dto.response.GetWalkwayReviewsResponse;
+import com.dongsan.domains.walkway.entity.Walkway;
+import com.dongsan.domains.walkway.mapper.ReviewMapper;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
 import com.dongsan.domains.walkway.usecase.WalkwayReviewUseCase;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fixture.WalkwayFixture;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -83,5 +92,42 @@ class ReviewControllerTest {
                     .andExpect(jsonPath("$.data.reviewId").value(1L));
         }
 
+    }
+
+    @Nested
+    @DisplayName("getWalkwayReviews 메서드는")
+    class Describe_getWalkwayReviews {
+        @Test
+        @DisplayName("리뷰 리스트를 반환한다.")
+        void it_returns_review_list() throws Exception {
+            // Given
+            String type = "latest";
+            Long walkwayId = 1L;
+            Long lastId = null;
+            Byte rating = 5;
+            Integer size = 10;
+
+            Walkway walkway = WalkwayFixture.createWalkway(member);
+            List<Review> reviews = new ArrayList<>();
+            for (int i = 0; i < 5; i++) {
+                reviews.add(createReviewWithId(1L, member, walkway));
+            }
+
+            GetWalkwayReviewsResponse getWalkwayReviewsResponse = ReviewMapper.toGetWalkwayReviewsResponse(reviews);
+            when(walkwayQueryService.existsByWalkwayId(walkwayId)).thenReturn(true);
+            when(walkwayReviewUseCase.getWalkwayReviews(type, lastId, walkwayId, rating, size))
+                    .thenReturn(getWalkwayReviewsResponse);
+
+            // When
+            ResultActions response = mockMvc.perform(get("/walkways/1/review/content")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .param("type", type));
+
+            // Then
+            response.andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data.reviews").isNotEmpty())
+                    .andExpect(jsonPath("$.data.reviews").isArray())
+                    .andExpect(jsonPath("$.data.reviews.size()").value(5));
+        }
     }
 }

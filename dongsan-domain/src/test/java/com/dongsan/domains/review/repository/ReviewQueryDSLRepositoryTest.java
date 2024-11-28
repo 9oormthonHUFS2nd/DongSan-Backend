@@ -1,24 +1,23 @@
 package com.dongsan.domains.review.repository;
 
+import static fixture.MemberFixture.createMember;
+import static fixture.ReviewFixture.createReview;
+import static fixture.WalkwayFixture.createWalkway;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.dongsan.common.support.RepositoryTest;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.review.entity.Review;
 import com.dongsan.domains.walkway.entity.Walkway;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
-import static fixture.MemberFixture.createMember;
-import static fixture.ReviewFixture.createReview;
-import static fixture.WalkwayFixture.createWalkway;
-import static org.assertj.core.api.Assertions.assertThat;
 
 
 @DisplayName("ReviewQueryDSLRepository Unit Test")
@@ -106,5 +105,83 @@ class ReviewQueryDSLRepositoryTest extends RepositoryTest {
         }
     }
 
+    @Nested
+    @DisplayName("getWalkwayReviewsLatest 메서드는")
+    class Describe_getWalkwayReviewsLatest {
+        Member member;
+        Walkway walkway;
+        List<Review> reviews = new ArrayList<>();
+        @BeforeEach
+        void setUp(){
+            member = createMember();
+            walkway = createWalkway(member);
+            em.persist(member);
+            em.persist(walkway);
+            for(int i =0; i<6; i++){
+                Review review = createReview(member, walkway);
+                reviews.add(review);
+                em.persist(review);
+            }
+        }
+
+        @Test
+        @DisplayName("리뷰 리스트를 시간순으로 반환한다.")
+        void it_returns_review_list_latest() {
+            // Given
+            Integer limit = 5;
+            Long walkwayId = walkway.getId();
+
+            // When
+            List<Review> result = reviewQueryDSLRepository.getWalkwayReviewsLatest(limit, null, walkwayId);
+
+            // Then
+            Long beforeId = result.get(0).getId();
+            for(int count = 1; count < 5; count++) {
+                Long currentId = result.get(count).getId();
+                assertThat(currentId).isLessThan(beforeId);
+                beforeId = currentId;
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("getWalkwayReviewsRating 메서드는")
+    class Describe_getWalkwayReviewsRating {
+        Member member;
+        Walkway walkway;
+        List<Review> reviews = new ArrayList<>();
+        @BeforeEach
+        void setUp(){
+            member = createMember();
+            walkway = createWalkway(member);
+            em.persist(member);
+            em.persist(walkway);
+            for(Byte i = 0; i<6; i++){
+                Review review = createReview(member, walkway, i, "test");
+                reviews.add(review);
+                em.persist(review);
+            }
+        }
+
+        @Test
+        @DisplayName("리뷰 리스트를 별점순으로 반환한다.")
+        void it_returns_review_list_rating() {
+            // Given
+            Integer limit = 5;
+            Long walkwayId = walkway.getId();
+            Byte rating = 5;
+
+            // When
+            List<Review> result = reviewQueryDSLRepository.getWalkwayReviewsRating(limit, null, walkwayId, rating);
+
+            // Then
+            Byte beforeRating = result.get(0).getRating();
+            for(int count = 1; count < 5; count++) {
+                Byte currentRating = result.get(count).getRating();
+                assertThat(currentRating).isLessThan(beforeRating);
+                beforeRating = currentRating;
+            }
+        }
+    }
 
 }
