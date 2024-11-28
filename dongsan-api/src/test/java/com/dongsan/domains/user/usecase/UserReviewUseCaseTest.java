@@ -1,11 +1,19 @@
 package com.dongsan.domains.user.usecase;
 
+import static fixture.MemberFixture.createMemberWithId;
+import static fixture.ReviewFixture.createReviewWithId;
+import static fixture.WalkwayFixture.createWalkwayWithId;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.review.entity.Review;
 import com.dongsan.domains.review.service.ReviewQueryService;
 import com.dongsan.domains.user.dto.response.GetReviewResponse;
 import com.dongsan.domains.user.dto.response.GetReviewResponse.ReviewInfo;
 import com.dongsan.domains.walkway.entity.Walkway;
+import java.util.List;
+import java.util.stream.IntStream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -13,15 +21,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.List;
-import java.util.stream.IntStream;
-
-import static fixture.MemberFixture.createMemberWithId;
-import static fixture.ReviewFixture.createReviewWithId;
-import static fixture.WalkwayFixture.createWalkwayWithId;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("UserReviewUseCase Unit Test")
@@ -54,7 +53,7 @@ class UserReviewUseCaseTest {
             GetReviewResponse result = userReviewUseCase.getReviews(limit, reviewId, memberId);
 
             // then
-            assertThat(result.reviews().size()).isEqualTo(reviews.size());
+            assertThat(result.reviews()).hasSameSizeAs(reviews);
             for(int i=0; i<result.reviews().size(); i++){
                 ReviewInfo reviewInfo = result.reviews().get(i);
                 assertThat(reviewInfo.reviewId()).isEqualTo(reviews.get(i).getId());

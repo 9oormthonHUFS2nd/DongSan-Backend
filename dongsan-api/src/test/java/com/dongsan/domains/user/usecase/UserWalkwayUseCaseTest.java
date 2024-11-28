@@ -1,12 +1,18 @@
 package com.dongsan.domains.user.usecase;
 
+import static fixture.WalkwayFixture.createWalkwayWithId;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
 import com.dongsan.domains.user.dto.response.GetWalkwayDetailResponse;
 import com.dongsan.domains.user.dto.response.GetWalkwayDetailResponse.GetWalkwayDetailInfo;
 import com.dongsan.domains.user.dto.response.GetWalkwaySummaryResponse;
 import com.dongsan.domains.user.dto.response.GetWalkwaySummaryResponse.UserWalkwaySummaryInfo;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
-import fixture.WalkwayFixture;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.IntStream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -14,14 +20,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.IntStream;
-
-import static fixture.WalkwayFixture.createWalkwayWithId;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("UserWalkwayUseCase Unit Test")
@@ -51,7 +49,7 @@ class UserWalkwayUseCaseTest {
             GetWalkwaySummaryResponse response = userWalkwayUseCase.getUserWalkwaySummary(memberId, size, walkwayId);
 
             // then
-            assertThat(response.walkways().size()).isEqualTo(walkways.size());
+            assertThat(response.walkways()).hasSameSizeAs(walkways);
             for(int i=0; i<response.walkways().size(); i++){
                 UserWalkwaySummaryInfo walkwayInfo = response.walkways().get(i);
                 Walkway walkway = walkways.get(i);
@@ -74,7 +72,7 @@ class UserWalkwayUseCaseTest {
             GetWalkwaySummaryResponse response = userWalkwayUseCase.getUserWalkwaySummary(memberId, size, walkwayId);
 
             // then
-            assertThat(response.walkways().size()).isEqualTo(0);
+            assertThat(response.walkways()).isEmpty();
         }
     }
 
@@ -99,13 +97,13 @@ class UserWalkwayUseCaseTest {
             GetWalkwayDetailResponse response = userWalkwayUseCase.getUserWalkwayDetail(memberId, size, walkwayId);
 
             // then
-            assertThat(response.walkways().size()).isEqualTo(walkways.size());
+            assertThat(response.walkways()).hasSameSizeAs(walkways);
             for(int i=0; i<response.walkways().size(); i++){
                 GetWalkwayDetailInfo walkwayInfo = response.walkways().get(i);
                 Walkway walkway = walkways.get(i);
                 assertThat(walkwayInfo.walkwayId()).isEqualTo(walkway.getId());
                 assertThat(walkwayInfo.name()).isEqualTo(walkway.getName());
-                assertThat(walkwayInfo.hashtags().size()).isEqualTo(walkway.getHashtagWalkways().size());
+                assertThat(walkwayInfo.hashtags()).hasSameSizeAs(walkway.getHashtagWalkways());
             }
         }
 
@@ -123,7 +121,7 @@ class UserWalkwayUseCaseTest {
             GetWalkwayDetailResponse response = userWalkwayUseCase.getUserWalkwayDetail(memberId, size, walkwayId);
 
             // then
-            assertThat(response.walkways().size()).isEqualTo(0);
+            assertThat(response.walkways()).isEmpty();
         }
 
     }

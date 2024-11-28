@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class UserWalkwayMapper {
+    private UserWalkwayMapper(){}
     /**
      * List<Walkway> -> GetUserWalkwaySummary
      */

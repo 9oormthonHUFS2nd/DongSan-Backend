@@ -5,6 +5,8 @@ import com.dongsan.domains.dev.dto.response.GetMemberInfoResponse;
 import com.dongsan.domains.member.entity.Member;
 
 public class DevMapper {
+    private DevMapper(){}
+
     /**
      * String, String 타입을 GenerateTokenResponse 타입으로 변환한다.
      */

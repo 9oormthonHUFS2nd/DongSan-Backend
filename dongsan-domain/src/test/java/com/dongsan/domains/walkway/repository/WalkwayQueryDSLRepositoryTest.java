@@ -51,7 +51,7 @@ class WalkwayQueryDSLRepositoryTest extends RepositoryTest {
             List<Walkway> result = walkwayQueryDSLRepository.getUserWalkway(memberId, size, walkwayId);
 
             // then
-            assertThat(result.size()).isEqualTo(5);
+            assertThat(result).hasSize(5);
             for(int i=1; i<result.size(); i++){
                 LocalDateTime after = result.get(i-1).getCreatedAt();
                 LocalDateTime prev = result.get(i).getCreatedAt();
@@ -71,7 +71,7 @@ class WalkwayQueryDSLRepositoryTest extends RepositoryTest {
             List<Walkway> result = walkwayQueryDSLRepository.getUserWalkway(memberId, size, walkwayId);
 
             // then
-            assertThat(result.size()).isEqualTo(3);
+            assertThat(result).hasSize(3);
             for(int i=1; i<result.size(); i++){
                 LocalDateTime after = result.get(i-1).getCreatedAt();
                 LocalDateTime prev = result.get(i).getCreatedAt();
