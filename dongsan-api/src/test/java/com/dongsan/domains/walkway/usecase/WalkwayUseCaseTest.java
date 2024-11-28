@@ -39,22 +39,23 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("WalkwayUseCase Unit Test")
 class WalkwayUseCaseTest {
 
     @Mock
-    private WalkwayCommandService walkwayCommandService;
+    WalkwayCommandService walkwayCommandService;
     @Mock
-    private WalkwayQueryService walkwayQueryService;
+    WalkwayQueryService walkwayQueryService;
     @Mock
-    private MemberQueryService memberQueryService;
+    MemberQueryService memberQueryService;
     @Mock
-    private HashtagWalkwayCommandService hashtagWalkwayCommandService;
+    HashtagWalkwayCommandService hashtagWalkwayCommandService;
     @Mock
-    private HashtagQueryService hashtagQueryService;
+    HashtagQueryService hashtagQueryService;
     @Mock
-    private HashtagCommandService hashtagCommandService;
+    HashtagCommandService hashtagCommandService;
     @InjectMocks
-    private WalkwayUseCase walkwayUseCase;
+    WalkwayUseCase walkwayUseCase;
 
     @Nested
     @DisplayName("createWalkway 메서드는")

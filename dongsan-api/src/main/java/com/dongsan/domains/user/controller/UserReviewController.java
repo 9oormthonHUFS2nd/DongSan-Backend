@@ -3,12 +3,14 @@ package com.dongsan.domains.user.controller;
 import com.dongsan.apiResponse.ResponseFactory;
 import com.dongsan.apiResponse.SuccessResponse;
 import com.dongsan.common.validation.annotation.ExistReview;
+import com.dongsan.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.domains.user.dto.response.GetReviewResponse;
 import com.dongsan.domains.user.usecase.UserReviewUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,10 +32,10 @@ public class UserReviewController {
     @GetMapping()
     public ResponseEntity<SuccessResponse<GetReviewResponse>> getReviews(
             @RequestParam(defaultValue = "5") Integer limit,
-            @ExistReview @RequestParam Long reviewId
+            @ExistReview @RequestParam(required = false) Long reviewId,
+            @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ){
-        Long memberId = 1L;  // (하드 코딩 수정)
-        GetReviewResponse response = userReviewUsecase.getReviews(limit, reviewId, memberId);
+        GetReviewResponse response = userReviewUsecase.getReviews(limit, reviewId, customOAuth2User.getMemberId());
         return ResponseFactory.ok(response);
     }
 

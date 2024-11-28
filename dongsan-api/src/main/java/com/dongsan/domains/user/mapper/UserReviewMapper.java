@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class UserReviewMapper {
+    private UserReviewMapper(){}
     /**
      * List<Review> 타입을 dto.response.GetReview 타입으로 변환한다.
      */

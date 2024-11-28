@@ -23,7 +23,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("UserReviewUseCaseTest Unit Test")
+@DisplayName("UserReviewUseCase Unit Test")
 class UserReviewUseCaseTest {
     @InjectMocks
     UserReviewUseCase userReviewUseCase;
@@ -53,8 +53,8 @@ class UserReviewUseCaseTest {
             GetReviewResponse result = userReviewUseCase.getReviews(limit, reviewId, memberId);
 
             // then
-            assertThat(result.reviews().size()).isEqualTo(5);
-            for(int i=0; i<5; i++){
+            assertThat(result.reviews()).hasSameSizeAs(reviews);
+            for(int i=0; i<result.reviews().size(); i++){
                 ReviewInfo reviewInfo = result.reviews().get(i);
                 assertThat(reviewInfo.reviewId()).isEqualTo(reviews.get(i).getId());
                 assertThat(reviewInfo.walkwayId()).isEqualTo(reviews.get(i).getWalkway().getId());

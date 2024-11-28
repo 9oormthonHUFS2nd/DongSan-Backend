@@ -18,6 +18,7 @@ import java.util.List;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("HashtagQueryService Unit Test")
 class HashtagQueryServiceTest {
 
     @Mock

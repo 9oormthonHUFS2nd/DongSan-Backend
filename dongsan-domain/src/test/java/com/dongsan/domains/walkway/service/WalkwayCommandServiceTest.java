@@ -17,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("WalkwayCommandService Unit Test")
 class WalkwayCommandServiceTest {
 
     @Mock
