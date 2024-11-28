@@ -95,7 +95,6 @@ public class WalkwayQueryDSLRepository {
                 .fetch();
     }
 
-
     public List<Walkway> getUserWalkway(Long memberId, Integer size, Long walkwayId){
         return queryFactory.selectFrom(walkway)
                 .where(walkway.member.id.eq(memberId), walkwayIdLt(walkwayId))
@@ -105,11 +104,12 @@ public class WalkwayQueryDSLRepository {
     }
 
     /**
-     * walkwayId보다 작은 walkwayId를 검색하는 조건
+     * walkwayId보다 작은 Id를 가진 walkway를 조회하는 조건 (즉, createdAt이 더 작은 walkway를 조회)
      * @param walkwayId 마지막으로 가져온 walkwayId
      * @return 조건 만족 안하면 null 반환, where 절에서 null은 무시된다.
      */
     private BooleanExpression walkwayIdLt(Long walkwayId){
         return walkwayId != null ? walkway.id.lt(walkwayId) : null;
     }
+
 }

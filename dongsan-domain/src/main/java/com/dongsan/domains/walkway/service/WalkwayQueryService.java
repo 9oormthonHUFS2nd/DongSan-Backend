@@ -1,5 +1,6 @@
 package com.dongsan.domains.walkway.service;
 
+import com.dongsan.domains.walkway.entity.LikedWalkway;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.repository.WalkwayQueryDSLRepository;
 import com.dongsan.domains.walkway.repository.WalkwayRepository;
