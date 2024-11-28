@@ -1,19 +1,11 @@
 package com.dongsan.domains.user.usecase;
 
-import static fixture.MemberFixture.createMemberWithId;
-import static fixture.ReviewFixture.createReviewWithId;
-import static fixture.WalkwayFixture.createWalkwayWithId;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
-
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.review.entity.Review;
 import com.dongsan.domains.review.service.ReviewQueryService;
 import com.dongsan.domains.user.dto.response.GetReviewResponse;
 import com.dongsan.domains.user.dto.response.GetReviewResponse.ReviewInfo;
 import com.dongsan.domains.walkway.entity.Walkway;
-import java.util.List;
-import java.util.stream.IntStream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -22,8 +14,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+import java.util.stream.IntStream;
+
+import static fixture.MemberFixture.createMemberWithId;
+import static fixture.ReviewFixture.createReviewWithId;
+import static fixture.WalkwayFixture.createWalkwayWithId;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
 @ExtendWith(MockitoExtension.class)
-@DisplayName("UserReviewUseCaseTest Unit Test")
+@DisplayName("UserReviewUseCase Unit Test")
 class UserReviewUseCaseTest {
     @InjectMocks
     UserReviewUseCase userReviewUseCase;
@@ -53,8 +54,8 @@ class UserReviewUseCaseTest {
             GetReviewResponse result = userReviewUseCase.getReviews(limit, reviewId, memberId);
 
             // then
-            assertThat(result.reviews().size()).isEqualTo(5);
-            for(int i=0; i<5; i++){
+            assertThat(result.reviews().size()).isEqualTo(reviews.size());
+            for(int i=0; i<result.reviews().size(); i++){
                 ReviewInfo reviewInfo = result.reviews().get(i);
                 assertThat(reviewInfo.reviewId()).isEqualTo(reviews.get(i).getId());
                 assertThat(reviewInfo.walkwayId()).isEqualTo(reviews.get(i).getWalkway().getId());

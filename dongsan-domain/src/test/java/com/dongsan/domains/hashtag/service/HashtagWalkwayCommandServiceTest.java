@@ -24,6 +24,7 @@ import java.util.List;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("HashtagWalkwayCommandService Unit Test")
 class HashtagWalkwayCommandServiceTest {
 
     @Mock

@@ -17,6 +17,7 @@ import static fixture.BookmarkFixture.createBookmark;
 import static fixture.MemberFixture.createMember;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@DisplayName("BookmarkQueryDSLRepository Unit Test")
 class BookmarkQueryDSLRepositoryTest extends RepositoryTest {
 
     @Autowired

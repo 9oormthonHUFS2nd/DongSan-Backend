@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import java.util.ArrayList;
 import java.util.List;
 
+@DisplayName("HashtagRepository Unit Test")
 class HashtagRepositoryTest extends RepositoryTest {
 
     @Autowired

@@ -21,6 +21,7 @@ import static fixture.MemberFixture.createMemberWithId;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@DisplayName("BookmarkQueryService Unit Test")
 class BookmarkQueryServiceTest {
 
     @Mock

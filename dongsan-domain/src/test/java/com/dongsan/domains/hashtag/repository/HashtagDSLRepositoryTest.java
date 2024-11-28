@@ -18,6 +18,7 @@ import static fixture.MemberFixture.createMember;
 import static fixture.WalkwayFixture.createWalkway;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@DisplayName("HashtagDSLRepository Unit Test")
 class HashtagDSLRepositoryTest extends RepositoryTest {
 
     @Autowired

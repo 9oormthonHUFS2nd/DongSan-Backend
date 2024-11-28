@@ -3,10 +3,11 @@ package com.dongsan.domains.walkway.service;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.repository.WalkwayQueryDSLRepository;
 import com.dongsan.domains.walkway.repository.WalkwayRepository;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -68,8 +69,8 @@ public class WalkwayQueryService {
         return walkwayQueryDSLRepository.getUserWalkway(memberId, size, walkwayId);
     }
 
-    public boolean existsByWalkwayId(Long value) {
-        return walkwayRepository.existsById(value);
+    public boolean existsByWalkwayId(Long walkwayId) {
+        return walkwayRepository.existsById(walkwayId);
     }
 
 }
