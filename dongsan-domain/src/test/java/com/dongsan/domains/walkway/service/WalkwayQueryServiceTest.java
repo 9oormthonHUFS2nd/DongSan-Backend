@@ -48,7 +48,7 @@ class WalkwayQueryServiceTest {
             when(walkwayQueryDSLRepository.getWalkway(member.getId(), walkway.getId())).thenReturn(walkway);
 
             // when
-            Walkway result = walkwayQueryService.getWalkway(member.getId(), walkway.getId());
+            Walkway result = walkwayQueryService.getWalkwayWithRatingAndLike(member.getId(), walkway.getId());
 
             // then
             assertThat(result).isEqualTo(walkway);

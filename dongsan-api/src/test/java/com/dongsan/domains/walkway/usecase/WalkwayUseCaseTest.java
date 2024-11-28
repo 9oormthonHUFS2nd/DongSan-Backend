@@ -142,7 +142,7 @@ class WalkwayUseCaseTest {
         @DisplayName("walkwayId에 해당하는 산책로가 없으면 예외처리 한다.")
         void it_returns_exception_not_found_walkway() {
             // given
-            when(walkwayQueryService.getWalkway(1L, 1L)).thenReturn(null);
+            when(walkwayQueryService.getWalkwayWithRatingAndLike(1L, 1L)).thenReturn(null);
 
             // when & then
             org.junit.jupiter.api.Assertions.assertThrows(CustomException.class, () -> {
@@ -157,7 +157,7 @@ class WalkwayUseCaseTest {
             Member member = MemberFixture.createMember();
             Walkway walkway = WalkwayFixture.createWalkwayWithId(1L, member);
 
-            when(walkwayQueryService.getWalkway(any(), any())).thenReturn(walkway);
+            when(walkwayQueryService.getWalkwayWithRatingAndLike(any(), any())).thenReturn(walkway);
 
             GetWalkwayWithLikedResponse getWalkwayWithLikedResponse
                     = WalkwayMapper.toGetWalkwayWithLikedResponse(walkway);

@@ -90,7 +90,7 @@ public class WalkwayUseCase {
 
     @Transactional(readOnly = true)
     public GetWalkwayWithLikedResponse getWalkwayWithLiked(Long walkwayId, Long memberId) {
-        Walkway walkway = walkwayQueryService.getWalkway(memberId, walkwayId);
+        Walkway walkway = walkwayQueryService.getWalkwayWithRatingAndLike(memberId, walkwayId);
         if (walkway == null) {
             throw new CustomException(WalkwayErrorCode.INVALID_COURSE);
         }

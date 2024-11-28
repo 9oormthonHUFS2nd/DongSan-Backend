@@ -3,11 +3,11 @@ package com.dongsan.domains.walkway.service;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.repository.WalkwayQueryDSLRepository;
 import com.dongsan.domains.walkway.repository.WalkwayRepository;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -17,8 +17,12 @@ public class WalkwayQueryService {
     private final WalkwayRepository walkwayRepository;
     private final WalkwayQueryDSLRepository walkwayQueryDSLRepository;
 
-    public Walkway getWalkway(Long userId, Long walkwayId) {
+    public Walkway getWalkwayWithRatingAndLike(Long userId, Long walkwayId) {
         return walkwayQueryDSLRepository.getWalkway(userId, walkwayId);
+    }
+
+    public Optional<Walkway> getWalkway(Long walkwayId) {
+        return walkwayRepository.findById(walkwayId);
     }
 
     public List<Walkway> getWalkwaysPopular (
