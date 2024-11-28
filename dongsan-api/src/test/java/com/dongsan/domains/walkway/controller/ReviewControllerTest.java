@@ -1,0 +1,87 @@
+package com.dongsan.domains.walkway.controller;
+
+import static fixture.MemberFixture.createMemberWithId;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.dongsan.domains.auth.security.oauth2.dto.CustomOAuth2User;
+import com.dongsan.domains.member.entity.Member;
+import com.dongsan.domains.walkway.dto.request.CreateReviewRequest;
+import com.dongsan.domains.walkway.dto.response.CreateReviewResponse;
+import com.dongsan.domains.walkway.service.WalkwayQueryService;
+import com.dongsan.domains.walkway.usecase.WalkwayReviewUseCase;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+
+@WebMvcTest(ReviewController.class)
+@AutoConfigureMockMvc(addFilters = false)
+@ExtendWith(MockitoExtension.class)
+@DisplayName("ReviewController Unit Test")
+class ReviewControllerTest {
+    @Autowired
+    MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
+    @MockBean
+    WalkwayQueryService walkwayQueryService;
+    @MockBean
+    WalkwayReviewUseCase walkwayReviewUseCase;
+    final Member member = createMemberWithId(1L);
+    final CustomOAuth2User customOAuth2User = new CustomOAuth2User(member);
+
+    @BeforeEach
+    void setUp_Authentication(){
+        SecurityContext context = SecurityContextHolder.getContext();
+        Authentication authentication = new UsernamePasswordAuthenticationToken(customOAuth2User, null, null);
+        context.setAuthentication(authentication);
+    }
+
+    @Nested
+    @DisplayName("createReview 메서드는")
+    class Describe_createReview {
+        @Test
+        @DisplayName("리뷰 작성에 성공하면 작성한 리뷰의 ID를 반환한다.")
+        void it_returns_reviewId() throws Exception {
+            // Given
+            Long walkwayId = 1L;
+            Byte rating = 5;
+            CreateReviewRequest createReviewRequest = new CreateReviewRequest(rating, "test content");
+
+            CreateReviewResponse createReviewResponse = CreateReviewResponse.builder()
+                    .reviewId(1L)
+                    .build();
+
+            when(walkwayQueryService.existsByWalkwayId(walkwayId)).thenReturn(true);
+            when(walkwayReviewUseCase.createReview(customOAuth2User.getMemberId(), walkwayId, createReviewRequest))
+                    .thenReturn(createReviewResponse);
+
+            // When
+            ResultActions response = mockMvc.perform(post("/walkways/1/review")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(createReviewRequest)));
+
+            // Then
+            response.andExpect(status().isCreated())
+                    .andExpect(jsonPath("$.data.reviewId").value(1L));
+        }
+
+    }
+}
