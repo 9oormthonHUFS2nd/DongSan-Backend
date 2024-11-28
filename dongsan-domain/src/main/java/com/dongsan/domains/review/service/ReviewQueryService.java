@@ -22,4 +22,12 @@ public class ReviewQueryService {
     public boolean existsByReviewId(Long reviewId){
         return reviewRepository.existsById(reviewId);
     }
+
+    public List<Review> getWalkwayReviewsLatest(Integer limit, Long reviewId, Long walkwayId) {
+        return reviewQueryDSLRepository.getWalkwayReviewsLatest(limit, reviewId, walkwayId);
+    }
+
+    public List<Review> getWalkwayReviewsRating(Integer limit, Long reviewId, Long walkwayId, Byte rating) {
+        return reviewQueryDSLRepository.getWalkwayReviewsRating(limit, reviewId, walkwayId, rating);
+    }
 }
