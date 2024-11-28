@@ -7,6 +7,7 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 
 public class LineStringMapper {
+    private LineStringMapper(){}
 
     public static List<List<Double>> toList(LineString lineString) {
         List<List<Double>> coordinatesList = new ArrayList<>();

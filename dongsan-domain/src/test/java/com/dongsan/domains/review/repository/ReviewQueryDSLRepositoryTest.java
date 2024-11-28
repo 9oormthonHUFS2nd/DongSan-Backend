@@ -1,6 +1,6 @@
 package com.dongsan.domains.review.repository;
 
-import com.dongsan.common.annotation.RepositoryTest;
+import com.dongsan.common.support.RepositoryTest;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.review.entity.Review;
 import com.dongsan.domains.walkway.entity.Walkway;
@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,14 +20,14 @@ import static fixture.ReviewFixture.createReview;
 import static fixture.WalkwayFixture.createWalkway;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RepositoryTest
-@Transactional
-class ReviewQueryDSLRepositoryTest {
+
+@DisplayName("ReviewQueryDSLRepository Unit Test")
+class ReviewQueryDSLRepositoryTest extends RepositoryTest {
     @Autowired
-    private TestEntityManager entityManager;
+    TestEntityManager em;
 
     @Autowired
-    private ReviewQueryDSLRepository reviewQueryDSLRepository;
+    ReviewQueryDSLRepository reviewQueryDSLRepository;
 
     @Nested
     @DisplayName("getReviews 메소드는")
@@ -41,18 +40,18 @@ class ReviewQueryDSLRepositoryTest {
         void setUp(){
             member = createMember();
             walkway = createWalkway(member);
-            entityManager.persist(member);
-            entityManager.persist(walkway);
+            em.persist(member);
+            em.persist(walkway);
             for(int i =0; i<6; i++){
                 Review review = createReview(member, walkway);
                 reviews.add(review);
-                entityManager.persist(review);
+                em.persist(review);
             }
         }
 
         @Test
-        @DisplayName("reviewId가 null이면 첫 Page의 리뷰를 reviewId 내림차순으로 가져온다.")
-        void it_returns_first_page_reviews(){
+        @DisplayName("reviewId가 null이면 가장 최근의 review들을 내림차순으로 가져온다.")
+        void it_returns_most_recent_reviews(){
             // given
             Integer limit = 5;
             Long reviewId = null;

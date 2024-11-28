@@ -4,6 +4,7 @@ import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.user.dto.response.GetProfileResponse;
 
 public class UserProfileMapper {
+    private UserProfileMapper(){}
 
     /**
      * Member -> GetProfileResponse

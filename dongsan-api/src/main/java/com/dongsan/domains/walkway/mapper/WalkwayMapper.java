@@ -18,6 +18,7 @@ import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
 
 public class WalkwayMapper {
+    private WalkwayMapper(){}
 
     public static Walkway toWalkway(CreateWalkwayRequest createWalkwayRequest, Member member) {
 

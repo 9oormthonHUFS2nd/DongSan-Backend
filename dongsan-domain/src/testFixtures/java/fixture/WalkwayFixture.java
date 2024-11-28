@@ -1,15 +1,21 @@
 package fixture;
 
 import com.dongsan.domains.common.entity.BaseEntity;
+import com.dongsan.domains.hashtag.entity.Hashtag;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.enums.ExposeLevel;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
+import java.util.List;
+
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
+
+import static fixture.HashtagFixture.createHashtag;
+import static fixture.HashtagWalkwayFixture.createHashtagWalkway;
 
 public class WalkwayFixture {
     private static final String NAME = "Sample Walkway";
@@ -29,7 +35,7 @@ public class WalkwayFixture {
     private static final String COURSE_IMAGE_URL = "http://example.com/course-image.png";
 
     public static Walkway createWalkway(Member member) {
-        return Walkway.builder()
+        Walkway walkWalk = Walkway.builder()
                 .member(member)
                 .name(NAME)
                 .distance(DISTANCE)
@@ -41,6 +47,12 @@ public class WalkwayFixture {
                 .course(COURSE)
                 .courseImageUrl(COURSE_IMAGE_URL)
                 .build();
+        for(int i=0; i<3; i++){
+            Hashtag hashtag = createHashtag();
+            walkWalk.getHashtagWalkways().add(createHashtagWalkway(walkWalk, hashtag));
+        }
+
+        return walkWalk;
     }
 
     public static Walkway createWalkwayWithId(Long id, Member member){
