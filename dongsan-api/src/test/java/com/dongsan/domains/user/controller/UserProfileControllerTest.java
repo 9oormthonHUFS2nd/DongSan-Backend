@@ -1,11 +1,12 @@
 package com.dongsan.domains.user.controller;
 
-import static fixture.MemberFixture.createMember;
+import static fixture.MemberFixture.createMemberWithId;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.dongsan.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.user.dto.response.GetBookmarksResponse;
 import com.dongsan.domains.user.dto.response.GetProfileResponse;
@@ -13,6 +14,7 @@ import com.dongsan.domains.user.usecase.UserProfileUseCase;
 import java.util.ArrayList;
 import java.util.List;
 import org.hamcrest.CoreMatchers;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -23,6 +25,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -38,6 +44,15 @@ class UserProfileControllerTest {
     @MockBean
     private UserProfileUseCase userProfileUsecase;
 
+    final Member member = createMemberWithId(1L);
+    final CustomOAuth2User customOAuth2User = new CustomOAuth2User(member);
+
+    @BeforeEach
+    void setUp_Authentication(){
+        SecurityContext context = SecurityContextHolder.getContext();
+        Authentication authentication = new UsernamePasswordAuthenticationToken(customOAuth2User, null, null);
+        context.setAuthentication(authentication);
+    }
 
     @Nested
     @DisplayName("getUserProfile 메서드는")
@@ -54,7 +69,7 @@ class UserProfileControllerTest {
                             .nickname("Test Nickname")
                             .build();
 
-            when(userProfileUsecase.getUserProfile(1L)).thenReturn(getProfileResponse);
+            when(userProfileUsecase.getUserProfile(member.getId())).thenReturn(getProfileResponse);
 
             // When
             ResultActions response = mockMvc.perform(get("/users/profile"));
@@ -78,8 +93,6 @@ class UserProfileControllerTest {
             // Given
             List<GetBookmarksResponse.BookmarkInfo> bookmarkInfoList = new ArrayList<>();
 
-            Member member = createMember();
-
             for(long id = 2L; id != 0L; id--) {
                 GetBookmarksResponse.BookmarkInfo bookmarkInfo =
                         GetBookmarksResponse.BookmarkInfo.builder()
@@ -92,7 +105,7 @@ class UserProfileControllerTest {
             GetBookmarksResponse getBookmarksResponse = new GetBookmarksResponse(bookmarkInfoList);
 
             Integer limit = 2;
-            Long userId = 1L;
+            Long userId = member.getId();
             Long bookmarkId = 3L;
 
             when(userProfileUsecase.getUserBookmarks(userId, bookmarkId, limit)).thenReturn(getBookmarksResponse);
