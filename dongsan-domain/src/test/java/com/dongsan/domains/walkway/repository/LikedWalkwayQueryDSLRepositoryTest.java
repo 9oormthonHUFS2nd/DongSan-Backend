@@ -92,7 +92,7 @@ class LikedWalkwayQueryDSLRepositoryTest extends RepositoryTest {
             List<LikedWalkway> result = likedWalkwayQueryDSLRepository.getUserLikedWalkway(memberId, size, likedWalkwayId);
 
             // then
-            assertThat(result).hasSize(0);
+            assertThat(result).isEmpty();
         }
 
         @Test
@@ -107,7 +107,7 @@ class LikedWalkwayQueryDSLRepositoryTest extends RepositoryTest {
             List<LikedWalkway> result = likedWalkwayQueryDSLRepository.getUserLikedWalkway(memberId, size, likedWalkwayId);
 
             // then
-            assertThat(result).hasSize(0);
+            assertThat(result).isEmpty();
         }
     }
 }

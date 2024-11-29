@@ -52,8 +52,9 @@ class LikedWalkwayQueryServiceTest {
             List<LikedWalkway> result = likedWalkwayQueryService.getUserLikedWalkway(memberId, size, walkwayId);
 
             // then
-            assertThat(result).hasSameSizeAs(likedWalkways);
-            assertThat(result).isEqualTo(likedWalkways);
+            assertThat(result)
+                    .hasSameSizeAs(likedWalkways)
+                    .isEqualTo(likedWalkways);
         }
 
         @Test
@@ -75,8 +76,9 @@ class LikedWalkwayQueryServiceTest {
             List<LikedWalkway> result = likedWalkwayQueryService.getUserLikedWalkway(memberId, size, walkwayId);
 
             // then
-            assertThat(result).hasSameSizeAs(likedWalkways);
-            assertThat(result).isEqualTo(likedWalkways);
+            assertThat(result)
+                    .hasSameSizeAs(likedWalkways)
+                    .isEqualTo(likedWalkways);
         }
     }
 
