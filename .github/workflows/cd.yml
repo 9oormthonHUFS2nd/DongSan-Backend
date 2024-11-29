@@ -61,7 +61,7 @@ jobs:
             sudo docker image prune -f
 
   report:
-    needs: push
+    needs: deploy
     runs-on: ubuntu-latest
     steps:
       - name: Report to CodeCov
