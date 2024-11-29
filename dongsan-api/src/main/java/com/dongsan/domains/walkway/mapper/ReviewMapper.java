@@ -8,7 +8,7 @@ import com.dongsan.domains.walkway.dto.request.CreateReviewRequest;
 import com.dongsan.domains.walkway.dto.response.CreateReviewResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayRatingResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayReviewsResponse;
-import com.dongsan.domains.walkway.dto.response.GetWalkwayReviewsResponse.walkwayReview;
+import com.dongsan.domains.walkway.dto.response.GetWalkwayReviewsResponse.WalkwayReview;
 import com.dongsan.domains.walkway.entity.Walkway;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -41,9 +41,9 @@ public class ReviewMapper {
                 .build();
     }
 
-    public static List<walkwayReview> toGetWalkwayReviewsResponseReview(List<Review> reviews) {
+    public static List<WalkwayReview> toGetWalkwayReviewsResponseReview(List<Review> reviews) {
         return reviews.stream()
-                .map(review -> walkwayReview.builder()
+                .map(review -> WalkwayReview.builder()
                         .date(review.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy.MM.dd")))
                         .period(TimeFormat.formatTimeString(review.getCreatedAt()))
                         .nickname(review.getMember().getNickname())
