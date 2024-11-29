@@ -54,7 +54,7 @@ public class WalkwayController {
             @RequestParam Double latitude,
             @RequestParam Double longitude,
             @RequestParam Double distance,
-            @RequestParam(defaultValue = "0") Long lastId,
+            @RequestParam(required = false) Long lastId,
             @RequestParam(defaultValue = "0") Double rating,
             @RequestParam(defaultValue = "0") Integer likes,
             @RequestParam(defaultValue = "10") Integer size,

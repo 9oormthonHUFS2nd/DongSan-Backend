@@ -66,7 +66,7 @@ public class ReviewMapper {
         }
 
         return GetWalkwayRatingResponse.builder()
-                .rating(walkway.getRating())
+                .rating(Math.floor(walkway.getRating() * 10) / 10)
                 .reviewCount(walkway.getReviewCount())
                 .five(ratings.get(4))
                 .four(ratings.get(3))

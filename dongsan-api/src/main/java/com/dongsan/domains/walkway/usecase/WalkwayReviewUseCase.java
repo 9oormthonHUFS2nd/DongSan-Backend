@@ -13,6 +13,7 @@ import com.dongsan.domains.walkway.dto.response.GetWalkwayRatingResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayReviewsResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.mapper.ReviewMapper;
+import com.dongsan.domains.walkway.service.WalkwayCommandService;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
 import com.dongsan.error.code.MemberErrorCode;
 import com.dongsan.error.code.ReviewErrorCode;
@@ -29,6 +30,7 @@ public class WalkwayReviewUseCase {
     private final MemberQueryService memberQueryService;
     private final WalkwayQueryService walkwayQueryService;
     private final ReviewQueryService reviewQueryService;
+    private final WalkwayCommandService walkwayCommandService;
 
     public CreateReviewResponse createReview(Long memberId, Long walkwayId, CreateReviewRequest createReviewRequest) {
         Member member = memberQueryService.readMember(memberId)
@@ -40,6 +42,9 @@ public class WalkwayReviewUseCase {
         Review review = ReviewMapper.toReview(createReviewRequest, walkway, member);
 
         review = reviewCommandService.createReview(review);
+
+        walkway.updateRatingAndReviewCount(review.getRating());
+        walkwayCommandService.createWalkway(walkway);
 
         return ReviewMapper.toCreateReviewResponse(review);
     }

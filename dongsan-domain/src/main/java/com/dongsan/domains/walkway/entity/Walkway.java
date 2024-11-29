@@ -90,4 +90,9 @@ public class Walkway extends BaseEntity {
         this.reviewCount = 0;
         this.rating = 0.0;
     }
+
+    public void updateRatingAndReviewCount(Byte inputRating) {
+        this.rating = (this.rating + inputRating) / 2;
+        this.reviewCount++;
+    }
 }
