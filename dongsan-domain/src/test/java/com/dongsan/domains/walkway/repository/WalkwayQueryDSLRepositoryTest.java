@@ -1,21 +1,20 @@
 package com.dongsan.domains.walkway.repository;
 
+import static fixture.MemberFixture.createMember;
+import static fixture.WalkwayFixture.createWalkway;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.dongsan.common.support.RepositoryTest;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.walkway.entity.Walkway;
+import java.time.LocalDateTime;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static fixture.MemberFixture.createMember;
-import static fixture.WalkwayFixture.createWalkway;
-import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("WalkwayQueryDSLRepositoryTest Unit Test")
 class WalkwayQueryDSLRepositoryTest extends RepositoryTest {

@@ -1,5 +1,6 @@
 package com.dongsan.domains.user.usecase;
 
+import static fixture.LikedWalkwayFixture.createLikedWalkway;
 import static fixture.WalkwayFixture.createWalkwayWithId;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -8,7 +9,9 @@ import com.dongsan.domains.user.dto.response.GetWalkwayDetailResponse;
 import com.dongsan.domains.user.dto.response.GetWalkwayDetailResponse.GetWalkwayDetailInfo;
 import com.dongsan.domains.user.dto.response.GetWalkwaySummaryResponse;
 import com.dongsan.domains.user.dto.response.GetWalkwaySummaryResponse.UserWalkwaySummaryInfo;
+import com.dongsan.domains.walkway.entity.LikedWalkway;
 import com.dongsan.domains.walkway.entity.Walkway;
+import com.dongsan.domains.walkway.service.LikedWalkwayQueryService;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
 import java.util.Collections;
 import java.util.List;
@@ -28,6 +31,8 @@ class UserWalkwayUseCaseTest {
     UserWalkwayUseCase userWalkwayUseCase;
     @Mock
     WalkwayQueryService walkwayQueryService;
+    @Mock
+    LikedWalkwayQueryService likedWalkwayQueryService;
 
     @Nested
     @DisplayName("getUserWalkwaySummary 메소드는")
@@ -124,5 +129,55 @@ class UserWalkwayUseCaseTest {
             assertThat(response.walkways()).isEmpty();
         }
 
+    }
+
+    @Nested
+    @DisplayName("getUserLikedWalkway 메서드는")
+    class Describe_getUserLikedWalkway{
+        @Test
+        @DisplayName("산책로가 존재하면 DTO로 변환한다.")
+        void it_returns_response_DTO(){
+            // given
+            Long memberId = 1L;
+            Integer size = 5;
+            Long walkwayId = 6L;
+            List<LikedWalkway> likedWalkways = IntStream.range(0, 5)
+                    .mapToObj(index -> {
+                            Walkway walkway = createWalkwayWithId((long) (index + 1), null);
+                            return createLikedWalkway(null, walkway);
+                        })
+                    .toList();
+            when(likedWalkwayQueryService.getUserLikedWalkway(memberId, size, walkwayId)).thenReturn(likedWalkways);
+
+            // when
+            GetWalkwayDetailResponse response = userWalkwayUseCase.getUserLikedWalkway(memberId, size, walkwayId);
+
+            // then
+            assertThat(response.walkways()).hasSameSizeAs(likedWalkways);
+            for(int i=0; i<response.walkways().size(); i++){
+                GetWalkwayDetailInfo walkwayInfo = response.walkways().get(i);
+                Walkway walkway = likedWalkways.get(i).getWalkway();
+                assertThat(walkwayInfo.walkwayId()).isEqualTo(walkway.getId());
+                assertThat(walkwayInfo.name()).isEqualTo(walkway.getName());
+                assertThat(walkwayInfo.hashtags()).hasSameSizeAs(walkway.getHashtagWalkways());
+            }
+        }
+
+        @Test
+        @DisplayName("산책로가 존재하지 않으면 빈 리스트를 반환한다.")
+        void it_returns_empty_list(){
+            // given
+            Long memberId = 1L;
+            Integer size = 5;
+            Long walkwayId = 6L;
+            List<LikedWalkway> likedWalkways = Collections.emptyList();
+            when(likedWalkwayQueryService.getUserLikedWalkway(memberId, size, walkwayId)).thenReturn(likedWalkways);
+
+            // when
+            GetWalkwayDetailResponse response = userWalkwayUseCase.getUserLikedWalkway(memberId, size, walkwayId);
+
+            // then
+            assertThat(response.walkways()).isEmpty();
+        }
     }
 }

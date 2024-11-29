@@ -12,4 +12,5 @@ public class LikedWalkwayFixture {
                 .walkway(walkway)
                 .build();
     }
+
 }
