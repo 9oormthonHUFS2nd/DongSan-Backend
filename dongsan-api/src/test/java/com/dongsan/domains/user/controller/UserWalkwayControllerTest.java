@@ -57,7 +57,7 @@ class UserWalkwayControllerTest {
     }
 
     @Nested
-    @DisplayName("getUserWalkwaySummary 메소드는")
+    @DisplayName("getUserWalkwaySummary 메서드는")
     class Describe_getUserWalkwaySummary{
         @Test
         @DisplayName("walkwayId가 존재하지 않으면 404을 반환한다.")
@@ -109,7 +109,7 @@ class UserWalkwayControllerTest {
     }
 
     @Nested
-    @DisplayName("getUserWalkwayDetail 메소드는")
+    @DisplayName("getUserWalkwayDetail 메서드는")
     class Describe_getUserWalkwayDetail{
         @Test
         @DisplayName("walkwayId가 존재하지 않으면 400을 반환한다.")
@@ -151,6 +151,61 @@ class UserWalkwayControllerTest {
 
             // when & then
             mockMvc.perform(get("/users/walkways")
+                            .param("size", String.valueOf(size))
+                            .param("walkwayId", String.valueOf(walkwayId))
+                            .contentType("application/json;charset=UTF-8"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data.walkways", hasSize(response.walkways().size())))
+                    .andExpect(jsonPath("$.data.walkways[0].name", is(response.walkways().get(0).name())))
+                    .andExpect(jsonPath("$.data.walkways[0].hashtags", hasSize(response.walkways().get(0).hashtags().size())))
+                    .andReturn();
+        }
+
+    }
+
+    @Nested
+    @DisplayName("getUserLikedWalkway 메서드는")
+    class Describe_getUserLikedWalkway{
+        @Test
+        @DisplayName("walkwayId가 존재하지 않으면 400을 반환한다.")
+        void it_returns_400() throws Exception{
+            // given
+            Integer size = 5;
+            Long walkwayId = 1L;
+            when(walkwayQueryService.existsByWalkwayId(walkwayId)).thenReturn(false);
+
+            // when & then
+            mockMvc.perform(get("/users/walkways/like")
+                            .param("size", String.valueOf(size))
+                            .param("walkwayId", String.valueOf(walkwayId))
+                            .contentType("application/json;charset=UTF-8"))
+                    .andExpect(status().isBadRequest())
+                    .andReturn();
+        }
+
+        @Test
+        @DisplayName("walkwayId가 존재하면 산책로를 반환한다.")
+        void it_returns_walkways() throws Exception{
+            // given
+            Integer size = 5;
+            Long walkwayId = 1L;
+            GetWalkwayDetailResponse response = GetWalkwayDetailResponse.builder()
+                    .walkways(
+                            List.of(GetWalkwayDetailInfo.builder()
+                                    .walkwayId(1L)
+                                    .name("첫 번째 산책로")
+                                    .date(LocalDate.of(2024, 11, 28))
+                                    .distance(5.0)
+                                    .hashtags(List.of("공원", "산책"))
+                                    .courseImageUrl("http://example.com/image1.jpg")
+                                    .build())
+                    )
+                    .build();
+            when(walkwayQueryService.existsByWalkwayId(walkwayId)).thenReturn(true);
+            when(userWalkwayUseCase.getUserLikedWalkway(customOAuth2User.getMemberId(), size, walkwayId)).thenReturn(response);
+
+            // when & then
+            mockMvc.perform(get("/users/walkways/like")
                             .param("size", String.valueOf(size))
                             .param("walkwayId", String.valueOf(walkwayId))
                             .contentType("application/json;charset=UTF-8"))

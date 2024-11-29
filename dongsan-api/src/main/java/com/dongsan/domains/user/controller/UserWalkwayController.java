@@ -34,7 +34,7 @@ public class UserWalkwayController {
      * @param walkwayId 마지막에 조회한 walkway의 id
      * @param customOAuth2User header의 access Token 를 통해 가지고 온 사용자 정보
      */
-    @Operation(summary = "내가 등록한 산책로 요약 보기")
+    @Operation(summary = "등록한 산책로 요약 보기")
     @GetMapping("/summary")
     public ResponseEntity<SuccessResponse<GetWalkwaySummaryResponse>> getUserWalkwaySummary(
             @RequestParam(defaultValue = "5") Integer size,
@@ -50,9 +50,8 @@ public class UserWalkwayController {
      * @param size 한번에 몇개 조회할 건지
      * @param walkwayId 마지막에 조회한 walkway의 id
      * @param customOAuth2User header의 access Token 를 통해 가지고 온 사용자 정보
-     * @return
      */
-    @Operation(summary = "내가 등록한 산책로 상세 보기")
+    @Operation(summary = "등록한 산책로 상세 보기")
     @GetMapping()
     public ResponseEntity<SuccessResponse<GetWalkwayDetailResponse>> getUserWalkwayDetail(
             @RequestParam(defaultValue = "10") Integer size,
@@ -60,6 +59,23 @@ public class UserWalkwayController {
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ){
         GetWalkwayDetailResponse response = userWalkwayUseCase.getUserWalkwayDetail(customOAuth2User.getMemberId(), size, walkwayId);
+        return ResponseFactory.ok(response);
+    }
+
+    /**
+     * 내가 좋아요한 산책로 상세 보기
+     * @param size 한번에 몇개 조회할 건지
+     * @param walkwayId 마지막에 조회한 walkway의 id
+     * @param customOAuth2User header의 access Token 를 통해 가지고 온 사용자 정보
+     */
+    @Operation(summary = "좋아요한 산책로 상세 보기")
+    @GetMapping("/like")
+    public ResponseEntity<SuccessResponse<GetWalkwayDetailResponse>> getUserLikedWalkway(
+            @RequestParam(defaultValue = "10") Integer size,
+            @ExistWalkway @RequestParam(required = false) Long walkwayId,
+            @AuthenticationPrincipal CustomOAuth2User customOAuth2User
+    ){
+        GetWalkwayDetailResponse response = userWalkwayUseCase.getUserLikedWalkway(customOAuth2User.getMemberId(), size, walkwayId);
         return ResponseFactory.ok(response);
     }
 

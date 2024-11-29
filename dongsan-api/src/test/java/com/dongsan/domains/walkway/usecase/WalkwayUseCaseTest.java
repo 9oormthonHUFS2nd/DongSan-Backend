@@ -2,6 +2,7 @@ package com.dongsan.domains.walkway.usecase;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -147,7 +148,7 @@ class WalkwayUseCaseTest {
             when(walkwayQueryService.getWalkwayWithHashtagAndLike(1L, 1L)).thenReturn(null);
 
             // when & then
-            org.junit.jupiter.api.Assertions.assertThrows(CustomException.class, () -> {
+            assertThrows(CustomException.class, () -> {
                 walkwayUseCase.getWalkwayWithLiked(1L, 1L);
             });
         }
