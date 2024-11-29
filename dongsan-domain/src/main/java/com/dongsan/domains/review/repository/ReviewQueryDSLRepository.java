@@ -1,5 +1,6 @@
 package com.dongsan.domains.review.repository;
 
+import com.dongsan.domains.review.dto.RatingCount;
 import com.dongsan.domains.review.entity.QReview;
 import com.dongsan.domains.review.entity.Review;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -54,5 +55,23 @@ public class ReviewQueryDSLRepository{
                 .limit(limit)
                 .orderBy(review.rating.desc(), review.id.desc())
                 .fetch();
+    }
+
+    public List<RatingCount> getWalkwaysRating(Long walkwayId) {
+        return queryFactory.select(
+                        review.rating,
+                        review.rating.count()
+                )
+                .from(review)
+                .where(review.walkway.id.eq(walkwayId))
+                .groupBy(review.rating)
+                .fetch()
+                .stream()
+                .map(tuple -> new RatingCount(
+                        tuple.get(review.rating),
+                        tuple.get(review.rating.count())
+                ))
+                .toList();
+
     }
 }

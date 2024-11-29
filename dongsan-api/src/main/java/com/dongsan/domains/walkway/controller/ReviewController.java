@@ -6,6 +6,7 @@ import com.dongsan.common.validation.annotation.ExistWalkway;
 import com.dongsan.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.domains.walkway.dto.request.CreateReviewRequest;
 import com.dongsan.domains.walkway.dto.response.CreateReviewResponse;
+import com.dongsan.domains.walkway.dto.response.GetWalkwayRatingResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayReviewsResponse;
 import com.dongsan.domains.walkway.usecase.WalkwayReviewUseCase;
 import io.swagger.v3.oas.annotations.Operation;
@@ -51,5 +52,13 @@ public class ReviewController {
             @RequestParam(required = false, defaultValue = "10") Integer size
     ) {
         return ResponseFactory.ok(walkwayReviewUseCase.getWalkwayReviews(type, lastId, walkwayId, rating, size));
+    }
+
+    @Operation(summary = "리뷰 별점 보기")
+    @GetMapping("/{walkwayId}/review/rating")
+    public ResponseEntity<SuccessResponse<GetWalkwayRatingResponse>> getWalkwaysRating(
+            @ExistWalkway @PathVariable Long walkwayId
+    ) {
+        return ResponseFactory.ok(walkwayReviewUseCase.getWalkwayRating(walkwayId));
     }
 }

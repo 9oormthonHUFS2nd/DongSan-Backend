@@ -3,11 +3,13 @@ package com.dongsan.domains.walkway.usecase;
 import com.dongsan.common.annotation.UseCase;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.member.service.MemberQueryService;
+import com.dongsan.domains.review.dto.RatingCount;
 import com.dongsan.domains.review.entity.Review;
 import com.dongsan.domains.review.service.ReviewCommandService;
 import com.dongsan.domains.review.service.ReviewQueryService;
 import com.dongsan.domains.walkway.dto.request.CreateReviewRequest;
 import com.dongsan.domains.walkway.dto.response.CreateReviewResponse;
+import com.dongsan.domains.walkway.dto.response.GetWalkwayRatingResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayReviewsResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.mapper.ReviewMapper;
@@ -52,5 +54,14 @@ public class WalkwayReviewUseCase {
         }
 
         return ReviewMapper.toGetWalkwayReviewsResponse(reviews);
+    }
+
+    public GetWalkwayRatingResponse getWalkwayRating(Long walkwayId) {
+        Walkway walkway = walkwayQueryService.getWalkway(walkwayId)
+                .orElseThrow(() -> new CustomException(WalkwayErrorCode.WALKWAY_NOT_FOUND));
+
+        List<RatingCount> ratingCounts = reviewQueryService.getWalkwaysRating(walkwayId);
+
+        return ReviewMapper.toGetWalkwayRatingResponse(ratingCounts, walkway);
     }
 }
