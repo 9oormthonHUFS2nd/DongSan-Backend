@@ -1,8 +1,11 @@
 package com.dongsan.common.format;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 public class TimeFormat {
+    private TimeFormat() {
+    }
 
     public static final int SEC = 60;
     public static final int MIN = 60;
@@ -13,24 +16,42 @@ public class TimeFormat {
 
     public static String formatTimeString(LocalDateTime createdAt) {
         LocalDateTime now = LocalDateTime.now();
-        long time = java.time.Duration.between(createdAt, now).getSeconds();
-        String msg;
+        long time = Duration.between(createdAt, now).getSeconds();
+
         if (time < SEC) {
-            msg = "방금 전";
-        } else if ((time /= SEC) < MIN) {
-            msg = time + "분 전";
-        } else if ((time /= MIN) < HOUR) {
-            msg = (time) + "시간 전";
-        } else if ((time /= HOUR) < DAY) {
-            msg = (time) + "일 전";
-        } else if ((time /= DAY) < WEEK) {
-            msg = (time) + "주 전";
-        } else if ((time /= WEEK) < MONTH) {
-            msg = (time) + "달 전";
-        } else {
-            time /= MONTH;
-            msg = (time) + "년 전";
+            return "방금 전";
         }
-        return msg;
+
+        time = calculateTime(time, SEC);
+        if (time < MIN) {
+            return time + "분 전";
+        }
+
+        time = calculateTime(time, MIN);
+        if (time < HOUR) {
+            return time + "시간 전";
+        }
+
+        time = calculateTime(time, HOUR);
+        if (time < DAY) {
+            return time + "일 전";
+        }
+
+        time = calculateTime(time, DAY);
+        if (time < WEEK) {
+            return time + "주 전";
+        }
+
+        time = calculateTime(time, WEEK);
+        if (time < MONTH) {
+            return time + "달 전";
+        }
+
+        time = calculateTime(time, MONTH);
+        return time + "년 전";
+    }
+
+    private static long calculateTime(long time, int divisor) {
+        return time / divisor;
     }
 }

@@ -120,7 +120,7 @@ class WalkwayReviewUseCaseTest {
             GetWalkwayReviewsResponse result = walkwayReviewUseCase.getWalkwayReviews(type, null, walkwayId, rating, size);
 
             // Then
-            assertThat(result.reviews().size()).isEqualTo(size);
+            assertThat(result.reviews()).hasSize(size);
         }
 
         @Test
@@ -145,7 +145,7 @@ class WalkwayReviewUseCaseTest {
             GetWalkwayReviewsResponse result = walkwayReviewUseCase.getWalkwayReviews(type, null, walkwayId, rating, size);
 
             // Then
-            assertThat(result.reviews().size()).isEqualTo(size);
+            assertThat(result.reviews()).hasSize(size);
         }
 
         @Test
@@ -206,11 +206,11 @@ class WalkwayReviewUseCaseTest {
             GetWalkwayRatingResponse result = walkwayReviewUseCase.getWalkwayRating(walkway.getId());
 
             // Then
-            assertThat(result.five()).isEqualTo(0L);
-            assertThat(result.four()).isEqualTo(0L);
-            assertThat(result.three()).isEqualTo(0L);
-            assertThat(result.two()).isEqualTo(0L);
-            assertThat(result.one()).isEqualTo(0L);
+            assertThat(result.five()).isZero();
+            assertThat(result.four()).isZero();
+            assertThat(result.three()).isZero();
+            assertThat(result.two()).isZero();
+            assertThat(result.one()).isZero();
         }
     }
 }

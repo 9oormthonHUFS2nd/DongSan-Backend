@@ -5,10 +5,10 @@ import lombok.Builder;
 
 @Builder
 public record GetWalkwayReviewsResponse(
-    List<review> reviews
+    List<walkwayReview> reviews
 ) {
     @Builder
-    public record review (
+    public record walkwayReview(
             Long reviewId,
             String nickname,
             String date,

@@ -182,7 +182,7 @@ class WalkwayQueryServiceTest {
             List<Walkway> result = walkwayQueryService.getWalkwaysPopular(searchWalkwayPopular);
 
             // Then
-            assertThat(result.size()).isEqualTo(10);
+            assertThat(result).hasSize(10);
         }
     }
 
@@ -217,7 +217,7 @@ class WalkwayQueryServiceTest {
             List<Walkway> result = walkwayQueryService.getWalkwaysRating(searchWalkwayRating);
 
             // Then
-            assertThat(result.size()).isEqualTo(10);
+            assertThat(result).hasSize(10);
         }
     }
 }

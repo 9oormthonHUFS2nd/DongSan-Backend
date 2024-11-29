@@ -18,7 +18,6 @@ import com.dongsan.domains.walkway.mapper.WalkwayMapper;
 import com.dongsan.domains.walkway.usecase.WalkwayUseCase;
 import com.dongsan.error.code.SystemErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fixture.MemberFixture;
 import fixture.WalkwayFixture;
 import java.util.ArrayList;
 import java.util.List;
@@ -159,7 +158,6 @@ class WalkwayControllerTest {
         @BeforeEach
         void setUp() {
             List<Walkway> walkways = new ArrayList<>();
-            Member member = MemberFixture.createMember();
             for (int i = 0; i < 10; i++) {
                 walkways.add(WalkwayFixture.createWalkway(member));
             }
