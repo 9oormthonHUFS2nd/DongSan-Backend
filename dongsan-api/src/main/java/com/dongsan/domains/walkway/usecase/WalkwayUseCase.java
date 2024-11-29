@@ -8,6 +8,8 @@ import com.dongsan.domains.hashtag.service.HashtagQueryService;
 import com.dongsan.domains.hashtag.service.HashtagWalkwayCommandService;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.member.service.MemberQueryService;
+import com.dongsan.domains.walkway.dto.SearchWalkwayPopular;
+import com.dongsan.domains.walkway.dto.SearchWalkwayRating;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.response.CreateWalkwayResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwaySearchResponse;
@@ -90,7 +92,7 @@ public class WalkwayUseCase {
 
     @Transactional(readOnly = true)
     public GetWalkwayWithLikedResponse getWalkwayWithLiked(Long walkwayId, Long memberId) {
-        Walkway walkway = walkwayQueryService.getWalkway(memberId, walkwayId);
+        Walkway walkway = walkwayQueryService.getWalkwayWithHashtagAndLike(memberId, walkwayId);
         if (walkway == null) {
             throw new CustomException(WalkwayErrorCode.INVALID_COURSE);
         }
@@ -116,14 +118,14 @@ public class WalkwayUseCase {
         int distanceInt = (int) (distance * 1000);
 
         List<Walkway> walkways = switch (type) {
-            case "liked" ->
-                    walkwayQueryService.getWalkwaysPopular(userId, latitude, longitude, distanceInt, hashtagsList,
-                            lastId,
-                            lastLikes, size);
-            case "rating" ->
-                    walkwayQueryService.getWalkwaysRating(userId, latitude, longitude, distanceInt, hashtagsList,
-                            lastId,
-                            lastRating, size);
+            case "liked" -> walkwayQueryService.getWalkwaysPopular(
+                    new SearchWalkwayPopular(userId, longitude, latitude, distanceInt, hashtagsList, lastId, lastLikes,
+                            size)
+            );
+            case "rating" -> walkwayQueryService.getWalkwaysRating(
+                    new SearchWalkwayRating(userId, longitude, latitude, distanceInt, hashtagsList, lastId, lastRating,
+                            size)
+            );
             default -> throw new CustomException(WalkwayErrorCode.INVALID_SEARCH_TYPE);
         };
 

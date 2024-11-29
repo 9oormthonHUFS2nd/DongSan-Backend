@@ -1,5 +1,6 @@
 package com.dongsan.domains.review.service;
 
+import com.dongsan.domains.review.dto.RatingCount;
 import com.dongsan.domains.review.entity.Review;
 import com.dongsan.domains.review.repository.ReviewQueryDSLRepository;
 import com.dongsan.domains.review.repository.ReviewRepository;
@@ -21,5 +22,17 @@ public class ReviewQueryService {
 
     public boolean existsByReviewId(Long reviewId){
         return reviewRepository.existsById(reviewId);
+    }
+
+    public List<Review> getWalkwayReviewsLatest(Integer limit, Long reviewId, Long walkwayId) {
+        return reviewQueryDSLRepository.getWalkwayReviewsLatest(limit, reviewId, walkwayId);
+    }
+
+    public List<Review> getWalkwayReviewsRating(Integer limit, Long reviewId, Long walkwayId, Byte rating) {
+        return reviewQueryDSLRepository.getWalkwayReviewsRating(limit, reviewId, walkwayId, rating);
+    }
+
+    public List<RatingCount> getWalkwaysRating(Long walkwayId) {
+        return reviewQueryDSLRepository.getWalkwaysRating(walkwayId);
     }
 }

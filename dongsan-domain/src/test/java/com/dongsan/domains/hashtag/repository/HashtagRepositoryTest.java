@@ -3,6 +3,8 @@ package com.dongsan.domains.hashtag.repository;
 import com.dongsan.common.support.RepositoryTest;
 import com.dongsan.domains.hashtag.entity.Hashtag;
 import fixture.HashtagFixture;
+import java.util.ArrayList;
+import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -10,9 +12,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @DisplayName("HashtagRepository Unit Test")
 class HashtagRepositoryTest extends RepositoryTest {
@@ -23,17 +22,17 @@ class HashtagRepositoryTest extends RepositoryTest {
     @Autowired
     private HashtagRepository hashtagRepository;
 
-    @BeforeEach
-    void setUpContext() {
-        for(int i=0; i<10; i++) {
-            Hashtag hashtag = HashtagFixture.createHashtag("tag"+i);
-            entityManager.persist(hashtag);
-        }
-    }
-
     @Nested
     @DisplayName("findByNameIn 메서드는")
     class Describe_findByNameIn {
+
+        @BeforeEach
+        void setUp() {
+            for(int i=0; i<10; i++) {
+                Hashtag hashtag = HashtagFixture.createHashtag("tag"+i);
+                entityManager.persist(hashtag);
+            }
+        }
 
         @Test
         @DisplayName("이름이 같은 태그가 있으면 모아서 리스트로 출력한다.")
