@@ -7,6 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.dongsan.common.support.RepositoryTest;
 import com.dongsan.domains.member.entity.Member;
+import com.dongsan.domains.review.dto.RatingCount;
 import com.dongsan.domains.review.entity.Review;
 import com.dongsan.domains.walkway.entity.Walkway;
 import java.time.LocalDateTime;
@@ -180,6 +181,38 @@ class ReviewQueryDSLRepositoryTest extends RepositoryTest {
                 Byte currentRating = result.get(count).getRating();
                 assertThat(currentRating).isLessThan(beforeRating);
                 beforeRating = currentRating;
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("getWalkwaysRating 메서드는")
+    class Describe_getWalkwaysRating {
+        Member member;
+        Walkway walkway;
+        List<Review> reviews = new ArrayList<>();
+        @BeforeEach
+        void setUp(){
+            member = createMember();
+            walkway = createWalkway(member);
+            em.persist(member);
+            em.persist(walkway);
+            for(Byte i = 1; i<=5; i++){
+                Review review = createReview(member, walkway, i, "test");
+                reviews.add(review);
+                em.persist(review);
+            }
+        }
+
+        @Test
+        @DisplayName("각 별점의 개수를 저장한 튜플 리스트를 반환한다.")
+        void it_returns_rating_tuple_list() {
+            // When
+            List<RatingCount> result = reviewQueryDSLRepository.getWalkwaysRating(walkway.getId());
+
+            // Then
+            for(RatingCount ratingCount : result) {
+                assertThat(ratingCount.count()).isEqualTo(1);
             }
         }
     }

@@ -8,11 +8,13 @@ import static org.mockito.Mockito.when;
 
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.member.service.MemberQueryService;
+import com.dongsan.domains.review.dto.RatingCount;
 import com.dongsan.domains.review.entity.Review;
 import com.dongsan.domains.review.service.ReviewCommandService;
 import com.dongsan.domains.review.service.ReviewQueryService;
 import com.dongsan.domains.walkway.dto.request.CreateReviewRequest;
 import com.dongsan.domains.walkway.dto.response.CreateReviewResponse;
+import com.dongsan.domains.walkway.dto.response.GetWalkwayRatingResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayReviewsResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
@@ -155,6 +157,57 @@ class WalkwayReviewUseCaseTest {
             // When & Then
             assertThatThrownBy(() -> walkwayReviewUseCase.getWalkwayReviews(type, null, walkwayId, rating, size))
                     .isInstanceOf(CustomException.class);
+        }
+    }
+
+    @Nested
+    @DisplayName("getWalkwayRating 메서드는")
+    class Describe_getWalkwayRating {
+        @Test
+        @DisplayName("산책로가 존재하면 산책로의 별점 내용을 반환한다.")
+        void it_returns_walkway_rating_info() {
+            // Given
+            Walkway walkway = WalkwayFixture.createWalkway(null);
+
+            List<RatingCount> ratingCounts = new ArrayList<>();
+            for(Byte i = 1; i <= 5; i++) {
+                ratingCounts.add(new RatingCount(i, 10L));
+            }
+
+            when(walkwayQueryService.getWalkway(walkway.getId())).thenReturn(Optional.of(walkway));
+            when(reviewQueryService.getWalkwaysRating(walkway.getId())).thenReturn(ratingCounts);
+
+            // When
+            GetWalkwayRatingResponse result = walkwayReviewUseCase.getWalkwayRating(walkway.getId());
+
+            // Then
+            assertThat(result.five()).isEqualTo(20L);
+            assertThat(result.four()).isEqualTo(20L);
+            assertThat(result.three()).isEqualTo(20L);
+            assertThat(result.two()).isEqualTo(20L);
+            assertThat(result.one()).isEqualTo(20L);
+        }
+
+        @Test
+        @DisplayName("산책로가 존재하고 리뷰가 없으면 빈 별점 내용을 반환한다.")
+        void it_returns_walkway_rating_empty_info() {
+            // Given
+            Walkway walkway = WalkwayFixture.createWalkway(null);
+
+            List<RatingCount> ratingCounts = new ArrayList<>();
+
+            when(walkwayQueryService.getWalkway(walkway.getId())).thenReturn(Optional.of(walkway));
+            when(reviewQueryService.getWalkwaysRating(walkway.getId())).thenReturn(ratingCounts);
+
+            // When
+            GetWalkwayRatingResponse result = walkwayReviewUseCase.getWalkwayRating(walkway.getId());
+
+            // Then
+            assertThat(result.five()).isEqualTo(0L);
+            assertThat(result.four()).isEqualTo(0L);
+            assertThat(result.three()).isEqualTo(0L);
+            assertThat(result.two()).isEqualTo(0L);
+            assertThat(result.one()).isEqualTo(0L);
         }
     }
 }
