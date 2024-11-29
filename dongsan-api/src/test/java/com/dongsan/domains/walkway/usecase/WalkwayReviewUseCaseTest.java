@@ -17,6 +17,7 @@ import com.dongsan.domains.walkway.dto.response.CreateReviewResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayRatingResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayReviewsResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
+import com.dongsan.domains.walkway.service.WalkwayCommandService;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
 import com.dongsan.error.exception.CustomException;
 import fixture.MemberFixture;
@@ -44,6 +45,8 @@ class WalkwayReviewUseCaseTest {
     ReviewCommandService reviewCommandService;
     @Mock
     ReviewQueryService reviewQueryService;
+    @Mock
+    WalkwayCommandService walkwayCommandService;
     @InjectMocks
     WalkwayReviewUseCase walkwayReviewUseCase;
 
