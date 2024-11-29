@@ -1,5 +1,7 @@
 package com.dongsan.domains.walkway.service;
 
+import com.dongsan.domains.walkway.dto.SearchWalkwayPopular;
+import com.dongsan.domains.walkway.dto.SearchWalkwayRating;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.repository.WalkwayQueryDSLRepository;
 import com.dongsan.domains.walkway.repository.WalkwayRepository;
@@ -17,8 +19,8 @@ public class WalkwayQueryService {
     private final WalkwayRepository walkwayRepository;
     private final WalkwayQueryDSLRepository walkwayQueryDSLRepository;
 
-    public Walkway getWalkwayWithRatingAndLike(Long userId, Long walkwayId) {
-        return walkwayQueryDSLRepository.getWalkway(userId, walkwayId);
+    public Walkway getWalkwayWithHashtagAndLike(Long userId, Long walkwayId) {
+        return walkwayQueryDSLRepository.getUserWalkwayWithHashtagAndLike(userId, walkwayId);
     }
 
     public Optional<Walkway> getWalkway(Long walkwayId) {
@@ -26,47 +28,15 @@ public class WalkwayQueryService {
     }
 
     public List<Walkway> getWalkwaysPopular (
-            Long userId,
-            Double latitude,
-            Double longitude,
-            int distance,
-            List<String> hashtags,
-            Long lastId,
-            Integer lastLikes,
-            int size
+            SearchWalkwayPopular searchWalkwayPopular
     ) {
-        return walkwayQueryDSLRepository.getWalkwaysPopular(
-                userId,
-                latitude,
-                longitude,
-                distance,
-                hashtags,
-                lastId,
-                lastLikes,
-                size
-        );
+        return walkwayQueryDSLRepository.getWalkwaysPopular(searchWalkwayPopular);
     }
 
     public List<Walkway> getWalkwaysRating (
-            Long userId,
-            Double latitude,
-            Double longitude,
-            int distance,
-            List<String> hashtags,
-            Long lastId,
-            Double lastRatings,
-            int size
+            SearchWalkwayRating searchWalkwayRating
     ) {
-        return walkwayQueryDSLRepository.getWalkwaysRating(
-                userId,
-                latitude,
-                longitude,
-                distance,
-                hashtags,
-                lastId,
-                lastRatings,
-                size
-        );
+        return walkwayQueryDSLRepository.getWalkwaysRating(searchWalkwayRating);
     }
 
     public List<Walkway> getUserWalkWay(Long memberId, Integer size, Long walkwayId){
