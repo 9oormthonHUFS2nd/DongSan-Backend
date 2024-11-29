@@ -93,4 +93,34 @@ class WalkwayQueryDSLRepositoryTest extends RepositoryTest {
             assertThat(result).isEmpty();
         }
     }
+
+    @Nested
+    @DisplayName("getUserWalkwayWithHashtagAndLike 메서드는")
+    class Describe_getUserWalkwayWithHashtagAndLike {
+
+        Member member;
+        Walkway walkway;
+        @BeforeEach
+        void setUp(){
+            member = createMember();
+            em.persist(member);
+            walkway = createWalkway(member);
+            em.persist(walkway);
+        }
+
+        @Test
+        @DisplayName("해쉬태그와 좋아요와 함께 산책로를 반환한다.")
+        void it_returns_walkway_with_hashtags_liked() {
+            // Given
+            Long memberId = member.getId();
+            Long walkwayId = walkway.getId();
+
+            // When
+            Walkway result = walkwayQueryDSLRepository.getUserWalkwayWithHashtagAndLike(memberId, walkwayId);
+
+            // Then
+            assertThat(result).isEqualTo(walkway);
+            assertThat(result.getHashtagWalkways()).isNotNull();
+        }
+    }
 }

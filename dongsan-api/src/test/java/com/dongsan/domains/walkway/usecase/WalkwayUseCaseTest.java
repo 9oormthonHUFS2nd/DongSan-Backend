@@ -13,6 +13,8 @@ import com.dongsan.domains.hashtag.service.HashtagQueryService;
 import com.dongsan.domains.hashtag.service.HashtagWalkwayCommandService;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.member.service.MemberQueryService;
+import com.dongsan.domains.walkway.dto.SearchWalkwayPopular;
+import com.dongsan.domains.walkway.dto.SearchWalkwayRating;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.response.CreateWalkwayResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwaySearchResponse;
@@ -143,7 +145,7 @@ class WalkwayUseCaseTest {
         @DisplayName("walkwayId에 해당하는 산책로가 없으면 예외처리 한다.")
         void it_returns_exception_not_found_walkway() {
             // given
-            when(walkwayQueryService.getWalkway(1L, 1L)).thenReturn(null);
+            when(walkwayQueryService.getWalkwayWithHashtagAndLike(1L, 1L)).thenReturn(null);
 
             // when & then
             assertThrows(CustomException.class, () -> {
@@ -158,7 +160,7 @@ class WalkwayUseCaseTest {
             Member member = MemberFixture.createMember();
             Walkway walkway = WalkwayFixture.createWalkwayWithId(1L, member);
 
-            when(walkwayQueryService.getWalkway(any(), any())).thenReturn(walkway);
+            when(walkwayQueryService.getWalkwayWithHashtagAndLike(any(), any())).thenReturn(walkway);
 
             GetWalkwayWithLikedResponse getWalkwayWithLikedResponse
                     = WalkwayMapper.toGetWalkwayWithLikedResponse(walkway);
@@ -204,16 +206,17 @@ class WalkwayUseCaseTest {
 
             int distanceInt = (int) (distance * 1000);
 
-            // when
-            when(walkwayQueryService.getWalkwaysPopular(userId, latitude, longitude, distanceInt, hashtagsList,
-                    lastId,
-                    lastLikes, size))
-                    .thenReturn(walkways);
-            // then
-            GetWalkwaySearchResponse result
-                    = walkwayUseCase.getWalkwaysSearch(userId, type, latitude, longitude, distance, hashtags, lastId,
-                    lastRating, lastLikes, size);
+            SearchWalkwayPopular searchWalkwayPopular
+                    = new SearchWalkwayPopular(userId, longitude, latitude, distanceInt, hashtagsList, lastId, lastLikes, size);
 
+            when(walkwayQueryService.getWalkwaysPopular(searchWalkwayPopular))
+                    .thenReturn(walkways);
+
+            // when
+            GetWalkwaySearchResponse result
+                    = walkwayUseCase.getWalkwaysSearch(userId, type, latitude, longitude, distance, hashtags, lastId, lastRating, lastLikes, size);
+
+            // then
             assertThat(result.nextCursor()).isNotNull();
             assertThat(result.walkways().size()).isEqualTo(10);
         }
@@ -237,15 +240,16 @@ class WalkwayUseCaseTest {
 
             int distanceInt = (int) (distance * 1000);
 
-            // when
-            when(walkwayQueryService.getWalkwaysRating(userId, latitude, longitude, distanceInt, hashtagsList, lastId,
-                    lastRating, size))
+            SearchWalkwayRating searchWalkwayRating = new SearchWalkwayRating(userId, longitude, latitude, distanceInt, hashtagsList, lastId, lastRating, size);
+            when(walkwayQueryService.getWalkwaysRating(searchWalkwayRating))
                     .thenReturn(walkways);
-            // then
+
+            // when
             GetWalkwaySearchResponse result
                     = walkwayUseCase.getWalkwaysSearch(userId, type, latitude, longitude, distance, hashtags, lastId,
                     lastRating, lastLikes, size);
 
+            // then
             assertThat(result.nextCursor()).isNotNull();
             assertThat(result.walkways().size()).isEqualTo(10);
         }

@@ -1,11 +1,13 @@
 package com.dongsan.domains.walkway.controller;
 
+import static fixture.MemberFixture.createMemberWithId;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.dongsan.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.response.CreateWalkwayResponse;
@@ -16,7 +18,6 @@ import com.dongsan.domains.walkway.mapper.WalkwayMapper;
 import com.dongsan.domains.walkway.usecase.WalkwayUseCase;
 import com.dongsan.error.code.SystemErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fixture.MemberFixture;
 import fixture.WalkwayFixture;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -48,6 +53,16 @@ class WalkwayControllerTest {
 
     @MockBean
     private WalkwayUseCase walkwayUseCase;
+
+    final Member member = createMemberWithId(1L);
+    final CustomOAuth2User customOAuth2User = new CustomOAuth2User(member);
+
+    @BeforeEach
+    void setUp_Authentication(){
+        SecurityContext context = SecurityContextHolder.getContext();
+        Authentication authentication = new UsernamePasswordAuthenticationToken(customOAuth2User, null, null);
+        context.setAuthentication(authentication);
+    }
 
     @Nested
     @DisplayName("createWalkway 메서드는")
@@ -67,7 +82,8 @@ class WalkwayControllerTest {
                     List.of(List.of(127.001, 37.001), List.of(127.002, 37.002))
             );
 
-            when(walkwayUseCase.createWalkway(createWalkwayRequest, 1L)).thenReturn(new CreateWalkwayResponse(1L));
+            when(walkwayUseCase.createWalkway(createWalkwayRequest, customOAuth2User.getMemberId())).thenReturn(
+                    new CreateWalkwayResponse(1L));
 
             // When
             ResultActions response = mockMvc.perform(post("/walkways")
@@ -105,7 +121,6 @@ class WalkwayControllerTest {
     }
 
 
-
     @Nested
     @DisplayName("getWalkway 메서드는")
     class Describe_getWalkway {
@@ -120,7 +135,8 @@ class WalkwayControllerTest {
                     .name("test")
                     .build();
 
-            when(walkwayUseCase.getWalkwayWithLiked(walkwayId, 1L)).thenReturn(getWalkwayWithLikedResponse);
+            when(walkwayUseCase.getWalkwayWithLiked(walkwayId, customOAuth2User.getMemberId())).thenReturn(
+                    getWalkwayWithLikedResponse);
 
             // When
             ResultActions response = mockMvc.perform(get("/walkways/1")
@@ -142,7 +158,6 @@ class WalkwayControllerTest {
         @BeforeEach
         void setUp() {
             List<Walkway> walkways = new ArrayList<>();
-            Member member = MemberFixture.createMember();
             for (int i = 0; i < 10; i++) {
                 walkways.add(WalkwayFixture.createWalkway(member));
             }
@@ -154,7 +169,6 @@ class WalkwayControllerTest {
         @DisplayName("type이 liked이면 좋아요 순으로 DTO를 반환한다.")
         void it_returns_DTO_liked() throws Exception {
             // given
-            Long userId = 1L;
             String type = "liked";
             Double latitude = 1.0;
             Double longitude = 1.0;
@@ -165,12 +179,12 @@ class WalkwayControllerTest {
             Integer likes = 1000;
             int size = 10;
 
-            // When
-            when(walkwayUseCase.getWalkwaysSearch(userId, type, latitude, longitude, distance, hashtags, lastId, rating,
+            when(walkwayUseCase.getWalkwaysSearch(customOAuth2User.getMemberId(), type, latitude, longitude, distance,
+                    hashtags, lastId, rating,
                     likes, size))
                     .thenReturn(getWalkwaySearchResponse);
 
-            // Then
+            // When
             ResultActions response = mockMvc.perform(get("/walkways")
                     .contentType(MediaType.APPLICATION_JSON)
                     .param("type", "liked")
@@ -182,7 +196,7 @@ class WalkwayControllerTest {
                     .param("likes", "1000")
                     .param("size", "10")
                     .content(objectMapper.writeValueAsString(getWalkwaySearchResponse)));
-
+            // Then
             response.andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.walkways").isArray())
                     .andExpect(jsonPath("$.data.walkways").isNotEmpty())
@@ -193,7 +207,6 @@ class WalkwayControllerTest {
         @DisplayName("type이 rating이면 좋아요 순으로 DTO를 반환한다.")
         void it_returns_DTO_rating() throws Exception {
             // given
-            Long userId = 1L;
             String type = "rating";
             Double latitude = 1.0;
             Double longitude = 1.0;
@@ -204,12 +217,12 @@ class WalkwayControllerTest {
             Integer likes = 0;
             int size = 10;
 
-            // When
-            when(walkwayUseCase.getWalkwaysSearch(userId, type, latitude, longitude, distance, hashtags, lastId, rating,
+            when(walkwayUseCase.getWalkwaysSearch(customOAuth2User.getMemberId(), type, latitude, longitude, distance,
+                    hashtags, lastId, rating,
                     likes, size))
                     .thenReturn(getWalkwaySearchResponse);
 
-            // Then
+            // When
             ResultActions response = mockMvc.perform(get("/walkways")
                     .contentType(MediaType.APPLICATION_JSON)
                     .param("type", "rating")
@@ -221,7 +234,7 @@ class WalkwayControllerTest {
                     .param("rating", "5.0")
                     .param("size", "10")
                     .content(objectMapper.writeValueAsString(getWalkwaySearchResponse)));
-
+            // Then
             response.andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.walkways").isArray())
                     .andExpect(jsonPath("$.data.walkways").isNotEmpty())
