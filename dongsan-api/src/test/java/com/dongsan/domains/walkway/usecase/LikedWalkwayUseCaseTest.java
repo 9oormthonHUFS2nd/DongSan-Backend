@@ -1,7 +1,7 @@
 package com.dongsan.domains.walkway.usecase;
 
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.dongsan.domains.member.entity.Member;
@@ -9,10 +9,8 @@ import com.dongsan.domains.member.service.MemberQueryService;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.service.LikedWalkwayCommandService;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
-import com.dongsan.error.exception.CustomException;
 import fixture.MemberFixture;
 import fixture.WalkwayFixture;
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -43,47 +41,15 @@ class LikedWalkwayUseCaseTest {
             Member member = MemberFixture.createMember();
             Walkway walkway = WalkwayFixture.createWalkway(member);
 
-            when(memberQueryService.readMember(member.getId())).thenReturn(Optional.of(member));
-            when(walkwayQueryService.getWalkway(walkway.getId())).thenReturn(Optional.of(walkway));
+            when(memberQueryService.getMember(member.getId())).thenReturn(member);
+            when(walkwayQueryService.getWalkway(walkway.getId())).thenReturn(walkway);
             when(likedWalkwayCommandService.existsLikedWalkwayByMemberAndWalkway(member, walkway)).thenReturn(false);
 
-            // When & Then
-            assertThatCode(() -> likedWalkwayUseCase.createLikedWalkway(member.getId(), walkway.getId()))
-                    .doesNotThrowAnyException();
+            // When
+            likedWalkwayUseCase.createLikedWalkway(member.getId(), walkway.getId());
 
-        }
-
-        @Test
-        @DisplayName("회원이 존재하지 않으면 예외를 반환한다.")
-        void it_returns_MEMBER_NOT_FOUND() {
-            // Given
-            Member member = MemberFixture.createMember();
-            Walkway walkway = WalkwayFixture.createWalkway(member);
-            Long memberId = member.getId();
-            Long walkwayId = walkway.getId();
-
-            when(memberQueryService.readMember(member.getId())).thenReturn(Optional.empty());
-
-            // When & Then
-            assertThatThrownBy(() -> likedWalkwayUseCase.createLikedWalkway(memberId, walkwayId))
-                    .isInstanceOf(CustomException.class);
-        }
-
-        @Test
-        @DisplayName("회원이 존재하지 않으면 예외를 반환한다.")
-        void it_returns_WALKWAY_NOT_FOUND() {
-            // Given
-            Member member = MemberFixture.createMember();
-            Walkway walkway = WalkwayFixture.createWalkway(member);
-            Long memberId = member.getId();
-            Long walkwayId = walkway.getId();
-
-            when(memberQueryService.readMember(member.getId())).thenReturn(Optional.of(member));
-            when(walkwayQueryService.getWalkway(walkway.getId())).thenReturn(Optional.empty());
-
-            // When & Then
-            assertThatThrownBy(() -> likedWalkwayUseCase.createLikedWalkway(memberId, walkwayId))
-                    .isInstanceOf(CustomException.class);
+            // Then
+            verify(likedWalkwayCommandService).createLikedWalkway(any());
         }
     }
 
@@ -97,47 +63,15 @@ class LikedWalkwayUseCaseTest {
             Member member = MemberFixture.createMember();
             Walkway walkway = WalkwayFixture.createWalkway(member);
 
-            when(memberQueryService.readMember(member.getId())).thenReturn(Optional.of(member));
-            when(walkwayQueryService.getWalkway(walkway.getId())).thenReturn(Optional.of(walkway));
+            when(memberQueryService.getMember(member.getId())).thenReturn(member);
+            when(walkwayQueryService.getWalkway(walkway.getId())).thenReturn(walkway);
             when(likedWalkwayCommandService.existsLikedWalkwayByMemberAndWalkway(member, walkway)).thenReturn(true);
 
-            // When & Then
-            assertThatCode(() -> likedWalkwayUseCase.deleteLikedWalkway(member.getId(), walkway.getId()))
-                    .doesNotThrowAnyException();
+            // When
+            likedWalkwayUseCase.deleteLikedWalkway(member.getId(), walkway.getId());
 
-        }
-
-        @Test
-        @DisplayName("회원이 존재하지 않으면 예외를 반환한다.")
-        void it_returns_MEMBER_NOT_FOUND() {
-            // Given
-            Member member = MemberFixture.createMember();
-            Walkway walkway = WalkwayFixture.createWalkway(member);
-            Long memberId = member.getId();
-            Long walkwayId = walkway.getId();
-
-            when(memberQueryService.readMember(member.getId())).thenReturn(Optional.empty());
-
-            // When & Then
-            assertThatThrownBy(() -> likedWalkwayUseCase.deleteLikedWalkway(memberId, walkwayId))
-                    .isInstanceOf(CustomException.class);
-        }
-
-        @Test
-        @DisplayName("회원이 존재하지 않으면 예외를 반환한다.")
-        void it_returns_WALKWAY_NOT_FOUND() {
-            // Given
-            Member member = MemberFixture.createMember();
-            Walkway walkway = WalkwayFixture.createWalkway(member);
-            Long memberId = member.getId();
-            Long walkwayId = walkway.getId();
-
-            when(memberQueryService.readMember(member.getId())).thenReturn(Optional.of(member));
-            when(walkwayQueryService.getWalkway(walkway.getId())).thenReturn(Optional.empty());
-
-            // When & Then
-            assertThatThrownBy(() -> likedWalkwayUseCase.deleteLikedWalkway(memberId, walkwayId))
-                    .isInstanceOf(CustomException.class);
+            // Then
+            verify(likedWalkwayCommandService).deleteLikedWalkway(member, walkway);
         }
     }
 }

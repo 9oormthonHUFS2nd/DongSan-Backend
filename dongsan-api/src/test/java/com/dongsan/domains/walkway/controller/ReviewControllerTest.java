@@ -50,7 +50,7 @@ class ReviewControllerTest {
     @Autowired
     MockMvc mockMvc;
     @Autowired
-    private ObjectMapper objectMapper;
+    ObjectMapper objectMapper;
     @MockBean
     WalkwayQueryService walkwayQueryService;
     @MockBean

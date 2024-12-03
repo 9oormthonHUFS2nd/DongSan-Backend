@@ -20,7 +20,6 @@ import com.dongsan.domains.walkway.mapper.HashtagWalkwayMapper;
 import com.dongsan.domains.walkway.mapper.WalkwayMapper;
 import com.dongsan.domains.walkway.service.WalkwayCommandService;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
-import com.dongsan.error.code.MemberErrorCode;
 import com.dongsan.error.code.WalkwayErrorCode;
 import com.dongsan.error.exception.CustomException;
 import java.util.ArrayList;
@@ -47,8 +46,7 @@ public class WalkwayUseCase {
     @Transactional
     public CreateWalkwayResponse createWalkway(CreateWalkwayRequest createWalkwayRequest, Long memberId) {
 
-        Member member = memberQueryService.readMember(memberId)
-                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+        Member member = memberQueryService.getMember(memberId);
 
         Walkway walkway = walkwayCommandService.createWalkway(WalkwayMapper.toWalkway(createWalkwayRequest, member));
 

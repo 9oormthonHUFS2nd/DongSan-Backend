@@ -25,7 +25,6 @@ import fixture.ReviewFixture;
 import fixture.WalkwayFixture;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -67,8 +66,8 @@ class WalkwayReviewUseCaseTest {
             Walkway walkway = WalkwayFixture.createWalkwayWithId(walkwayId, member);
             Review review = ReviewFixture.createReviewWithId(reviewId, member, walkway);
 
-            when(memberQueryService.readMember(memberId)).thenReturn(Optional.of(member));
-            when(walkwayQueryService.getWalkway(walkwayId)).thenReturn(Optional.of(walkway));
+            when(memberQueryService.getMember(member.getId())).thenReturn(member);
+            when(walkwayQueryService.getWalkway(walkway.getId())).thenReturn(walkway);
             when(reviewCommandService.createReview(any())).thenReturn(review);
 
             // When
@@ -76,22 +75,6 @@ class WalkwayReviewUseCaseTest {
 
             // Then
             assertThat(result.reviewId()).isEqualTo(reviewId);
-        }
-
-        @Test
-        @DisplayName("회원이 존재하지 않으면 예외처리한다.")
-        void it_returns_exception_MEMBER_NOT_FOUND() {
-            // Given
-            Long memberId = 1L;
-            Long walkwayId = 1L;
-            Byte rating = 5;
-            CreateReviewRequest createReviewRequest = new CreateReviewRequest(rating, "test content");
-
-            when(memberQueryService.readMember(memberId)).thenReturn(Optional.empty());
-
-            // When & Then
-            assertThatThrownBy(() -> walkwayReviewUseCase.createReview(memberId, walkwayId, createReviewRequest))
-                    .isInstanceOf(CustomException.class);
         }
     }
 
@@ -177,7 +160,7 @@ class WalkwayReviewUseCaseTest {
                 ratingCounts.add(new RatingCount(i, 10L));
             }
 
-            when(walkwayQueryService.getWalkway(walkway.getId())).thenReturn(Optional.of(walkway));
+            when(walkwayQueryService.getWalkway(walkway.getId())).thenReturn(walkway);
             when(reviewQueryService.getWalkwaysRating(walkway.getId())).thenReturn(ratingCounts);
 
             // When
@@ -199,7 +182,7 @@ class WalkwayReviewUseCaseTest {
 
             List<RatingCount> ratingCounts = new ArrayList<>();
 
-            when(walkwayQueryService.getWalkway(walkway.getId())).thenReturn(Optional.of(walkway));
+            when(walkwayQueryService.getWalkway(walkway.getId())).thenReturn(walkway);
             when(reviewQueryService.getWalkwaysRating(walkway.getId())).thenReturn(ratingCounts);
 
             // When

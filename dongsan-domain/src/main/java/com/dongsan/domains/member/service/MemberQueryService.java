@@ -4,7 +4,6 @@ import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.member.repository.MemberRepository;
 import com.dongsan.error.code.MemberErrorCode;
 import com.dongsan.error.exception.CustomException;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,10 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberQueryService {
 
     private final MemberRepository memberRepository;
-
-    public Optional<Member> readMember(Long id) {
-        return memberRepository.findById(id);
-    }
 
     public Member getMember(Long id){
         return memberRepository.findById(id).orElseThrow(

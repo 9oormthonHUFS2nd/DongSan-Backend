@@ -35,7 +35,7 @@ class LikedWalkwayControllerTest {
     @Autowired
     MockMvc mockMvc;
     @Autowired
-    private ObjectMapper objectMapper;
+    ObjectMapper objectMapper;
     @MockBean
     LikedWalkwayUseCase likedWalkwayUseCase;
     final Member member = createMemberWithId(1L);
@@ -55,9 +55,10 @@ class LikedWalkwayControllerTest {
         @DisplayName("좋아요를 생성하고 created를 반환한다.")
         void it_returns_created() throws Exception {
             // Given
+            Long walkwayId = 1L;
 
             // When
-            ResultActions response = mockMvc.perform(post("/walkways/1/likes")
+            ResultActions response = mockMvc.perform(post("/walkways/"+walkwayId+"/likes")
                     .contentType(MediaType.APPLICATION_JSON));
 
             // Then
@@ -72,9 +73,10 @@ class LikedWalkwayControllerTest {
         @DisplayName("좋아요를 삭제하고 ok를 반환한다.")
         void it_returns_created() throws Exception {
             // Given
+            Long walkwayId = 1L;
 
             // When
-            ResultActions response = mockMvc.perform(delete("/walkways/1/likes")
+            ResultActions response = mockMvc.perform(delete("/walkways/"+walkwayId+"/likes")
                     .contentType(MediaType.APPLICATION_JSON));
 
             // Then

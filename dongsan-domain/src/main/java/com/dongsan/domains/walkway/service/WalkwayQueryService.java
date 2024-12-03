@@ -5,8 +5,9 @@ import com.dongsan.domains.walkway.dto.SearchWalkwayRating;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.repository.WalkwayQueryDSLRepository;
 import com.dongsan.domains.walkway.repository.WalkwayRepository;
+import com.dongsan.error.code.WalkwayErrorCode;
+import com.dongsan.error.exception.CustomException;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,8 +24,9 @@ public class WalkwayQueryService {
         return walkwayQueryDSLRepository.getUserWalkwayWithHashtagAndLike(userId, walkwayId);
     }
 
-    public Optional<Walkway> getWalkway(Long walkwayId) {
-        return walkwayRepository.findById(walkwayId);
+    public Walkway getWalkway(Long walkwayId) {
+        return walkwayRepository.findById(walkwayId)
+                .orElseThrow(() -> new CustomException(WalkwayErrorCode.WALKWAY_NOT_FOUND));
     }
 
     public List<Walkway> getWalkwaysPopular (
