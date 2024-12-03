@@ -27,7 +27,8 @@ public class LikedWalkwayUseCase {
         Walkway walkway = walkwayQueryService.getWalkway(walkwayId)
                 .orElseThrow(() -> new CustomException(WalkwayErrorCode.WALKWAY_NOT_FOUND));
 
-        if (likedWalkwayCommandService.existsLikedWalkwayByMemberAndWalkway(member, walkway)) {
+        Boolean isLiked = likedWalkwayCommandService.existsLikedWalkwayByMemberAndWalkway(member, walkway);
+        if (isLiked) {
             return;
         }
 
@@ -43,7 +44,8 @@ public class LikedWalkwayUseCase {
         Walkway walkway = walkwayQueryService.getWalkway(walkwayId)
                 .orElseThrow(() -> new CustomException(WalkwayErrorCode.WALKWAY_NOT_FOUND));
 
-        if (likedWalkwayCommandService.existsLikedWalkwayByMemberAndWalkway(member, walkway)) {
+        Boolean isLiked = likedWalkwayCommandService.existsLikedWalkwayByMemberAndWalkway(member, walkway);
+        if (isLiked) {
             likedWalkwayCommandService.deleteLikedWalkway(member, walkway);
         }
     }

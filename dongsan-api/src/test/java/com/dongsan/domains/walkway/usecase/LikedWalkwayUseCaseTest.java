@@ -59,11 +59,13 @@ class LikedWalkwayUseCaseTest {
             // Given
             Member member = MemberFixture.createMember();
             Walkway walkway = WalkwayFixture.createWalkway(member);
+            Long memberId = member.getId();
+            Long walkwayId = walkway.getId();
 
             when(memberQueryService.readMember(member.getId())).thenReturn(Optional.empty());
 
             // When & Then
-            assertThatThrownBy(() -> likedWalkwayUseCase.createLikedWalkway(member.getId(), walkway.getId()))
+            assertThatThrownBy(() -> likedWalkwayUseCase.createLikedWalkway(memberId, walkwayId))
                     .isInstanceOf(CustomException.class);
         }
 
@@ -73,12 +75,14 @@ class LikedWalkwayUseCaseTest {
             // Given
             Member member = MemberFixture.createMember();
             Walkway walkway = WalkwayFixture.createWalkway(member);
+            Long memberId = member.getId();
+            Long walkwayId = walkway.getId();
 
             when(memberQueryService.readMember(member.getId())).thenReturn(Optional.of(member));
             when(walkwayQueryService.getWalkway(walkway.getId())).thenReturn(Optional.empty());
 
             // When & Then
-            assertThatThrownBy(() -> likedWalkwayUseCase.createLikedWalkway(member.getId(), walkway.getId()))
+            assertThatThrownBy(() -> likedWalkwayUseCase.createLikedWalkway(memberId, walkwayId))
                     .isInstanceOf(CustomException.class);
         }
     }
@@ -109,11 +113,13 @@ class LikedWalkwayUseCaseTest {
             // Given
             Member member = MemberFixture.createMember();
             Walkway walkway = WalkwayFixture.createWalkway(member);
+            Long memberId = member.getId();
+            Long walkwayId = walkway.getId();
 
             when(memberQueryService.readMember(member.getId())).thenReturn(Optional.empty());
 
             // When & Then
-            assertThatThrownBy(() -> likedWalkwayUseCase.deleteLikedWalkway(member.getId(), walkway.getId()))
+            assertThatThrownBy(() -> likedWalkwayUseCase.deleteLikedWalkway(memberId, walkwayId))
                     .isInstanceOf(CustomException.class);
         }
 
@@ -123,12 +129,14 @@ class LikedWalkwayUseCaseTest {
             // Given
             Member member = MemberFixture.createMember();
             Walkway walkway = WalkwayFixture.createWalkway(member);
+            Long memberId = member.getId();
+            Long walkwayId = walkway.getId();
 
             when(memberQueryService.readMember(member.getId())).thenReturn(Optional.of(member));
             when(walkwayQueryService.getWalkway(walkway.getId())).thenReturn(Optional.empty());
 
             // When & Then
-            assertThatThrownBy(() -> likedWalkwayUseCase.deleteLikedWalkway(member.getId(), walkway.getId()))
+            assertThatThrownBy(() -> likedWalkwayUseCase.deleteLikedWalkway(memberId, walkwayId))
                     .isInstanceOf(CustomException.class);
         }
     }
