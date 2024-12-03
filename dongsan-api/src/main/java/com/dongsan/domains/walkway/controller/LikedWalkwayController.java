@@ -4,6 +4,7 @@ import com.dongsan.apiResponse.ResponseFactory;
 import com.dongsan.apiResponse.SuccessResponse;
 import com.dongsan.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.domains.walkway.usecase.LikedWalkwayUseCase;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class LikedWalkwayController {
     private final LikedWalkwayUseCase likedWalkwayUseCase;
 
+    @Operation(summary = "산책로 좋아요")
     @PostMapping("/{walkwayId}/likes")
     public ResponseEntity<SuccessResponse<Object>> createLikedWalkway(
             @PathVariable Long walkwayId,
@@ -32,6 +34,7 @@ public class LikedWalkwayController {
         return ResponseFactory.created(null);
     }
 
+    @Operation(summary = "산책로 좋아요 취소")
     @DeleteMapping("/{walkwayId}/likes")
     public ResponseEntity<SuccessResponse<Object>> deleteLikedWalkway(
             @PathVariable Long walkwayId,
