@@ -19,4 +19,8 @@ public class LikedWalkwayCommandService {
     public Boolean existsLikedWalkwayByMemberAndWalkway(Member member, Walkway walkway) {
         return likedWalkwayRepository.existsByMemberAndWalkway(member, walkway);
     }
+
+    public void deleteLikedWalkway(Member member, Walkway walkway) {
+        likedWalkwayRepository.deleteByMemberAndWalkway(member, walkway);
+    }
 }

@@ -35,4 +35,16 @@ public class LikedWalkwayUseCase {
 
         likedWalkwayCommandService.createLikedWalkway(likedWalkway);
     }
+
+    public void deleteLikedWalkway(Long memberId, Long walkwayId) {
+        Member member = memberQueryService.readMember(memberId)
+                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+
+        Walkway walkway = walkwayQueryService.getWalkway(walkwayId)
+                .orElseThrow(() -> new CustomException(WalkwayErrorCode.WALKWAY_NOT_FOUND));
+
+        if (likedWalkwayCommandService.existsLikedWalkwayByMemberAndWalkway(member, walkway)) {
+            likedWalkwayCommandService.deleteLikedWalkway(member, walkway);
+        }
+    }
 }

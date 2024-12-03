@@ -12,4 +12,6 @@ public interface LikedWalkwayRepository extends JpaRepository<LikedWalkway, Long
     Optional<LikedWalkway> findByMemberIdAndWalkwayId(Long memberId, Long walkwayId);
 
     Boolean existsByMemberAndWalkway(Member member, Walkway walkway);
+
+    void deleteByMemberAndWalkway(Member member, Walkway walkway);
 }
