@@ -14,7 +14,6 @@ import com.dongsan.domains.user.dto.response.GetProfileResponse;
 import com.dongsan.domains.user.mapper.UserProfileMapper;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -50,7 +49,7 @@ class UserProfileUseCaseTest {
 
             GetProfileResponse getProfileResponse = UserProfileMapper.toGetProfileResponse(member);
 
-            when(memberQueryService.readMember(memberId)).thenReturn(Optional.of(member));
+            when(memberQueryService.getMember(memberId)).thenReturn(member);
 
             // When
             GetProfileResponse result = userProfileUsecase.getUserProfile(memberId);

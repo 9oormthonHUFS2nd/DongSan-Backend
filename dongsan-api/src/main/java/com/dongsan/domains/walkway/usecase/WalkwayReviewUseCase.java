@@ -15,9 +15,7 @@ import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.mapper.ReviewMapper;
 import com.dongsan.domains.walkway.service.WalkwayCommandService;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
-import com.dongsan.error.code.MemberErrorCode;
 import com.dongsan.error.code.ReviewErrorCode;
-import com.dongsan.error.code.WalkwayErrorCode;
 import com.dongsan.error.exception.CustomException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -33,11 +31,9 @@ public class WalkwayReviewUseCase {
     private final WalkwayCommandService walkwayCommandService;
 
     public CreateReviewResponse createReview(Long memberId, Long walkwayId, CreateReviewRequest createReviewRequest) {
-        Member member = memberQueryService.readMember(memberId)
-                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+        Member member = memberQueryService.getMember(memberId);
 
-        Walkway walkway = walkwayQueryService.getWalkway(walkwayId)
-                .orElseThrow(() -> new CustomException(WalkwayErrorCode.WALKWAY_NOT_FOUND));
+        Walkway walkway = walkwayQueryService.getWalkway(walkwayId);
 
         Review review = ReviewMapper.toReview(createReviewRequest, walkway, member);
 
@@ -62,8 +58,7 @@ public class WalkwayReviewUseCase {
     }
 
     public GetWalkwayRatingResponse getWalkwayRating(Long walkwayId) {
-        Walkway walkway = walkwayQueryService.getWalkway(walkwayId)
-                .orElseThrow(() -> new CustomException(WalkwayErrorCode.WALKWAY_NOT_FOUND));
+        Walkway walkway = walkwayQueryService.getWalkway(walkwayId);
 
         List<RatingCount> ratingCounts = reviewQueryService.getWalkwaysRating(walkwayId);
 

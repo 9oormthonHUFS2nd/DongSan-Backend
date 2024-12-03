@@ -31,7 +31,6 @@ import fixture.WalkwayFixture;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -84,7 +83,7 @@ class WalkwayUseCaseTest {
 
             Walkway walkway = WalkwayFixture.createWalkwayWithId(1L, member);
 
-            when(memberQueryService.readMember(memberId)).thenReturn(Optional.of(member));
+            when(memberQueryService.getMember(member.getId())).thenReturn(member);
             when(walkwayCommandService.createWalkway(any()))
                     .thenReturn(walkway);
             when(hashtagQueryService.getHashtagsByName(any())).thenReturn(Collections.emptyList());

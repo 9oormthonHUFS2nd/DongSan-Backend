@@ -39,10 +39,10 @@ import org.springframework.test.web.servlet.ResultActions;
 class UserProfileControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    MockMvc mockMvc;
 
     @MockBean
-    private UserProfileUseCase userProfileUsecase;
+    UserProfileUseCase userProfileUsecase;
 
     final Member member = createMemberWithId(1L);
     final CustomOAuth2User customOAuth2User = new CustomOAuth2User(member);

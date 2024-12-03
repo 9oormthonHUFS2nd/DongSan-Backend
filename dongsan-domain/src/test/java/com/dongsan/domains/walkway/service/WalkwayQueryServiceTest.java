@@ -2,6 +2,7 @@ package com.dongsan.domains.walkway.service;
 
 import static fixture.WalkwayFixture.createWalkwayWithId;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 import com.dongsan.domains.member.entity.Member;
@@ -10,6 +11,7 @@ import com.dongsan.domains.walkway.dto.SearchWalkwayRating;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.repository.WalkwayQueryDSLRepository;
 import com.dongsan.domains.walkway.repository.WalkwayRepository;
+import com.dongsan.error.exception.CustomException;
 import fixture.MemberFixture;
 import fixture.WalkwayFixture;
 import java.util.ArrayList;
@@ -144,10 +146,22 @@ class WalkwayQueryServiceTest {
             when(walkwayRepository.findById(walkway.getId())).thenReturn(Optional.of(walkway));
 
             // When
-            Optional<Walkway> result = walkwayQueryService.getWalkway(walkway.getId());
+            Walkway result = walkwayQueryService.getWalkway(walkway.getId());
 
             // Then
-            assertThat(result).isEqualTo(Optional.of(walkway));
+            assertThat(result).isEqualTo(walkway);
+        }
+
+        @Test
+        @DisplayName("산책로가 없을 경우 예외를 반환한다.")
+        void it_returns_exception() {
+            // Given
+            Long walkwayId = 1L;
+            when(walkwayRepository.findById(walkwayId)).thenReturn(Optional.empty());
+
+            // When & Then
+            assertThatThrownBy(() -> walkwayQueryService.getWalkway(walkwayId))
+                    .isInstanceOf(CustomException.class);
         }
     }
 

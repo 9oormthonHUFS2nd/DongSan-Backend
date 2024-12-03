@@ -39,6 +39,7 @@ public class WalkwayController {
         return ResponseFactory.created(walkwayUseCase.createWalkway(createWalkwayRequest, customOAuth2User.getMemberId()));
     }
 
+    @Operation(summary = "산책로 단건 조회")
     @GetMapping("/{walkwayId}")
     public ResponseEntity<SuccessResponse<GetWalkwayWithLikedResponse>> getWalkway(
             @PathVariable Long walkwayId,
@@ -47,6 +48,7 @@ public class WalkwayController {
         return ResponseFactory.ok(walkwayUseCase.getWalkwayWithLiked(walkwayId, customOAuth2User.getMemberId()));
     }
 
+    @Operation(summary = "산책로 검색")
     @GetMapping("")
     public ResponseEntity<SuccessResponse<GetWalkwaySearchResponse>> getWalkwaysSearch(
             @RequestParam String type,

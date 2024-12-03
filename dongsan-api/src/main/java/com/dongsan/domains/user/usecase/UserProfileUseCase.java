@@ -9,12 +9,9 @@ import com.dongsan.domains.user.dto.response.GetBookmarksResponse;
 import com.dongsan.domains.user.dto.response.GetProfileResponse;
 import com.dongsan.domains.user.mapper.UserBookmarkMapper;
 import com.dongsan.domains.user.mapper.UserProfileMapper;
-import com.dongsan.error.code.MemberErrorCode;
-import com.dongsan.error.exception.CustomException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @UseCase
 @RequiredArgsConstructor
@@ -26,8 +23,7 @@ public class UserProfileUseCase {
     @Transactional(readOnly = true)
     public GetProfileResponse getUserProfile(Long userId) {
 
-        Member member = memberQueryService.readMember(userId)
-                .orElseThrow(() -> new CustomException(MemberErrorCode.MEMBER_NOT_FOUND));
+        Member member = memberQueryService.getMember(userId);
 
         return UserProfileMapper.toGetProfileResponse(member);
     }
