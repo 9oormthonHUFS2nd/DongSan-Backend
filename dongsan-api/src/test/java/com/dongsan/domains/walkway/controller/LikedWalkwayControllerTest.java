@@ -1,6 +1,7 @@
 package com.dongsan.domains.walkway.controller;
 
 import static fixture.MemberFixture.createMemberWithId;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -61,6 +62,23 @@ class LikedWalkwayControllerTest {
 
             // Then
             response.andExpect(status().isCreated());
+        }
+    }
+
+    @Nested
+    @DisplayName("deleteLikedWalkway 메서드는")
+    class Describe_deleteLikedWalkway {
+        @Test
+        @DisplayName("좋아요를 삭제하고 ok를 반환한다.")
+        void it_returns_created() throws Exception {
+            // Given
+
+            // When
+            ResultActions response = mockMvc.perform(delete("/walkways/1/likes")
+                    .contentType(MediaType.APPLICATION_JSON));
+
+            // Then
+            response.andExpect(status().isOk());
         }
     }
 }

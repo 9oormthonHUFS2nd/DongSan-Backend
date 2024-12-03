@@ -1,6 +1,7 @@
 package com.dongsan.domains.walkway.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.Mockito.when;
 
 import com.dongsan.domains.member.entity.Member;
@@ -62,6 +63,22 @@ class LikedWalkwayCommandServiceTest {
 
             // Then
             assertThat(result).isTrue();
+        }
+    }
+
+    @Nested
+    @DisplayName("deleteLikedWalkway 메서드는")
+    class Describe_deleteLikedWalkway {
+        @Test
+        @DisplayName("Member와 Walkway로 LikedWalkway를 삭제한다.")
+        void it_delete_likedWalkway() {
+            // Given
+            Member member = MemberFixture.createMember();
+            Walkway walkway = WalkwayFixture.createWalkway(member);
+
+            // When & Then
+            assertThatCode(() -> likedWalkwayCommandService.deleteLikedWalkway(member, walkway))
+                    .doesNotThrowAnyException();
         }
     }
 }
