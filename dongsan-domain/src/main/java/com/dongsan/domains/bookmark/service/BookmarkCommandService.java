@@ -21,4 +21,8 @@ public class BookmarkCommandService {
         bookmarkRepository.save(bookmark);
         return bookmark.getId();
     }
+
+    public void renameBookmark(Bookmark bookmark, String name) {
+        bookmark.rename(name);
+    }
 }

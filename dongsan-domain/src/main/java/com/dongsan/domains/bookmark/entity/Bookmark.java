@@ -49,4 +49,8 @@ public class Bookmark extends BaseEntity {
     public void addMarkedWalkway(MarkedWalkway markedWalkway){
         this.markedWalkways.add(markedWalkway);
     }
+
+    public void rename(String name){
+        this.name = name;
+    }
 }
