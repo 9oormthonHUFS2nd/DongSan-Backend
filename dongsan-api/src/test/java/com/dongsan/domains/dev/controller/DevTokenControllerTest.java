@@ -30,7 +30,7 @@ class DevTokenControllerTest {
     @Autowired
     MockMvc mockMvc;
     @Autowired
-    private ObjectMapper objectMapper;
+    ObjectMapper objectMapper;
     @MockBean
     DevUseCase devUseCase;
 

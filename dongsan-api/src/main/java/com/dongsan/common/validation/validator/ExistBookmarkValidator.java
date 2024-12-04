@@ -1,6 +1,6 @@
 package com.dongsan.common.validation.validator;
 
-import com.dongsan.common.validation.annotation.ExistWalkway;
+import com.dongsan.common.validation.annotation.ExistBookmark;
 import com.dongsan.domains.bookmark.service.BookmarkQueryService;
 import com.dongsan.error.code.BookmarkErrorCode;
 import jakarta.validation.ConstraintValidator;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class ExistBookmarkValidator implements ConstraintValidator<ExistWalkway, Long> {
+public class ExistBookmarkValidator implements ConstraintValidator<ExistBookmark, Long> {
     private final BookmarkQueryService bookmarkQueryService;
     @Override
     public boolean isValid(Long value, ConstraintValidatorContext context) {

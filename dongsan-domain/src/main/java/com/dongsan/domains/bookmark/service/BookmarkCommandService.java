@@ -18,8 +18,7 @@ public class BookmarkCommandService {
                 .member(member)
                 .name(name)
                 .build();
-        bookmarkRepository.save(bookmark);
-        return bookmark.getId();
+        return bookmarkRepository.save(bookmark).getId();
     }
 
     public void renameBookmark(Bookmark bookmark, String name) {

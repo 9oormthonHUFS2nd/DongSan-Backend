@@ -37,7 +37,7 @@ public class BookmarkQueryService {
 
     public void isOwnerOfBookmark(Member member, Bookmark bookmark) {
         // 북마크 생성자가 아니면
-        if(!bookmark.getId().equals(member.getId())){
+        if(!bookmark.getMember().getId().equals(member.getId())){
             throw new CustomException(BookmarkErrorCode.NOT_BOOKMARK_OWNER);
         }
     }
