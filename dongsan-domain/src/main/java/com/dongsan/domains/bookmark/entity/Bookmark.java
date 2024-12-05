@@ -18,6 +18,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import net.minidev.json.annotate.JsonIgnore;
 
 @Entity
 @Getter
@@ -36,6 +37,7 @@ public class Bookmark extends BaseEntity {
 
     // 엔티티 생명 주기 (REMOVE)
     @OneToMany(mappedBy = "bookmark", cascade = CascadeType.REMOVE)
+    @JsonIgnore
     List<MarkedWalkway> markedWalkways = new ArrayList<>();
 
     @Builder

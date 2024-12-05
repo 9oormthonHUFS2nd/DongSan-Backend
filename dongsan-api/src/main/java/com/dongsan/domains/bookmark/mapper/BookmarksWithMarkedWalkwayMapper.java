@@ -4,7 +4,6 @@ import com.dongsan.domains.bookmark.dto.response.BookmarksWithMarkedWalkwayRespo
 import com.dongsan.domains.bookmark.dto.response.BookmarksWithMarkedWalkwayResponse.BookmarkWithMarkedWalkway;
 import com.dongsan.domains.bookmark.entity.Bookmark;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class BookmarksWithMarkedWalkwayMapper {
     private BookmarksWithMarkedWalkwayMapper() {}
@@ -13,7 +12,7 @@ public class BookmarksWithMarkedWalkwayMapper {
         return BookmarksWithMarkedWalkwayResponse.builder()
                 .bookmarks(bookmarks.stream()
                         .map(BookmarksWithMarkedWalkwayMapper::toBookmarkWithMarkedWalkway)
-                        .collect(Collectors.toList()))
+                        .toList())
                 .build();
     }
 

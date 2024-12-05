@@ -1,8 +1,6 @@
 package com.dongsan.domains.walkway.usecase;
 
 import com.dongsan.common.annotation.UseCase;
-import com.dongsan.domains.hashtag.entity.Hashtag;
-import com.dongsan.domains.hashtag.entity.HashtagWalkway;
 import com.dongsan.domains.hashtag.service.HashtagCommandService;
 import com.dongsan.domains.hashtag.service.HashtagQueryService;
 import com.dongsan.domains.hashtag.service.HashtagWalkwayCommandService;
@@ -16,16 +14,12 @@ import com.dongsan.domains.walkway.dto.response.CreateWalkwayResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwaySearchResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayWithLikedResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
-import com.dongsan.domains.walkway.mapper.HashtagMapper;
-import com.dongsan.domains.walkway.mapper.HashtagWalkwayMapper;
 import com.dongsan.domains.walkway.mapper.WalkwayMapper;
 import com.dongsan.domains.walkway.service.WalkwayCommandService;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
 import com.dongsan.error.code.WalkwayErrorCode;
 import com.dongsan.error.exception.CustomException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,14 +29,11 @@ public class WalkwayUseCase {
 
     private final WalkwayCommandService walkwayCommandService;
     private final WalkwayQueryService walkwayQueryService;
-
     private final MemberQueryService memberQueryService;
-
     private final HashtagWalkwayCommandService hashtagWalkwayCommandService;
-
     private final HashtagQueryService hashtagQueryService;
-
     private final HashtagCommandService hashtagCommandService;
+    private final HashtagUseCase hashtagUseCase;
 
     @Transactional
     public CreateWalkwayResponse createWalkway(CreateWalkwayRequest createWalkwayRequest, Long memberId) {
@@ -53,41 +44,12 @@ public class WalkwayUseCase {
 
         // 해쉬태그 추가
         if (!createWalkwayRequest.hashtags().isEmpty()) {
-            createHashtagWalkways(walkway, createWalkwayRequest.hashtags());
+            hashtagUseCase.createHashtagWalkways(walkway, createWalkwayRequest.hashtags());
         }
 
         // TODO: 경로 이미지 파일 저장
 
         return WalkwayMapper.toCreateWalkwayResponse(walkway);
-    }
-
-    @Transactional
-    public List<HashtagWalkway> createHashtagWalkways(Walkway walkway, List<String> hashtagNames) {
-
-        List<HashtagWalkway> hashtagWalkways = new ArrayList<>();
-        List<Hashtag> hashtags = hashtagQueryService.getHashtagsByName(hashtagNames);
-
-        for (String hashtagName : hashtagNames) {
-
-            Optional<Hashtag> hashtagCheck = hashtags.stream()
-                    .filter(hashtag -> hashtag.getName().equals(hashtagName))
-                    .findFirst();
-
-            HashtagWalkway hashtagWalkway;
-
-            // 해쉬태그가 존재하지 않으면 생성 후 추가
-            if (hashtagCheck.isPresent()) {
-                hashtagWalkway = HashtagWalkwayMapper.toHashtagWalkway(hashtagCheck.get(), walkway);
-            } else {
-                Hashtag hashtag = HashtagMapper.toHashtag(hashtagName);
-                hashtagCommandService.createHashtag(hashtag);
-                hashtagWalkway = HashtagWalkwayMapper.toHashtagWalkway(hashtag, walkway);
-            }
-            hashtagWalkways.add(hashtagWalkway);
-            walkway.addHashtagWalkway(hashtagWalkway);
-        }
-
-        return hashtagWalkwayCommandService.createHashtagWalkways(hashtagWalkways);
     }
 
     @Transactional(readOnly = true)
@@ -147,7 +109,7 @@ public class WalkwayUseCase {
         hashtagWalkwayCommandService.deleteAllHashtagWalkways(walkway);
         walkway.removeAllHashtagWalkway();
         if (!updateWalkwayRequest.hashtags().isEmpty()) {
-            createHashtagWalkways(walkway, updateWalkwayRequest.hashtags());
+            hashtagUseCase.createHashtagWalkways(walkway, updateWalkwayRequest.hashtags());
         }
 
         // 산책로 수정

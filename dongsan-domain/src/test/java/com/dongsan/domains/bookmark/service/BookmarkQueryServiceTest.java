@@ -63,8 +63,7 @@ class BookmarkQueryServiceTest {
             List<Bookmark> result = bookmarkQueryService.getUserBookmarks(bookmarkId, memberId, limit);
 
             // Then
-            assertThat(result).isNotNull();
-            assertThat(result).hasSize(limit);
+            assertThat(result).isNotNull().hasSize(limit);
             assertThat(result.get(0).getName()).isEqualTo(bookmarkList.get(0).getName());
             assertThat(result.get(1).getName()).isEqualTo(bookmarkList.get(1).getName());
         }

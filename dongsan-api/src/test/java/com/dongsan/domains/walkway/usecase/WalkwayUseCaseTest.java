@@ -6,9 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import com.dongsan.domains.hashtag.entity.Hashtag;
-import com.dongsan.domains.hashtag.entity.HashtagWalkway;
-import com.dongsan.domains.hashtag.service.HashtagCommandService;
 import com.dongsan.domains.hashtag.service.HashtagQueryService;
 import com.dongsan.domains.hashtag.service.HashtagWalkwayCommandService;
 import com.dongsan.domains.member.entity.Member;
@@ -26,12 +23,9 @@ import com.dongsan.domains.walkway.mapper.WalkwayMapper;
 import com.dongsan.domains.walkway.service.WalkwayCommandService;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
 import com.dongsan.error.exception.CustomException;
-import fixture.HashtagFixture;
-import fixture.HashtagWalkwayFixture;
 import fixture.MemberFixture;
 import fixture.WalkwayFixture;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -57,7 +51,7 @@ class WalkwayUseCaseTest {
     @Mock
     HashtagQueryService hashtagQueryService;
     @Mock
-    HashtagCommandService hashtagCommandService;
+    HashtagUseCase hashtagUseCase;
     @InjectMocks
     WalkwayUseCase walkwayUseCase;
 
@@ -88,8 +82,6 @@ class WalkwayUseCaseTest {
             when(memberQueryService.getMember(member.getId())).thenReturn(member);
             when(walkwayCommandService.createWalkway(any()))
                     .thenReturn(walkway);
-            when(hashtagQueryService.getHashtagsByName(any())).thenReturn(Collections.emptyList());
-            when(hashtagWalkwayCommandService.createHashtagWalkways(any())).thenReturn(Collections.emptyList());
 
             // When
             CreateWalkwayResponse result =
@@ -97,45 +89,6 @@ class WalkwayUseCaseTest {
 
             // Then
             assertThat(result.walkwayId()).isEqualTo(1L);
-        }
-    }
-
-    @Nested
-    @DisplayName("createHashtagWalkways 메서드는")
-    class Describe_createHashtagWalkways {
-
-        @Test
-        @DisplayName("hashtag 이름 목록을 입력 받으면 hashtag와 hashtagWalkway를 생성 후 hashtagWalkway리스트를 반환한다.")
-        void it_returns_hashtagWalkway_list() {
-            // Given
-            Member member = MemberFixture.createMember();
-            Walkway walkway = WalkwayFixture.createWalkway(member);
-            List<String> hashtagNames = List.of("tag0", "tag1", "tag2");
-            List<Hashtag> hashtags = new ArrayList<>();
-            List<HashtagWalkway> hashtagWalkways = new ArrayList<>();
-
-            for (int i = 1; i < 3; i++) {
-                hashtags.add(HashtagFixture.createHashtagWithId((long) i, hashtagNames.get(i)));
-            }
-            for (int i = 0; i < 3; i++) {
-                hashtagWalkways.add(HashtagWalkwayFixture.createHashtagWalkwayWithId(
-                        walkway,
-                        hashtags.get(0),
-                        (long) i
-                ));
-            }
-
-            when(hashtagQueryService.getHashtagsByName(hashtagNames)).thenReturn(hashtags);
-            when(hashtagCommandService.createHashtag(any())).thenReturn(null);
-            when(hashtagWalkwayCommandService.createHashtagWalkways(any())).thenReturn(hashtagWalkways);
-
-            // When
-            List<HashtagWalkway> result = walkwayUseCase.createHashtagWalkways(walkway, hashtagNames);
-
-            // Then
-            assertThat(result).isNotNull();
-            assertThat(result.size()).isEqualTo(hashtagWalkways.size());
-            assertThat(result).containsExactlyInAnyOrderElementsOf(hashtagWalkways);
         }
     }
 
@@ -285,15 +238,17 @@ class WalkwayUseCaseTest {
         @DisplayName("산책로를 등록한 회원가 다르면 예외처리한다.")
         void it_returns_exceptions() {
             // Given
-            Member member = MemberFixture.createMember();
+            Long memberId = 1L;
+            Long walkwayId = 1L;
+            Member member = MemberFixture.createMemberWithId(memberId);
             Member otherMember = MemberFixture.createMember();
-            Walkway walkway = WalkwayFixture.createWalkway(otherMember);
+            Walkway walkway = WalkwayFixture.createWalkwayWithId(walkwayId, otherMember);
 
             when(memberQueryService.getMember(member.getId())).thenReturn(member);
             when(walkwayQueryService.getWalkwayWithHashtag(walkway.getId())).thenReturn(walkway);
 
             // When & Then
-            assertThatThrownBy(() -> walkwayUseCase.updateWalkway(null, member.getId(), walkway.getId()))
+            assertThatThrownBy(() -> walkwayUseCase.updateWalkway(null, memberId, walkwayId))
                     .isInstanceOf(CustomException.class);
 
         }
