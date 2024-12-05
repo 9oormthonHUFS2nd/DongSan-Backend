@@ -36,6 +36,7 @@ public class LikedWalkwayUseCase {
         boolean isLiked = likedWalkwayCommandService.existsLikedWalkwayByMemberAndWalkway(member, walkway);
         if (isLiked) {
             likedWalkwayCommandService.deleteLikedWalkway(member, walkway);
+            walkway.removeLikedWalkway();
         }
     }
 }

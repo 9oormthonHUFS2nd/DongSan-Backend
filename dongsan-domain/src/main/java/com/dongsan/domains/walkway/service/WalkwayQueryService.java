@@ -49,4 +49,7 @@ public class WalkwayQueryService {
         return walkwayRepository.existsById(walkwayId);
     }
 
+    public Walkway getWalkwayWithHashtag(Long walkwayId) {
+        return walkwayQueryDSLRepository.getWalkwayWithHashtag(walkwayId);
+    }
 }

@@ -11,6 +11,7 @@ import com.dongsan.domains.member.service.MemberQueryService;
 import com.dongsan.domains.walkway.dto.SearchWalkwayPopular;
 import com.dongsan.domains.walkway.dto.SearchWalkwayRating;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayRequest;
+import com.dongsan.domains.walkway.dto.request.UpdateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.response.CreateWalkwayResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwaySearchResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayWithLikedResponse;
@@ -51,8 +52,8 @@ public class WalkwayUseCase {
         Walkway walkway = walkwayCommandService.createWalkway(WalkwayMapper.toWalkway(createWalkwayRequest, member));
 
         // 해쉬태그 추가
-        if (!createWalkwayRequest.hashTags().isEmpty()) {
-            createHashtagWalkways(walkway, createWalkwayRequest.hashTags());
+        if (!createWalkwayRequest.hashtags().isEmpty()) {
+            createHashtagWalkways(walkway, createWalkwayRequest.hashtags());
         }
 
         // TODO: 경로 이미지 파일 저장
@@ -129,5 +130,30 @@ public class WalkwayUseCase {
         };
 
         return WalkwayMapper.toGetWalkwaySearchResponse(walkways, size);
+    }
+
+    @Transactional
+    public void updateWalkway(UpdateWalkwayRequest updateWalkwayRequest, Long memberId, Long walkwayId) {
+        Member member = memberQueryService.getMember(memberId);
+
+        // 산책로 불러오기
+        Walkway walkway = walkwayQueryService.getWalkwayWithHashtag(walkwayId);
+
+        if (!walkway.getMember().equals(member)) {
+            throw new CustomException(WalkwayErrorCode.NOT_WALKWAY_OWNER);
+        }
+
+        // 해쉬 태그 추가 및 삭제
+        hashtagWalkwayCommandService.deleteAllHashtagWalkways(walkway);
+        walkway.removeAllHashtagWalkway();
+        if (!updateWalkwayRequest.hashtags().isEmpty()) {
+            createHashtagWalkways(walkway, updateWalkwayRequest.hashtags());
+        }
+
+        // 산책로 수정
+        walkway.updateWalkway(updateWalkwayRequest.name(), updateWalkwayRequest.memo(),
+                updateWalkwayRequest.exposeLevel());
+
+        walkwayCommandService.createWalkway(walkway);
     }
 }

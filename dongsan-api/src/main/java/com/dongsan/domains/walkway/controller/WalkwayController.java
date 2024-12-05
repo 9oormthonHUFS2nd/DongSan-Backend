@@ -7,6 +7,7 @@ import com.dongsan.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.domains.bookmark.dto.response.BookmarksWithMarkedWalkwayResponse;
 import com.dongsan.domains.bookmark.usecase.BookmarkUseCase;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayRequest;
+import com.dongsan.domains.walkway.dto.request.UpdateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.response.CreateWalkwayResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwaySearchResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayWithLikedResponse;
@@ -20,6 +21,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -76,5 +78,16 @@ public class WalkwayController {
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {
         return ResponseFactory.ok(bookmarkUseCase.getBookmarksWithMarkedWalkway(customOAuth2User.getMemberId(), walkwayId));
+    }
+
+    @Operation(summary = "산책로 수정")
+    @PutMapping("/{walkwayId}")
+    public ResponseEntity<Void> updateWalkway(
+            @ExistWalkway @PathVariable Long walkwayId,
+            @RequestBody UpdateWalkwayRequest updateWalkwayRequest,
+            @AuthenticationPrincipal CustomOAuth2User customOAuth2User
+    ) {
+        walkwayUseCase.updateWalkway(updateWalkwayRequest, customOAuth2User.getMemberId(), walkwayId);
+        return ResponseFactory.noContent();
     }
 }
