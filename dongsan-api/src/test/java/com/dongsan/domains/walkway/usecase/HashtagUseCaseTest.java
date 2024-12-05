@@ -71,9 +71,9 @@ class HashtagUseCaseTest {
             List<HashtagWalkway> result = hashtagUseCase.createHashtagWalkways(walkway, hashtagNames);
 
             // Then
-            assertThat(result).isNotNull();
-            assertThat(result).hasSize(hashtagWalkways.size());
-            assertThat(result).containsExactlyInAnyOrderElementsOf(hashtagWalkways);
+            assertThat(result).isNotNull()
+                    .hasSize(hashtagWalkways.size())
+                    .containsExactlyInAnyOrderElementsOf(hashtagWalkways);
         }
     }
 
