@@ -1,10 +1,23 @@
 package com.dongsan.domains.bookmark.service;
 
+import static fixture.BookmarkFixture.createBookmark;
+import static fixture.MemberFixture.createMemberWithId;
+import static fixture.ReflectFixture.reflectField;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
+
 import com.dongsan.domains.bookmark.entity.Bookmark;
 import com.dongsan.domains.bookmark.repository.BookmarkQueryDSLRepository;
 import com.dongsan.domains.bookmark.repository.BookmarkRepository;
 import com.dongsan.domains.member.entity.Member;
-import org.assertj.core.api.Assertions;
+import com.dongsan.error.code.BookmarkErrorCode;
+import com.dongsan.error.exception.CustomException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -13,25 +26,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static fixture.BookmarkFixture.createBookmark;
-import static fixture.MemberFixture.createMemberWithId;
-import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
 @DisplayName("BookmarkQueryService Unit Test")
 class BookmarkQueryServiceTest {
-
-    @Mock
-    private BookmarkRepository bookmarkRepository;
-
-    @Mock
-    private BookmarkQueryDSLRepository bookmarkQueryDSLRepository;
-
     @InjectMocks
-    private BookmarkQueryService bookmarkQueryService;
+    BookmarkQueryService bookmarkQueryService;
+    @Mock
+    BookmarkRepository bookmarkRepository;
+    @Mock
+    BookmarkQueryDSLRepository bookmarkQueryDSLRepository;
 
     @Nested
     @DisplayName("readUserBookmarks 메서드는")
@@ -59,10 +62,10 @@ class BookmarkQueryServiceTest {
             List<Bookmark> result = bookmarkQueryService.readUserBookmarks(bookmarkId, memberId, limit);
 
             // Then
-            Assertions.assertThat(result).isNotNull();
-            Assertions.assertThat(result.size()).isEqualTo(limit);
-            Assertions.assertThat(result.get(0).getName()).isEqualTo(bookmarkList.get(0).getName());
-            Assertions.assertThat(result.get(1).getName()).isEqualTo(bookmarkList.get(1).getName());
+            assertThat(result).isNotNull();
+            assertThat(result).hasSize(limit);
+            assertThat(result.get(0).getName()).isEqualTo(bookmarkList.get(0).getName());
+            assertThat(result.get(1).getName()).isEqualTo(bookmarkList.get(1).getName());
         }
 
         @Test
@@ -81,7 +84,138 @@ class BookmarkQueryServiceTest {
             List<Bookmark> result = bookmarkQueryService.readUserBookmarks(null, memberId, limit);
 
             // Then
-            Assertions.assertThat(result).isEmpty();
+            assertThat(result).isEmpty();
+        }
+    }
+
+    @Nested
+    @DisplayName("hasSameBookmarkName 메서드는")
+    class Describe_hasSameBookmarkName{
+        @Test
+        @DisplayName("사용자가 저장한 북마크 중 중복되는 이름이 존재하면 예외를 반환한다.")
+        void it_throws_exception(){
+            // given
+            Long memberId = 1L;
+            String name = "북마크 이름";
+            when(bookmarkRepository.existsByMemberIdAndName(memberId, name)).thenReturn(true);
+
+            // when & then
+            CustomException thrown = assertThrows(CustomException.class, () -> {
+                bookmarkQueryService.hasSameBookmarkName(memberId, name);
+            });
+            assertEquals(BookmarkErrorCode.SAME_BOOKMARK_NAME_EXIST, thrown.getErrorCode());
+        }
+
+        @Test
+        @DisplayName("사용자가 저장한 북마크 중 중복되는 이름이 존재하지 않으면 예외를 반환하지 않는다.")
+        void it_dont_throws_exception(){
+            // given
+            Long memberId = 1L;
+            String name = "북마크 이름";
+            when(bookmarkRepository.existsByMemberIdAndName(memberId, name)).thenReturn(false);
+
+            // when & then
+            assertDoesNotThrow(() -> {
+                bookmarkQueryService.hasSameBookmarkName(memberId, name);
+            });
+        }
+    }
+
+    @Nested
+    @DisplayName("getBookmark 메서드는")
+    class Describe_getBookmark{
+        @Test
+        @DisplayName("북마크가 존재하지 않으면 예외를 반환한다.")
+        void it_throws_exception(){
+            // given
+            Long bookmarkId = 1L;
+            when(bookmarkRepository.findById(bookmarkId)).thenReturn(Optional.empty());
+
+            // when & then
+            CustomException thrown = assertThrows(CustomException.class, () -> {
+                bookmarkQueryService.getBookmark(bookmarkId);
+            });
+            assertEquals(BookmarkErrorCode.BOOKMARK_NOT_EXIST, thrown.getErrorCode());
+        }
+
+        @Test
+        @DisplayName("북마크가 존재하면 북마크를 반환한다.")
+        void it_returns_bookmark(){
+            // given
+            Long bookmarkId = 1L;
+            Bookmark bookmark = createBookmark(null);
+            reflectField(bookmark, "id", bookmarkId);
+            when(bookmarkRepository.findById(bookmarkId)).thenReturn(Optional.of(bookmark));
+
+            // when
+            Bookmark result = bookmarkQueryService.getBookmark(bookmarkId);
+
+            // then
+            assertThat(result.getId()).isEqualTo(bookmarkId);
+        }
+    }
+
+    @Nested
+    @DisplayName("isOwnerOfBookmark 메서드는")
+    class Describe_isOwnerOfBookmark{
+        @Test
+        @DisplayName("북마크 생성자가 아니면 예외를 반환한다.")
+        void it_throws_exception(){
+            // given
+            Member owner = createMemberWithId(1L);
+            Member notOwner = createMemberWithId(2L);
+            Bookmark bookmark = createBookmark(owner);
+
+            // when & then
+            CustomException thrown = assertThrows(CustomException.class, () -> {
+                bookmarkQueryService.isOwnerOfBookmark(notOwner, bookmark);
+            });
+            assertEquals(BookmarkErrorCode.NOT_BOOKMARK_OWNER, thrown.getErrorCode());
+        }
+
+        @Test
+        @DisplayName("북마크 생성자가 맞으면 예외를 반환하지 않는다.")
+        void it_dont_throws_exception(){
+            // given
+            Member owner = createMemberWithId(1L);
+            Bookmark bookmark = createBookmark(owner);
+
+            // when & then
+            assertDoesNotThrow(() -> {
+                bookmarkQueryService.isOwnerOfBookmark(owner, bookmark);
+            });
+        }
+    }
+
+    @Nested
+    @DisplayName("existsById 메서드는")
+    class Describe_existsById{
+        @Test
+        @DisplayName("북마크가 존재하면 true를 반환한다.")
+        void it_returns_true(){
+            // given
+            Long bookmarkId = 1L;
+            when(bookmarkRepository.existsById(bookmarkId)).thenReturn(true);
+
+            // when
+            boolean result = bookmarkQueryService.existsById(bookmarkId);
+
+            // then
+            assertThat(result).isTrue();
+        }
+
+        @Test
+        @DisplayName("북마크가 존재하지 않으면 false를 반환한다.")
+        void it_returns_false(){
+            // given
+            Long bookmarkId = 1L;
+            when(bookmarkRepository.existsById(bookmarkId)).thenReturn(false);
+
+            // when
+            boolean result = bookmarkQueryService.existsById(bookmarkId);
+
+            // then
+            assertThat(result).isFalse();
         }
     }
 

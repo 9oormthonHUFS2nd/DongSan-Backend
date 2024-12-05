@@ -1,10 +1,19 @@
 package com.dongsan.domains.user.controller;
 
+import static fixture.MemberFixture.createMemberWithId;
+import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.dongsan.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.review.service.ReviewQueryService;
 import com.dongsan.domains.user.dto.response.GetReviewResponse;
 import com.dongsan.domains.user.usecase.UserReviewUseCase;
+import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -20,16 +29,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.Collections;
-
-import static fixture.MemberFixture.createMemberWithId;
-import static org.hamcrest.Matchers.hasSize;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(UserReviewController.class)
 @AutoConfigureMockMvc(addFilters = false)
