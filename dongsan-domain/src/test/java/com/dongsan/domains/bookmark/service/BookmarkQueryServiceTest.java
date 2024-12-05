@@ -238,7 +238,7 @@ class BookmarkQueryServiceTest {
             when(bookmarkQueryDSLRepository.getBookmarksWithMarkedWalkway(walkwayId, memberId)).thenReturn(bookmarks);
 
             // When
-            List<Bookmark> result = bookmarkQueryService.getUserBookmarksWithMarkedWalkway(walkwayId, memberId);
+            List<Bookmark> result = bookmarkQueryService.getBookmarksWithMarkedWalkway(walkwayId, memberId);
 
             // Then
             assertThat(result).isEqualTo(bookmarks);

@@ -4,6 +4,7 @@ import static fixture.MemberFixture.createMemberWithId;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -14,6 +15,7 @@ import com.dongsan.domains.bookmark.mapper.BookmarksWithMarkedWalkwayMapper;
 import com.dongsan.domains.bookmark.usecase.BookmarkUseCase;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayRequest;
+import com.dongsan.domains.walkway.dto.request.UpdateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.response.CreateWalkwayResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwaySearchResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayWithLikedResponse;
@@ -284,6 +286,32 @@ class WalkwayControllerTest {
             response.andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.bookmarks").isArray())
                     .andExpect(jsonPath("$.data.bookmarks.size()").value(5));
+        }
+    }
+
+    @Nested
+    @DisplayName("updateWalkway 메서드는")
+    class Describe_updateWalkway {
+        @Test
+        @DisplayName("204를 반환한다.")
+        void it_returns_204() throws Exception {
+            // Given
+            Long walkwayId = 1L;
+            UpdateWalkwayRequest updateWalkwayRequest = new UpdateWalkwayRequest(
+                    "test name",
+                    "test memo",
+                    List.of(),
+                    "비공개");
+
+            when(walkwayQueryService.existsByWalkwayId(walkwayId)).thenReturn(true);
+
+            // When
+            ResultActions response = mockMvc.perform(put("/walkways/" + walkwayId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(updateWalkwayRequest)));
+
+            // Then
+            response.andExpect(status().isNoContent());
         }
     }
 }

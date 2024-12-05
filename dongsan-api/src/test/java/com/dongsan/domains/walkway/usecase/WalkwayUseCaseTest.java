@@ -16,10 +16,12 @@ import com.dongsan.domains.member.service.MemberQueryService;
 import com.dongsan.domains.walkway.dto.SearchWalkwayPopular;
 import com.dongsan.domains.walkway.dto.SearchWalkwayRating;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayRequest;
+import com.dongsan.domains.walkway.dto.request.UpdateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.response.CreateWalkwayResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwaySearchResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayWithLikedResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
+import com.dongsan.domains.walkway.enums.ExposeLevel;
 import com.dongsan.domains.walkway.mapper.WalkwayMapper;
 import com.dongsan.domains.walkway.service.WalkwayCommandService;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
@@ -274,5 +276,53 @@ class WalkwayUseCaseTest {
                     .isInstanceOf(CustomException.class);
         }
 
+    }
+
+    @Nested
+    @DisplayName("updateWalkway 메서드는")
+    class Describe_updateWalkway {
+        @Test
+        @DisplayName("산책로를 등록한 회원가 다르면 예외처리한다.")
+        void it_returns_exceptions() {
+            // Given
+            Member member = MemberFixture.createMember();
+            Member otherMember = MemberFixture.createMember();
+            Walkway walkway = WalkwayFixture.createWalkway(otherMember);
+
+            when(memberQueryService.getMember(member.getId())).thenReturn(member);
+            when(walkwayQueryService.getWalkwayWithHashtag(walkway.getId())).thenReturn(walkway);
+
+            // When & Then
+            assertThatThrownBy(() -> walkwayUseCase.updateWalkway(null, member.getId(), walkway.getId()))
+                    .isInstanceOf(CustomException.class);
+
+        }
+
+        @Test
+        @DisplayName("산책로를 수정한다.")
+        void it_update_walkway() {
+            // Given
+            Member member = MemberFixture.createMember();
+            Long walkwayId = 1L;
+            Walkway walkway = WalkwayFixture.createWalkwayWithId(walkwayId, member);
+            UpdateWalkwayRequest updateWalkwayRequest = new UpdateWalkwayRequest(
+                    "test name",
+                    "test memo",
+                    List.of(),
+                    "비공개");
+
+            when(memberQueryService.getMember(member.getId())).thenReturn(member);
+            when(walkwayQueryService.getWalkwayWithHashtag(walkway.getId())).thenReturn(walkway);
+            when(walkwayCommandService.createWalkway(walkway)).thenReturn(null);
+
+            // When
+            walkwayUseCase.updateWalkway(updateWalkwayRequest, member.getId(), walkwayId);
+
+            // Then
+            assertThat(walkway.getHashtagWalkways()).isEmpty();
+            assertThat(walkway.getName()).isEqualTo("test name");
+            assertThat(walkway.getMemo()).isEqualTo("test memo");
+            assertThat(walkway.getExposeLevel()).isEqualTo(ExposeLevel.PRIVATE);
+        }
     }
 }
