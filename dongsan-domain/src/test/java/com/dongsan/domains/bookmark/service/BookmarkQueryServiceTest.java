@@ -15,6 +15,7 @@ import com.dongsan.domains.bookmark.repository.BookmarkRepository;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.error.code.BookmarkErrorCode;
 import com.dongsan.error.exception.CustomException;
+import fixture.BookmarkFixture;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -59,7 +60,7 @@ class BookmarkQueryServiceTest {
             when(bookmarkQueryDSLRepository.getBookmarks(bookmarkId, memberId, limit)).thenReturn(bookmarkList);
 
             // When
-            List<Bookmark> result = bookmarkQueryService.readUserBookmarks(bookmarkId, memberId, limit);
+            List<Bookmark> result = bookmarkQueryService.getUserBookmarks(bookmarkId, memberId, limit);
 
             // Then
             assertThat(result).isNotNull();
@@ -81,7 +82,7 @@ class BookmarkQueryServiceTest {
             when(bookmarkQueryDSLRepository.getBookmarks(null, memberId, limit)).thenReturn(bookmarkList);
 
             // When
-            List<Bookmark> result = bookmarkQueryService.readUserBookmarks(null, memberId, limit);
+            List<Bookmark> result = bookmarkQueryService.getUserBookmarks(null, memberId, limit);
 
             // Then
             assertThat(result).isEmpty();
@@ -216,6 +217,31 @@ class BookmarkQueryServiceTest {
 
             // then
             assertThat(result).isFalse();
+        }
+    }
+
+    @Nested
+    @DisplayName("getUserWalkwayBookmarks 메서드는")
+    class Describe_getUserWalkwayBookmarks {
+        @Test
+        @DisplayName("walkwayId와 memberId가 입력 되면 Bookmark 리스트를 반환한다.")
+        void it_returns_bookmarks() {
+            // Given
+            Long walkwayId = 1L;
+            Long memberId = 1L;
+
+            List<Bookmark> bookmarks = new ArrayList<>();
+            for (int i = 0; i < 5; i++) {
+                bookmarks.add(BookmarkFixture.createBookmark(null));
+            }
+
+            when(bookmarkQueryDSLRepository.getBookmarksWithMarkedWalkway(walkwayId, memberId)).thenReturn(bookmarks);
+
+            // When
+            List<Bookmark> result = bookmarkQueryService.getUserBookmarksWithMarkedWalkway(walkwayId, memberId);
+
+            // Then
+            assertThat(result).isEqualTo(bookmarks);
         }
     }
 

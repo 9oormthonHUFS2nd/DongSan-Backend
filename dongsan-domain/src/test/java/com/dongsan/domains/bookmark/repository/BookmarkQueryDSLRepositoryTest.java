@@ -6,7 +6,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.dongsan.common.support.RepositoryTest;
 import com.dongsan.domains.bookmark.entity.Bookmark;
+import com.dongsan.domains.bookmark.entity.MarkedWalkway;
 import com.dongsan.domains.member.entity.Member;
+import com.dongsan.domains.walkway.entity.Walkway;
+import fixture.MarkedWalkwayFixture;
+import fixture.WalkwayFixture;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,7 +62,7 @@ class BookmarkQueryDSLRepositoryTest extends RepositoryTest {
             List<Bookmark> result = bookmarkQueryDSLRepository.getBookmarks(bookmarkId, memberId, limit);
 
             // Then
-            assertThat(result.size()).isEqualTo(limit);
+            assertThat(result).hasSize(limit);
             for(int i = 0; i < limit; i++) {
                 assertThat(result.get(i).getId()).isLessThan(bookmarkId);
                 if (i < limit - 1) {
@@ -79,7 +83,7 @@ class BookmarkQueryDSLRepositoryTest extends RepositoryTest {
             List<Bookmark> result = bookmarkQueryDSLRepository.getBookmarks(bookmarkId, memberId, limit);
 
             // Then
-            assertThat(result.size()).isEqualTo(limit);
+            assertThat(result).hasSize(limit);
             for(int i = 0; i < limit; i++) {
                 if (i < limit - 1) {
                     assertThat(result.get(i).getId()).isGreaterThan(result.get(i + 1).getId());
@@ -100,6 +104,53 @@ class BookmarkQueryDSLRepositoryTest extends RepositoryTest {
 
             // Then
             assertThat(result).isEmpty();
+        }
+    }
+
+    @Nested
+    @DisplayName("getBookmarksWithMarkedWalkway 메서드는")
+    class Describe_getBookmarksWithMarkedWalkway {
+
+        Member member;
+        Walkway walkway;
+        @BeforeEach
+        void setUpData(){
+            member = createMember();
+            entityManager.persist(member);
+            walkway = WalkwayFixture.createWalkway(member);
+            entityManager.persist(walkway);
+            for(int i = 0; i < 5; i++) {
+                Bookmark bookmark = createBookmark(member, "test"+i);
+                entityManager.persist(bookmark);
+                MarkedWalkway markedWalkway = MarkedWalkwayFixture.createMarkedWalkway(walkway, bookmark);
+                entityManager.persist(markedWalkway);
+                bookmark.addMarkedWalkway(markedWalkway);
+            }
+            for(int i = 5; i < 10; i++) {
+                Bookmark bookmark = createBookmark(member, "test"+i);
+                entityManager.persist(bookmark);
+            }
+        }
+
+        @Test
+        @DisplayName("회원의 북마크 리스트를 산책로와 함께 반환한다.")
+        void it_returns_bookmarks() {
+            // Given
+            Long memberId = member.getId();
+            Long walkwayId = walkway.getId();
+
+            // When
+            List<Bookmark> result = bookmarkQueryDSLRepository.getBookmarksWithMarkedWalkway(walkwayId, memberId);
+
+            // Then
+            assertThat(result).hasSize(10);
+            for(int i = 0; i < 10; i++) {
+                if (i >= 5) {
+                    assertThat(result.get(i).getMarkedWalkways()).hasSize(1);
+                } else {
+                    assertThat(result.get(i).getMarkedWalkways()).isEmpty();
+                }
+            }
         }
     }
 
