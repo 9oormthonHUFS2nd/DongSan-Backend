@@ -72,7 +72,7 @@ class HashtagUseCaseTest {
 
             // Then
             assertThat(result).isNotNull();
-            assertThat(result.size()).isEqualTo(hashtagWalkways.size());
+            assertThat(result).hasSize(hashtagWalkways.size());
             assertThat(result).containsExactlyInAnyOrderElementsOf(hashtagWalkways);
         }
     }
