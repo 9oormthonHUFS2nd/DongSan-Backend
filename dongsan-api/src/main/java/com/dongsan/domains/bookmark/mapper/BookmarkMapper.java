@@ -3,6 +3,8 @@ package com.dongsan.domains.bookmark.mapper;
 import com.dongsan.domains.bookmark.dto.response.BookmarkIdResponse;
 
 public class BookmarkMapper {
+    private BookmarkMapper(){}
+
     /**
      * Long -> BookmarkIdResponse
      */

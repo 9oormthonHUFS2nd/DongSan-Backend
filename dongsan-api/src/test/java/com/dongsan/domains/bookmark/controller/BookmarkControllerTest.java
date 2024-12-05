@@ -42,7 +42,7 @@ class BookmarkControllerTest {
     @MockBean
     BookmarkUseCase bookmarkUseCase;
     @MockBean
-    BookmarkQueryService bookmarkQueryService;;
+    BookmarkQueryService bookmarkQueryService;
     final Member member = createMemberWithId(1L);
     final CustomOAuth2User customOAuth2User = new CustomOAuth2User(member);
 
