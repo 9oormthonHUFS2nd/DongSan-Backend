@@ -25,6 +25,7 @@ public class LikedWalkwayUseCase {
         if (!isLiked) {
             LikedWalkway likedWalkway = LikedWalkwayMapper.toLikedWalkway(member, walkway);
             likedWalkwayCommandService.createLikedWalkway(likedWalkway);
+            walkway.addLikedWalkway(likedWalkway);
         }
     }
 

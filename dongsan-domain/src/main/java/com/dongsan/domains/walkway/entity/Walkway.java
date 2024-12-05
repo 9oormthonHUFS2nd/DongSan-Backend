@@ -95,4 +95,11 @@ public class Walkway extends BaseEntity {
         this.rating = (this.rating + inputRating) / 2;
         this.reviewCount++;
     }
+
+    public void addHashtagWalkway(HashtagWalkway hashtagWalkway) {
+        this.hashtagWalkways.add(hashtagWalkway);
+    }
+    public void addLikedWalkway(LikedWalkway likedWalkway) {
+        this.likedWalkways.add(likedWalkway);
+    }
 }

@@ -83,6 +83,7 @@ public class WalkwayUseCase {
                 hashtagWalkway = HashtagWalkwayMapper.toHashtagWalkway(hashtag, walkway);
             }
             hashtagWalkways.add(hashtagWalkway);
+            walkway.addHashtagWalkway(hashtagWalkway);
         }
 
         return hashtagWalkwayCommandService.createHashtagWalkways(hashtagWalkways);
