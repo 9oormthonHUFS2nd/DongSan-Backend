@@ -35,7 +35,7 @@ public class Bookmark extends BaseEntity {
     private String name;
 
     // 엔티티 생명 주기 (REMOVE)
-    @OneToMany(cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "bookmark", cascade = CascadeType.REMOVE)
     List<MarkedWalkway> markedWalkways = new ArrayList<>();
 
     @Builder

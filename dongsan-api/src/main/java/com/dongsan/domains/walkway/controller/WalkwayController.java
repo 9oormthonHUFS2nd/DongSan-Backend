@@ -2,7 +2,10 @@ package com.dongsan.domains.walkway.controller;
 
 import com.dongsan.apiResponse.ResponseFactory;
 import com.dongsan.apiResponse.SuccessResponse;
+import com.dongsan.common.validation.annotation.ExistWalkway;
 import com.dongsan.domains.auth.security.oauth2.dto.CustomOAuth2User;
+import com.dongsan.domains.bookmark.dto.response.BookmarksWithMarkedWalkwayResponse;
+import com.dongsan.domains.bookmark.usecase.BookmarkUseCase;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.response.CreateWalkwayResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwaySearchResponse;
@@ -29,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class WalkwayController {
 
     private final WalkwayUseCase walkwayUseCase;
+    private final BookmarkUseCase bookmarkUseCase;
 
     @Operation(summary = "산책로 등록")
     @PostMapping("")
@@ -63,5 +67,14 @@ public class WalkwayController {
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {
         return ResponseFactory.ok(walkwayUseCase.getWalkwaysSearch(customOAuth2User.getMemberId(), type, latitude, longitude, distance, hashtags, lastId, rating, likes, size));
+    }
+
+    @Operation(summary = "북마크 목록 보기(산책로 마크 여부 포함)")
+    @GetMapping("/{walkwayId}/bookmarks")
+    public ResponseEntity<SuccessResponse<BookmarksWithMarkedWalkwayResponse>> getBookmarksWithMarkedWalkway(
+            @ExistWalkway @PathVariable Long walkwayId,
+            @AuthenticationPrincipal CustomOAuth2User customOAuth2User
+    ) {
+        return ResponseFactory.ok(bookmarkUseCase.getBookmarksWithMarkedWalkway(customOAuth2User.getMemberId(), walkwayId));
     }
 }

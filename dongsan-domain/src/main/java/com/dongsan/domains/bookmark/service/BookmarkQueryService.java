@@ -18,7 +18,7 @@ public class BookmarkQueryService {
     private final BookmarkRepository bookmarkRepository;
     private final BookmarkQueryDSLRepository bookmarkQueryDSLRepository;
 
-    public List<Bookmark> readUserBookmarks(Long bookmarkId, Long memberId, Integer limit) {
+    public List<Bookmark> getUserBookmarks(Long bookmarkId, Long memberId, Integer limit) {
         return bookmarkQueryDSLRepository.getBookmarks(bookmarkId, memberId, limit);
     }
 
@@ -45,4 +45,9 @@ public class BookmarkQueryService {
     public boolean existsById(Long bookmarkId){
         return bookmarkRepository.existsById(bookmarkId);
     }
+
+    public List<Bookmark> getBookmarksWithMarkedWalkway(Long walkwayId, Long memberId) {
+        return bookmarkQueryDSLRepository.getBookmarksWithMarkedWalkway(walkwayId, memberId);
+    }
+
 }
