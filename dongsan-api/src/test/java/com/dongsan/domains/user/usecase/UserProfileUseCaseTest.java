@@ -84,7 +84,7 @@ class UserProfileUseCaseTest {
                 bookmarkList.add(bookmark);
             }
 
-            when(bookmarkQueryService.readUserBookmarks(bookmarkId, userId, limit)).thenReturn(bookmarkList);
+            when(bookmarkQueryService.getUserBookmarks(bookmarkId, userId, limit)).thenReturn(bookmarkList);
 
             // When
             GetBookmarksResponse result =

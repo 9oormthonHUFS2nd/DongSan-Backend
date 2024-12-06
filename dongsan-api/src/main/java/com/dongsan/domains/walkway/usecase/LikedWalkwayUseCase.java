@@ -25,6 +25,7 @@ public class LikedWalkwayUseCase {
         if (!isLiked) {
             LikedWalkway likedWalkway = LikedWalkwayMapper.toLikedWalkway(member, walkway);
             likedWalkwayCommandService.createLikedWalkway(likedWalkway);
+            walkway.addLikedWalkway(likedWalkway);
         }
     }
 
@@ -35,6 +36,7 @@ public class LikedWalkwayUseCase {
         boolean isLiked = likedWalkwayCommandService.existsLikedWalkwayByMemberAndWalkway(member, walkway);
         if (isLiked) {
             likedWalkwayCommandService.deleteLikedWalkway(member, walkway);
+            walkway.removeLikedWalkway();
         }
     }
 }

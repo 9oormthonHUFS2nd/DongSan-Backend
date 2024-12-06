@@ -11,7 +11,7 @@ public record CreateWalkwayRequest(
         String memo,
         Double distance,
         Integer time,
-        List<String> hashTags,
+        List<String> hashtags,
         String exposeLevel,
 //      나중에 추가
 //        MultipartFile courseImage,
