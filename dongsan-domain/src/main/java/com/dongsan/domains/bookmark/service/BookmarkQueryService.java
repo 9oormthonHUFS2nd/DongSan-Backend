@@ -3,7 +3,9 @@ package com.dongsan.domains.bookmark.service;
 import com.dongsan.domains.bookmark.entity.Bookmark;
 import com.dongsan.domains.bookmark.repository.BookmarkQueryDSLRepository;
 import com.dongsan.domains.bookmark.repository.BookmarkRepository;
+import com.dongsan.domains.bookmark.repository.MarkedWalkwayRepository;
 import com.dongsan.domains.member.entity.Member;
+import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.error.code.BookmarkErrorCode;
 import com.dongsan.error.exception.CustomException;
 import java.util.List;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class BookmarkQueryService {
     private final BookmarkRepository bookmarkRepository;
     private final BookmarkQueryDSLRepository bookmarkQueryDSLRepository;
+    private final MarkedWalkwayRepository markedWalkwayRepository;
 
     public List<Bookmark> readUserBookmarks(Long bookmarkId, Long memberId, Integer limit) {
         return bookmarkQueryDSLRepository.getBookmarks(bookmarkId, memberId, limit);
@@ -44,5 +47,12 @@ public class BookmarkQueryService {
 
     public boolean existsById(Long bookmarkId){
         return bookmarkRepository.existsById(bookmarkId);
+    }
+
+    /**
+     * 북마크에 포함된 산책로인지 확인
+     */
+    public boolean isWalkwayAdded(Bookmark bookmark, Walkway walkway) {
+        return markedWalkwayRepository.existsByBookmarkIdAndWalkwayId(bookmark.getId(), walkway.getId());
     }
 }

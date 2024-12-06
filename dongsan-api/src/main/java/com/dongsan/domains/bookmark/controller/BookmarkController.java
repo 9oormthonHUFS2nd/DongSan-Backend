@@ -5,6 +5,7 @@ import com.dongsan.apiResponse.SuccessResponse;
 import com.dongsan.common.validation.annotation.ExistBookmark;
 import com.dongsan.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.domains.bookmark.dto.request.BookmarkNameRequest;
+import com.dongsan.domains.bookmark.dto.request.WalkwayIdRequest;
 import com.dongsan.domains.bookmark.dto.response.BookmarkIdResponse;
 import com.dongsan.domains.bookmark.usecase.BookmarkUseCase;
 import io.swagger.v3.oas.annotations.Operation;
@@ -49,4 +50,16 @@ public class BookmarkController {
         bookmarkUseCase.renameBookmark(customOAuth2User.getMemberId(), bookmarkId, request);
         return ResponseFactory.noContent();
     }
+
+    @PostMapping("/{bookmarkId}/walkways")
+    @Operation(summary = "북마크에 산책로를 추가")
+    public ResponseEntity<Void> addWalkway(
+            @ExistBookmark @PathVariable Long bookmarkId,
+            @Valid @RequestBody WalkwayIdRequest request,
+            @AuthenticationPrincipal CustomOAuth2User customOAuth2User
+    ){
+        bookmarkUseCase.addWalkway(customOAuth2User.getMemberId(), bookmarkId, request);
+        return ResponseFactory.noContent();
+    }
+
 }
