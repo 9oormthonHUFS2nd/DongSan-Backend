@@ -36,4 +36,8 @@ public class BookmarkCommandService {
                 .build();
         markedWalkwayRepository.save(markedWalkway);
     }
+
+    public void deleteWalkway(Bookmark bookmark, Walkway walkway) {
+        markedWalkwayRepository.deleteByBookmarkIdAndWalkwayId(bookmark.getId(), walkway.getId());
+    }
 }

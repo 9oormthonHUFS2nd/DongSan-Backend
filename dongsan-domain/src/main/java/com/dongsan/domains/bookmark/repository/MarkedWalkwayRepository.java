@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface MarkedWalkwayRepository extends JpaRepository<MarkedWalkway, Long> {
     boolean existsByBookmarkIdAndWalkwayId(Long bookmarkId, Long walkwayId);
+    void deleteByBookmarkIdAndWalkwayId(Long bookmarkId, Long walkwayId);
 }

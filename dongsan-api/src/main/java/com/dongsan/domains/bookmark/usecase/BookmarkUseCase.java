@@ -60,4 +60,18 @@ public class BookmarkUseCase {
             bookmarkCommandService.addWalkway(bookmark, walkway);
         }
     }
+
+    public void deleteWalkway(Long memberId, Long bookmarkId, Long walkwayId) {
+        Member member = memberQueryService.getMember(memberId);
+        Bookmark bookmark = bookmarkQueryService.getBookmark(bookmarkId);
+        Walkway walkway = walkwayQueryService.getWalkway(walkwayId);
+        // 내 소유의 북마크인지 화인
+        bookmarkQueryService.isOwnerOfBookmark(member, bookmark);
+        // 이미 추가된 산책로인지 확인
+        if(bookmarkQueryService.isWalkwayAdded(bookmark, walkway)){
+            bookmarkCommandService.deleteWalkway(bookmark, walkway);
+        } else {
+            throw new CustomException(BookmarkErrorCode.WALKWAY_NOT_EXIST_IN_BOOKMARK);
+        }
+    }
 }

@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -59,6 +60,17 @@ public class BookmarkController {
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ){
         bookmarkUseCase.addWalkway(customOAuth2User.getMemberId(), bookmarkId, request);
+        return ResponseFactory.noContent();
+    }
+
+    @DeleteMapping("/{bookmarkId}/walkways/{walkwayId}")
+    @Operation(summary = "북마크에 산책로를 제거")
+    public ResponseEntity<Void> deleteWalkway(
+            @ExistBookmark @PathVariable Long bookmarkId,
+            @PathVariable Long walkwayId, // TODO
+            @AuthenticationPrincipal CustomOAuth2User customOAuth2User
+    ){
+        bookmarkUseCase.deleteWalkway(customOAuth2User.getMemberId(), bookmarkId, walkwayId);
         return ResponseFactory.noContent();
     }
 
