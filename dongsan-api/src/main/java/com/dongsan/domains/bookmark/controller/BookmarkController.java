@@ -3,6 +3,7 @@ package com.dongsan.domains.bookmark.controller;
 import com.dongsan.apiResponse.ResponseFactory;
 import com.dongsan.apiResponse.SuccessResponse;
 import com.dongsan.common.validation.annotation.ExistBookmark;
+import com.dongsan.common.validation.annotation.ExistWalkway;
 import com.dongsan.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.domains.bookmark.dto.request.BookmarkNameRequest;
 import com.dongsan.domains.bookmark.dto.request.WalkwayIdRequest;
@@ -67,7 +68,7 @@ public class BookmarkController {
     @Operation(summary = "북마크에 산책로를 제거")
     public ResponseEntity<Void> deleteWalkway(
             @ExistBookmark @PathVariable Long bookmarkId,
-            @PathVariable Long walkwayId, // TODO
+            @ExistWalkway @PathVariable Long walkwayId,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ){
         bookmarkUseCase.deleteWalkway(customOAuth2User.getMemberId(), bookmarkId, walkwayId);

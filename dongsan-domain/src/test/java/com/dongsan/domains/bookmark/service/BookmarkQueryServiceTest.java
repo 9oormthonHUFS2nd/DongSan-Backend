@@ -3,6 +3,7 @@ package com.dongsan.domains.bookmark.service;
 import static fixture.BookmarkFixture.createBookmark;
 import static fixture.MemberFixture.createMemberWithId;
 import static fixture.ReflectFixture.reflectField;
+import static fixture.WalkwayFixture.createWalkway;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -12,7 +13,9 @@ import static org.mockito.Mockito.when;
 import com.dongsan.domains.bookmark.entity.Bookmark;
 import com.dongsan.domains.bookmark.repository.BookmarkQueryDSLRepository;
 import com.dongsan.domains.bookmark.repository.BookmarkRepository;
+import com.dongsan.domains.bookmark.repository.MarkedWalkwayRepository;
 import com.dongsan.domains.member.entity.Member;
+import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.error.code.BookmarkErrorCode;
 import com.dongsan.error.exception.CustomException;
 import java.util.ArrayList;
@@ -35,6 +38,8 @@ class BookmarkQueryServiceTest {
     BookmarkRepository bookmarkRepository;
     @Mock
     BookmarkQueryDSLRepository bookmarkQueryDSLRepository;
+    @Mock
+    MarkedWalkwayRepository markedWalkwayRepository;
 
     @Nested
     @DisplayName("readUserBookmarks 메서드는")
@@ -213,6 +218,44 @@ class BookmarkQueryServiceTest {
 
             // when
             boolean result = bookmarkQueryService.existsById(bookmarkId);
+
+            // then
+            assertThat(result).isFalse();
+        }
+    }
+
+    @Nested
+    @DisplayName("isWalkwayAdded 메서드는")
+    class Describe_isWalkwayAdded{
+        @Test
+        @DisplayName("북마크에 포함된 산책로이면 true를 반환한다.")
+        void it_returns_true(){
+            // given
+            Bookmark bookmark = createBookmark(null);
+            reflectField(bookmark, "id", 1L);
+            Walkway walkway = createWalkway(null);
+            reflectField(walkway, "id", 1L);
+            when(markedWalkwayRepository.existsByBookmarkIdAndWalkwayId(bookmark.getId(), walkway.getId())).thenReturn(true);
+
+            // when
+            boolean result = bookmarkQueryService.isWalkwayAdded(bookmark, walkway);
+
+            // then
+            assertThat(result).isTrue();
+        }
+
+        @Test
+        @DisplayName("북마크에 포함되지 않은 산책로이면 false를 반환한다.")
+        void it_returns_false(){
+            // given
+            Bookmark bookmark = createBookmark(null);
+            reflectField(bookmark, "id", 1L);
+            Walkway walkway = createWalkway(null);
+            reflectField(walkway, "id", 1L);
+            when(markedWalkwayRepository.existsByBookmarkIdAndWalkwayId(bookmark.getId(), walkway.getId())).thenReturn(false);
+
+            // when
+            boolean result = bookmarkQueryService.isWalkwayAdded(bookmark, walkway);
 
             // then
             assertThat(result).isFalse();

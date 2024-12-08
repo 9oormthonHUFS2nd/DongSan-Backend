@@ -1,11 +1,11 @@
 package com.dongsan.domains.bookmark.dto.request;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
-import lombok.NonNull;
 
 @Builder
 public record WalkwayIdRequest(
-        @NonNull
+        @NotNull
         Long walkwayId
 ) {
 }
