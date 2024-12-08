@@ -5,6 +5,7 @@ import static fixture.MemberFixture.createMember;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.dongsan.common.support.RepositoryTest;
+import com.dongsan.domains.bookmark.dto.BookmarksWithMarkedWalkwayDTO;
 import com.dongsan.domains.bookmark.entity.Bookmark;
 import com.dongsan.domains.bookmark.entity.MarkedWalkway;
 import com.dongsan.domains.member.entity.Member;
@@ -124,7 +125,6 @@ class BookmarkQueryDSLRepositoryTest extends RepositoryTest {
                 entityManager.persist(bookmark);
                 MarkedWalkway markedWalkway = MarkedWalkwayFixture.createMarkedWalkway(walkway, bookmark);
                 entityManager.persist(markedWalkway);
-                bookmark.addMarkedWalkway(markedWalkway);
             }
             for(int i = 5; i < 10; i++) {
                 Bookmark bookmark = createBookmark(member, "test"+i);
@@ -140,15 +140,15 @@ class BookmarkQueryDSLRepositoryTest extends RepositoryTest {
             Long walkwayId = walkway.getId();
 
             // When
-            List<Bookmark> result = bookmarkQueryDSLRepository.getBookmarksWithMarkedWalkway(walkwayId, memberId);
+            List<BookmarksWithMarkedWalkwayDTO> result = bookmarkQueryDSLRepository.getBookmarksWithMarkedWalkway(walkwayId, memberId);
 
             // Then
             assertThat(result).hasSize(10);
             for(int i = 0; i < 10; i++) {
                 if (i >= 5) {
-                    assertThat(result.get(i).getMarkedWalkways()).hasSize(1);
+                    assertThat(result.get(i).markedWalkwayId()).isNotNull();
                 } else {
-                    assertThat(result.get(i).getMarkedWalkways()).isEmpty();
+                    assertThat(result.get(i).markedWalkwayId()).isNull();
                 }
             }
         }

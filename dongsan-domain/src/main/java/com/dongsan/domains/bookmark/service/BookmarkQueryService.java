@@ -1,5 +1,6 @@
 package com.dongsan.domains.bookmark.service;
 
+import com.dongsan.domains.bookmark.dto.BookmarksWithMarkedWalkwayDTO;
 import com.dongsan.domains.bookmark.entity.Bookmark;
 import com.dongsan.domains.bookmark.repository.BookmarkQueryDSLRepository;
 import com.dongsan.domains.bookmark.repository.BookmarkRepository;
@@ -46,7 +47,7 @@ public class BookmarkQueryService {
         return bookmarkRepository.existsById(bookmarkId);
     }
 
-    public List<Bookmark> getBookmarksWithMarkedWalkway(Long walkwayId, Long memberId) {
+    public List<BookmarksWithMarkedWalkwayDTO> getBookmarksWithMarkedWalkway(Long walkwayId, Long memberId) {
         return bookmarkQueryDSLRepository.getBookmarksWithMarkedWalkway(walkwayId, memberId);
     }
 

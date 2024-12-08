@@ -1,14 +1,14 @@
 package com.dongsan.domains.bookmark.mapper;
 
+import com.dongsan.domains.bookmark.dto.BookmarksWithMarkedWalkwayDTO;
 import com.dongsan.domains.bookmark.dto.response.BookmarksWithMarkedWalkwayResponse;
 import com.dongsan.domains.bookmark.dto.response.BookmarksWithMarkedWalkwayResponse.BookmarkWithMarkedWalkway;
-import com.dongsan.domains.bookmark.entity.Bookmark;
 import java.util.List;
 
 public class BookmarksWithMarkedWalkwayMapper {
     private BookmarksWithMarkedWalkwayMapper() {}
 
-    public static BookmarksWithMarkedWalkwayResponse toBookmarksWithMarkedWalkwayResponse(List<Bookmark> bookmarks) {
+    public static BookmarksWithMarkedWalkwayResponse toBookmarksWithMarkedWalkwayResponse(List<BookmarksWithMarkedWalkwayDTO> bookmarks) {
         return BookmarksWithMarkedWalkwayResponse.builder()
                 .bookmarks(bookmarks.stream()
                         .map(BookmarksWithMarkedWalkwayMapper::toBookmarkWithMarkedWalkway)
@@ -16,11 +16,11 @@ public class BookmarksWithMarkedWalkwayMapper {
                 .build();
     }
 
-    public static BookmarkWithMarkedWalkway toBookmarkWithMarkedWalkway(Bookmark bookmark) {
+    public static BookmarkWithMarkedWalkway toBookmarkWithMarkedWalkway(BookmarksWithMarkedWalkwayDTO bookmark) {
         return BookmarkWithMarkedWalkway.builder()
-                .bookmarkId(bookmark.getId())
-                .name(bookmark.getName())
-                .marked(!bookmark.getMarkedWalkways().isEmpty())
+                .bookmarkId(bookmark.bookmarkId())
+                .name(bookmark.name())
+                .marked(bookmark.markedWalkwayId() != null)
                 .build();
     }
 }

@@ -1,6 +1,7 @@
 package com.dongsan.domains.bookmark.usecase;
 
 import com.dongsan.common.annotation.UseCase;
+import com.dongsan.domains.bookmark.dto.BookmarksWithMarkedWalkwayDTO;
 import com.dongsan.domains.bookmark.dto.request.BookmarkNameRequest;
 import com.dongsan.domains.bookmark.dto.response.BookmarkIdResponse;
 import com.dongsan.domains.bookmark.dto.response.BookmarksWithMarkedWalkwayResponse;
@@ -45,7 +46,7 @@ public class BookmarkUseCase {
 
     @Transactional(readOnly = true)
     public BookmarksWithMarkedWalkwayResponse getBookmarksWithMarkedWalkway(Long memberId, Long walkwayId) {
-        List<Bookmark> bookmarks = bookmarkQueryService.getBookmarksWithMarkedWalkway(walkwayId, memberId);
+        List<BookmarksWithMarkedWalkwayDTO> bookmarks = bookmarkQueryService.getBookmarksWithMarkedWalkway(walkwayId, memberId);
         return BookmarksWithMarkedWalkwayMapper.toBookmarksWithMarkedWalkwayResponse(bookmarks);
     }
 }
