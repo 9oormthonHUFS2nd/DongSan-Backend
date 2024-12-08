@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
+import com.dongsan.domains.bookmark.dto.BookmarksWithMarkedWalkwayDTO;
 import com.dongsan.domains.bookmark.entity.Bookmark;
 import com.dongsan.domains.bookmark.repository.BookmarkQueryDSLRepository;
 import com.dongsan.domains.bookmark.repository.BookmarkRepository;
@@ -64,11 +65,10 @@ class BookmarkQueryServiceTest {
             when(bookmarkQueryDSLRepository.getBookmarks(bookmarkId, memberId, limit)).thenReturn(bookmarkList);
 
             // When
-            List<Bookmark> result = bookmarkQueryService.readUserBookmarks(bookmarkId, memberId, limit);
+            List<Bookmark> result = bookmarkQueryService.getUserBookmarks(bookmarkId, memberId, limit);
 
             // Then
-            assertThat(result).isNotNull();
-            assertThat(result).hasSize(limit);
+            assertThat(result).isNotNull().hasSize(limit);
             assertThat(result.get(0).getName()).isEqualTo(bookmarkList.get(0).getName());
             assertThat(result.get(1).getName()).isEqualTo(bookmarkList.get(1).getName());
         }
@@ -86,7 +86,7 @@ class BookmarkQueryServiceTest {
             when(bookmarkQueryDSLRepository.getBookmarks(null, memberId, limit)).thenReturn(bookmarkList);
 
             // When
-            List<Bookmark> result = bookmarkQueryService.readUserBookmarks(null, memberId, limit);
+            List<Bookmark> result = bookmarkQueryService.getUserBookmarks(null, memberId, limit);
 
             // Then
             assertThat(result).isEmpty();
@@ -226,16 +226,17 @@ class BookmarkQueryServiceTest {
 
     @Nested
     @DisplayName("isWalkwayAdded 메서드는")
-    class Describe_isWalkwayAdded{
+    class Describe_isWalkwayAdded {
         @Test
         @DisplayName("북마크에 포함된 산책로이면 true를 반환한다.")
-        void it_returns_true(){
+        void it_returns_true() {
             // given
             Bookmark bookmark = createBookmark(null);
             reflectField(bookmark, "id", 1L);
             Walkway walkway = createWalkway(null);
             reflectField(walkway, "id", 1L);
-            when(markedWalkwayRepository.existsByBookmarkIdAndWalkwayId(bookmark.getId(), walkway.getId())).thenReturn(true);
+            when(markedWalkwayRepository.existsByBookmarkIdAndWalkwayId(bookmark.getId(), walkway.getId())).thenReturn(
+                    true);
 
             // when
             boolean result = bookmarkQueryService.isWalkwayAdded(bookmark, walkway);
@@ -246,19 +247,45 @@ class BookmarkQueryServiceTest {
 
         @Test
         @DisplayName("북마크에 포함되지 않은 산책로이면 false를 반환한다.")
-        void it_returns_false(){
+        void it_returns_false() {
             // given
             Bookmark bookmark = createBookmark(null);
             reflectField(bookmark, "id", 1L);
             Walkway walkway = createWalkway(null);
             reflectField(walkway, "id", 1L);
-            when(markedWalkwayRepository.existsByBookmarkIdAndWalkwayId(bookmark.getId(), walkway.getId())).thenReturn(false);
+            when(markedWalkwayRepository.existsByBookmarkIdAndWalkwayId(bookmark.getId(), walkway.getId())).thenReturn(
+                    false);
 
             // when
             boolean result = bookmarkQueryService.isWalkwayAdded(bookmark, walkway);
 
             // then
             assertThat(result).isFalse();
+        }
+    }
+
+    @Nested
+    @DisplayName("getUserWalkwayBookmarks 메서드는")
+    class Describe_getUserWalkwayBookmarks {
+        @Test
+        @DisplayName("walkwayId와 memberId가 입력 되면 Bookmark 리스트를 반환한다.")
+        void it_returns_bookmarks() {
+            // Given
+            Long walkwayId = 1L;
+            Long memberId = 1L;
+
+            List<BookmarksWithMarkedWalkwayDTO> dto = new ArrayList<>();
+            for (int i = 0; i < 5; i++) {
+                dto.add(new BookmarksWithMarkedWalkwayDTO(1L, 1L, "test", 1L));
+            }
+
+            when(bookmarkQueryDSLRepository.getBookmarksWithMarkedWalkway(walkwayId, memberId)).thenReturn(dto);
+
+            // When
+            List<BookmarksWithMarkedWalkwayDTO> result = bookmarkQueryService.getBookmarksWithMarkedWalkway(walkwayId, memberId);
+
+            // Then
+            assertThat(result).isEqualTo(dto);
         }
     }
 

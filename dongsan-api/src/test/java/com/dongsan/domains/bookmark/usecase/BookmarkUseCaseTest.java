@@ -10,9 +10,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.dongsan.domains.bookmark.dto.BookmarksWithMarkedWalkwayDTO;
 import com.dongsan.domains.bookmark.dto.request.BookmarkNameRequest;
 import com.dongsan.domains.bookmark.dto.request.WalkwayIdRequest;
 import com.dongsan.domains.bookmark.dto.response.BookmarkIdResponse;
+import com.dongsan.domains.bookmark.dto.response.BookmarksWithMarkedWalkwayResponse;
 import com.dongsan.domains.bookmark.entity.Bookmark;
 import com.dongsan.domains.bookmark.service.BookmarkCommandService;
 import com.dongsan.domains.bookmark.service.BookmarkQueryService;
@@ -22,6 +24,8 @@ import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
 import com.dongsan.error.code.BookmarkErrorCode;
 import com.dongsan.error.exception.CustomException;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -201,5 +205,30 @@ class BookmarkUseCaseTest {
         }
     }
 
+    @Nested
+    @DisplayName("getBookmarksWithMarkedWalkway 메서드는")
+    class Describe_getBookmarksWithMarkedWalkway {
+        @Test
+        @DisplayName("북마크 리스트 DTO를 반환한다.")
+        void it_returns_DTO() {
+            // Given
+            Long memberId = 1L;
+            Long walkwayId = 1L;
+            List<BookmarksWithMarkedWalkwayDTO> bookmarks = new ArrayList<>();
 
+            for (int i = 0; i < 5; i++) {
+                BookmarksWithMarkedWalkwayDTO bookmark = new BookmarksWithMarkedWalkwayDTO(1L, 1L, "test", 1L);
+                bookmarks.add(bookmark);
+            }
+
+            when(bookmarkQueryService.getBookmarksWithMarkedWalkway(walkwayId, memberId)).thenReturn(bookmarks);
+
+            // When
+            BookmarksWithMarkedWalkwayResponse result = bookmarkUseCase.getBookmarksWithMarkedWalkway(memberId,
+                    walkwayId);
+
+            // Then
+            assertThat(result.bookmarks()).hasSize(bookmarks.size());
+        }
+    }
 }

@@ -1,5 +1,8 @@
 package com.dongsan.domains.hashtag.service;
 
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.dongsan.domains.hashtag.entity.Hashtag;
 import com.dongsan.domains.hashtag.entity.HashtagWalkway;
 import com.dongsan.domains.hashtag.repository.HashtagWalkwayRepository;
@@ -9,6 +12,8 @@ import fixture.HashtagFixture;
 import fixture.HashtagWalkwayFixture;
 import fixture.MemberFixture;
 import fixture.WalkwayFixture;
+import java.util.ArrayList;
+import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -17,11 +22,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("HashtagWalkwayCommandService Unit Test")
@@ -57,6 +57,21 @@ class HashtagWalkwayCommandServiceTest {
 
             // Then
             Assertions.assertThat(result).containsExactlyElementsOf(hashtags);
+        }
+    }
+
+    @Nested
+    @DisplayName("deleteAllHashtagWalkways 메서드는")
+    class Describe_deleteAllHashtagWalkways {
+        @Test
+        @DisplayName("산책로의 모든 해쉬태그를 삭제한다.")
+        void it_delete_all_hashtags() {
+            // Given
+            Walkway walkway = WalkwayFixture.createWalkway(null);
+            // When
+            hashtagWalkwayCommandService.deleteAllHashtagWalkways(walkway);
+            // Then
+            verify(hashtagWalkwayRepository).deleteAllByWalkway(walkway);
         }
     }
 }

@@ -84,7 +84,7 @@ class BookmarkCommandServiceTest {
             // given
             Bookmark bookmark = createBookmark(null);
             Walkway walkway = createWalkway(null);
-            MarkedWalkway markedWalkway = createMarkedWalkway(bookmark, walkway);
+            MarkedWalkway markedWalkway = createMarkedWalkway(walkway, bookmark);
             when(markedWalkwayRepository.save(any(MarkedWalkway.class))).thenReturn(markedWalkway);
 
             // when

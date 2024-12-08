@@ -31,7 +31,7 @@ class MarkedWalkwayRepositoryTest extends RepositoryTest {
         void setUp(){
             Bookmark bookmark = createBookmark(null);
             Walkway walkway = createWalkway(null);
-            MarkedWalkway markedWalkway = createMarkedWalkway(bookmark, walkway);
+            MarkedWalkway markedWalkway = createMarkedWalkway(walkway, bookmark);
             em.persist(bookmark);
             em.persist(walkway);
             em.persist(markedWalkway);
@@ -73,7 +73,7 @@ class MarkedWalkwayRepositoryTest extends RepositoryTest {
         void setUp(){
             Bookmark bookmark = createBookmark(null);
             Walkway walkway = createWalkway(null);
-            MarkedWalkway markedWalkway = createMarkedWalkway(bookmark, walkway);
+            MarkedWalkway markedWalkway = createMarkedWalkway(walkway, bookmark);
             em.persist(bookmark);
             em.persist(walkway);
             em.persist(markedWalkway);

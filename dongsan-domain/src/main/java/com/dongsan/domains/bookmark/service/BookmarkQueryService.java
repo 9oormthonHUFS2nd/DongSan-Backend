@@ -1,5 +1,6 @@
 package com.dongsan.domains.bookmark.service;
 
+import com.dongsan.domains.bookmark.dto.BookmarksWithMarkedWalkwayDTO;
 import com.dongsan.domains.bookmark.entity.Bookmark;
 import com.dongsan.domains.bookmark.repository.BookmarkQueryDSLRepository;
 import com.dongsan.domains.bookmark.repository.BookmarkRepository;
@@ -21,7 +22,7 @@ public class BookmarkQueryService {
     private final BookmarkQueryDSLRepository bookmarkQueryDSLRepository;
     private final MarkedWalkwayRepository markedWalkwayRepository;
 
-    public List<Bookmark> readUserBookmarks(Long bookmarkId, Long memberId, Integer limit) {
+    public List<Bookmark> getUserBookmarks(Long bookmarkId, Long memberId, Integer limit) {
         return bookmarkQueryDSLRepository.getBookmarks(bookmarkId, memberId, limit);
     }
 
@@ -55,4 +56,9 @@ public class BookmarkQueryService {
     public boolean isWalkwayAdded(Bookmark bookmark, Walkway walkway) {
         return markedWalkwayRepository.existsByBookmarkIdAndWalkwayId(bookmark.getId(), walkway.getId());
     }
+
+    public List<BookmarksWithMarkedWalkwayDTO> getBookmarksWithMarkedWalkway(Long walkwayId, Long memberId) {
+        return bookmarkQueryDSLRepository.getBookmarksWithMarkedWalkway(walkwayId, memberId);
+    }
+
 }

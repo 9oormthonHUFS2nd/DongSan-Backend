@@ -4,17 +4,24 @@ import static fixture.MemberFixture.createMemberWithId;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.dongsan.domains.auth.security.oauth2.dto.CustomOAuth2User;
+import com.dongsan.domains.bookmark.dto.BookmarksWithMarkedWalkwayDTO;
+import com.dongsan.domains.bookmark.dto.response.BookmarksWithMarkedWalkwayResponse;
+import com.dongsan.domains.bookmark.mapper.BookmarksWithMarkedWalkwayMapper;
+import com.dongsan.domains.bookmark.usecase.BookmarkUseCase;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayRequest;
+import com.dongsan.domains.walkway.dto.request.UpdateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.response.CreateWalkwayResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwaySearchResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayWithLikedResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.mapper.WalkwayMapper;
+import com.dongsan.domains.walkway.service.WalkwayQueryService;
 import com.dongsan.domains.walkway.usecase.WalkwayUseCase;
 import com.dongsan.error.code.SystemErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -53,6 +60,12 @@ class WalkwayControllerTest {
 
     @MockBean
     WalkwayUseCase walkwayUseCase;
+
+    @MockBean
+    BookmarkUseCase bookmarkUseCase;
+
+    @MockBean
+    WalkwayQueryService walkwayQueryService;
 
     final Member member = createMemberWithId(1L);
     final CustomOAuth2User customOAuth2User = new CustomOAuth2User(member);
@@ -239,6 +252,66 @@ class WalkwayControllerTest {
                     .andExpect(jsonPath("$.data.walkways").isArray())
                     .andExpect(jsonPath("$.data.walkways").isNotEmpty())
                     .andExpect(jsonPath("$.data.walkways.size()").value(10));
+        }
+    }
+
+    @Nested
+    @DisplayName("getBookmarksWithMarkedWalkway 메서드는")
+    class Describe_getBookmarksWithMarkedWalkway {
+        @Test
+        @DisplayName("marked 여부를 포함한 bookmark 리스트를 반환한다.")
+        void it_returns_bookmarks() throws Exception {
+            // Given
+            Long walkwayId = 1L;
+            List<BookmarksWithMarkedWalkwayDTO> bookmarks = new ArrayList<>();
+
+            for(int i = 0; i < 5; i++) {
+                BookmarksWithMarkedWalkwayDTO bookmark
+                        = new BookmarksWithMarkedWalkwayDTO(1L, 1L, "test", 1L);
+                bookmarks.add(bookmark);
+            }
+
+            BookmarksWithMarkedWalkwayResponse bookmarksWithMarkedWalkwayResponse =
+                    BookmarksWithMarkedWalkwayMapper.toBookmarksWithMarkedWalkwayResponse(bookmarks);
+
+            when(walkwayQueryService.existsByWalkwayId(walkwayId)).thenReturn(true);
+            when(bookmarkUseCase.getBookmarksWithMarkedWalkway(customOAuth2User.getMemberId(), walkwayId))
+                    .thenReturn(bookmarksWithMarkedWalkwayResponse);
+
+            // When
+            ResultActions response = mockMvc.perform(get("/walkways/" + walkwayId + "/bookmarks")
+                    .contentType(MediaType.APPLICATION_JSON));
+
+            // Then
+            response.andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data.bookmarks").isArray())
+                    .andExpect(jsonPath("$.data.bookmarks.size()").value(5));
+        }
+    }
+
+    @Nested
+    @DisplayName("updateWalkway 메서드는")
+    class Describe_updateWalkway {
+        @Test
+        @DisplayName("204를 반환한다.")
+        void it_returns_204() throws Exception {
+            // Given
+            Long walkwayId = 1L;
+            UpdateWalkwayRequest updateWalkwayRequest = new UpdateWalkwayRequest(
+                    "test name",
+                    "test memo",
+                    List.of(),
+                    "비공개");
+
+            when(walkwayQueryService.existsByWalkwayId(walkwayId)).thenReturn(true);
+
+            // When
+            ResultActions response = mockMvc.perform(put("/walkways/" + walkwayId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(updateWalkwayRequest)));
+
+            // Then
+            response.andExpect(status().isNoContent());
         }
     }
 }
