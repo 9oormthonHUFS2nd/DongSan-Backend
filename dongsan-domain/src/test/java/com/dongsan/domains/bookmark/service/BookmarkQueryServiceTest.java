@@ -9,13 +9,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
+import com.dongsan.domains.bookmark.dto.BookmarksWithMarkedWalkwayDTO;
 import com.dongsan.domains.bookmark.entity.Bookmark;
 import com.dongsan.domains.bookmark.repository.BookmarkQueryDSLRepository;
 import com.dongsan.domains.bookmark.repository.BookmarkRepository;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.error.code.BookmarkErrorCode;
 import com.dongsan.error.exception.CustomException;
-import fixture.BookmarkFixture;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -229,18 +229,18 @@ class BookmarkQueryServiceTest {
             Long walkwayId = 1L;
             Long memberId = 1L;
 
-            List<Bookmark> bookmarks = new ArrayList<>();
+            List<BookmarksWithMarkedWalkwayDTO> dto = new ArrayList<>();
             for (int i = 0; i < 5; i++) {
-                bookmarks.add(BookmarkFixture.createBookmark(null));
+                dto.add(new BookmarksWithMarkedWalkwayDTO(1L, 1L, "test", 1L));
             }
 
-            when(bookmarkQueryDSLRepository.getBookmarksWithMarkedWalkway(walkwayId, memberId)).thenReturn(bookmarks);
+            when(bookmarkQueryDSLRepository.getBookmarksWithMarkedWalkway(walkwayId, memberId)).thenReturn(dto);
 
             // When
-            List<Bookmark> result = bookmarkQueryService.getBookmarksWithMarkedWalkway(walkwayId, memberId);
+            List<BookmarksWithMarkedWalkwayDTO> result = bookmarkQueryService.getBookmarksWithMarkedWalkway(walkwayId, memberId);
 
             // Then
-            assertThat(result).isEqualTo(bookmarks);
+            assertThat(result).isEqualTo(dto);
         }
     }
 

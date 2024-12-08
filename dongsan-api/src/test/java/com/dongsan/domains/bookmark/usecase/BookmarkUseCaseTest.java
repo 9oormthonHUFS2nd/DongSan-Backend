@@ -7,17 +7,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.dongsan.domains.bookmark.dto.BookmarksWithMarkedWalkwayDTO;
 import com.dongsan.domains.bookmark.dto.request.BookmarkNameRequest;
 import com.dongsan.domains.bookmark.dto.response.BookmarkIdResponse;
 import com.dongsan.domains.bookmark.dto.response.BookmarksWithMarkedWalkwayResponse;
 import com.dongsan.domains.bookmark.entity.Bookmark;
-import com.dongsan.domains.bookmark.entity.MarkedWalkway;
 import com.dongsan.domains.bookmark.service.BookmarkCommandService;
 import com.dongsan.domains.bookmark.service.BookmarkQueryService;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.member.service.MemberQueryService;
-import fixture.BookmarkFixture;
-import fixture.MarkedWalkwayFixture;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -106,19 +104,18 @@ class BookmarkUseCaseTest {
             // Given
             Long memberId = 1L;
             Long walkwayId = 1L;
-            List<Bookmark> bookmarks = new ArrayList<>();
+            List<BookmarksWithMarkedWalkwayDTO> bookmarks = new ArrayList<>();
 
-            for(int i = 0; i < 5; i++) {
-                Bookmark bookmark = BookmarkFixture.createBookmark(null);
-                MarkedWalkway markedWalkway = MarkedWalkwayFixture.createMarkedWalkway(null, bookmark);
-                bookmark.addMarkedWalkway(markedWalkway);
+            for (int i = 0; i < 5; i++) {
+                BookmarksWithMarkedWalkwayDTO bookmark = new BookmarksWithMarkedWalkwayDTO(1L, 1L, "test", 1L);
                 bookmarks.add(bookmark);
             }
 
             when(bookmarkQueryService.getBookmarksWithMarkedWalkway(walkwayId, memberId)).thenReturn(bookmarks);
 
             // When
-            BookmarksWithMarkedWalkwayResponse result = bookmarkUseCase.getBookmarksWithMarkedWalkway(memberId, walkwayId);
+            BookmarksWithMarkedWalkwayResponse result = bookmarkUseCase.getBookmarksWithMarkedWalkway(memberId,
+                    walkwayId);
 
             // Then
             assertThat(result.bookmarks()).hasSize(bookmarks.size());

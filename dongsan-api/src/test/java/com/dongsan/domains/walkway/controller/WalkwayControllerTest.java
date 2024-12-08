@@ -9,8 +9,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.dongsan.domains.auth.security.oauth2.dto.CustomOAuth2User;
+import com.dongsan.domains.bookmark.dto.BookmarksWithMarkedWalkwayDTO;
 import com.dongsan.domains.bookmark.dto.response.BookmarksWithMarkedWalkwayResponse;
-import com.dongsan.domains.bookmark.entity.Bookmark;
 import com.dongsan.domains.bookmark.mapper.BookmarksWithMarkedWalkwayMapper;
 import com.dongsan.domains.bookmark.usecase.BookmarkUseCase;
 import com.dongsan.domains.member.entity.Member;
@@ -25,7 +25,6 @@ import com.dongsan.domains.walkway.service.WalkwayQueryService;
 import com.dongsan.domains.walkway.usecase.WalkwayUseCase;
 import com.dongsan.error.code.SystemErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import fixture.BookmarkFixture;
 import fixture.WalkwayFixture;
 import java.util.ArrayList;
 import java.util.List;
@@ -264,10 +263,11 @@ class WalkwayControllerTest {
         void it_returns_bookmarks() throws Exception {
             // Given
             Long walkwayId = 1L;
-            List<Bookmark> bookmarks = new ArrayList<>();
+            List<BookmarksWithMarkedWalkwayDTO> bookmarks = new ArrayList<>();
 
             for(int i = 0; i < 5; i++) {
-                Bookmark bookmark = BookmarkFixture.createBookmark(null);
+                BookmarksWithMarkedWalkwayDTO bookmark
+                        = new BookmarksWithMarkedWalkwayDTO(1L, 1L, "test", 1L);
                 bookmarks.add(bookmark);
             }
 
