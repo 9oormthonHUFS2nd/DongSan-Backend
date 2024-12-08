@@ -3,8 +3,10 @@ package com.dongsan.domains.bookmark.controller;
 import com.dongsan.apiResponse.ResponseFactory;
 import com.dongsan.apiResponse.SuccessResponse;
 import com.dongsan.common.validation.annotation.ExistBookmark;
+import com.dongsan.common.validation.annotation.ExistWalkway;
 import com.dongsan.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.domains.bookmark.dto.request.BookmarkNameRequest;
+import com.dongsan.domains.bookmark.dto.request.WalkwayIdRequest;
 import com.dongsan.domains.bookmark.dto.response.BookmarkIdResponse;
 import com.dongsan.domains.bookmark.usecase.BookmarkUseCase;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -49,4 +52,27 @@ public class BookmarkController {
         bookmarkUseCase.renameBookmark(customOAuth2User.getMemberId(), bookmarkId, request);
         return ResponseFactory.noContent();
     }
+
+    @PostMapping("/{bookmarkId}/walkways")
+    @Operation(summary = "북마크에 산책로를 추가")
+    public ResponseEntity<Void> addWalkway(
+            @ExistBookmark @PathVariable Long bookmarkId,
+            @Valid @RequestBody WalkwayIdRequest request,
+            @AuthenticationPrincipal CustomOAuth2User customOAuth2User
+    ){
+        bookmarkUseCase.addWalkway(customOAuth2User.getMemberId(), bookmarkId, request);
+        return ResponseFactory.noContent();
+    }
+
+    @DeleteMapping("/{bookmarkId}/walkways/{walkwayId}")
+    @Operation(summary = "북마크에 산책로를 제거")
+    public ResponseEntity<Void> deleteWalkway(
+            @ExistBookmark @PathVariable Long bookmarkId,
+            @ExistWalkway @PathVariable Long walkwayId,
+            @AuthenticationPrincipal CustomOAuth2User customOAuth2User
+    ){
+        bookmarkUseCase.deleteWalkway(customOAuth2User.getMemberId(), bookmarkId, walkwayId);
+        return ResponseFactory.noContent();
+    }
+
 }
