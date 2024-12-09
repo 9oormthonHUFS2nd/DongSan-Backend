@@ -344,7 +344,7 @@ class BookmarkControllerTest {
             // when & then
             mockMvc.perform(get("/bookmarks/{bookmarkId}/walkways", bookmarkId)
                             .param("size", size.toString())
-                            .param("walkwayId", size.toString())
+                            .param("walkwayId", walkwayId.toString())
                             .contentType("application/json;charset=UTF-8"))
                     .andExpect(status().isBadRequest())
                     .andReturn();

@@ -80,8 +80,6 @@ class UserProfileControllerTest {
                     .andExpect(jsonPath("$.data.email").value(getProfileResponse.email()))
                     .andExpect(jsonPath("$.data.nickname").value(getProfileResponse.nickname()))
                     .andReturn();
-            ;
-
         }
 
     }
