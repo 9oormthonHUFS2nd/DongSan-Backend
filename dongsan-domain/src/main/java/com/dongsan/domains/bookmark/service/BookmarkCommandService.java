@@ -29,6 +29,9 @@ public class BookmarkCommandService {
         bookmark.rename(name);
     }
 
+    /**
+     * 북마크에 산책로 추가
+     */
     public void addWalkway(Bookmark bookmark, Walkway walkway) {
         MarkedWalkway markedWalkway = MarkedWalkway.builder()
                 .bookmark(bookmark)
@@ -37,7 +40,18 @@ public class BookmarkCommandService {
         markedWalkwayRepository.save(markedWalkway);
     }
 
+    /**
+     * 북마크에서 산책로 제거
+     */
     public void deleteWalkway(Bookmark bookmark, Walkway walkway) {
         markedWalkwayRepository.deleteByBookmarkIdAndWalkwayId(bookmark.getId(), walkway.getId());
+    }
+
+    /**
+     * Bookmark & MarkedWalkway 삭제
+     */
+    public void deleteBookmark(Bookmark bookmark) {
+        bookmarkRepository.deleteById(bookmark.getId());
+        markedWalkwayRepository.deleteAllByBookmarkId(bookmark.getId());
     }
 }

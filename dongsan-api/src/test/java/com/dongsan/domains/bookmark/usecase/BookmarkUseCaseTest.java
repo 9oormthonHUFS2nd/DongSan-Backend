@@ -11,19 +11,23 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.dongsan.domains.bookmark.dto.BookmarksWithMarkedWalkwayDTO;
+import com.dongsan.domains.bookmark.dto.param.GetBookmarkDetailParam;
 import com.dongsan.domains.bookmark.dto.request.BookmarkNameRequest;
 import com.dongsan.domains.bookmark.dto.request.WalkwayIdRequest;
 import com.dongsan.domains.bookmark.dto.response.BookmarkIdResponse;
 import com.dongsan.domains.bookmark.dto.response.BookmarksWithMarkedWalkwayResponse;
+import com.dongsan.domains.bookmark.dto.response.GetBookmarkDetailResponse;
 import com.dongsan.domains.bookmark.entity.Bookmark;
 import com.dongsan.domains.bookmark.service.BookmarkCommandService;
 import com.dongsan.domains.bookmark.service.BookmarkQueryService;
+import com.dongsan.domains.bookmark.service.MarkedWalkwayQueryService;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.member.service.MemberQueryService;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
 import com.dongsan.error.code.BookmarkErrorCode;
 import com.dongsan.error.exception.CustomException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -47,6 +51,8 @@ class BookmarkUseCaseTest {
     BookmarkCommandService bookmarkCommandService;
     @Mock
     WalkwayQueryService walkwayQueryService;
+    @Mock
+    MarkedWalkwayQueryService markedWalkwayQueryService;
 
     @Nested
     @DisplayName("createBookmark 메서드는")
@@ -229,6 +235,62 @@ class BookmarkUseCaseTest {
 
             // Then
             assertThat(result.bookmarks()).hasSize(bookmarks.size());
+        }
+    }
+
+    @Nested
+    @DisplayName("deleteBookmark 메서드는")
+    class Describe_deleteBookmark{
+        @Test
+        @DisplayName("북마크를 삭제한다.")
+        void it_deletes_bookmark(){
+            // given
+            Long memberId = 1L;
+            Long bookmarkId = 2L;
+            Member member = createMember();
+            Bookmark bookmark = createBookmark(member);
+            when(memberQueryService.getMember(memberId)).thenReturn(member);
+            when(bookmarkQueryService.getBookmark(bookmarkId)).thenReturn(bookmark);
+
+            // when
+            bookmarkUseCase.deleteBookmark(memberId, bookmarkId);
+
+            // then
+            verify(bookmarkQueryService).isOwnerOfBookmark(member, bookmark);
+            verify(bookmarkCommandService).deleteBookmark(bookmark);
+        }
+    }
+
+    @Nested
+    @DisplayName("getBookmarkDetails 메서드는")
+    class Describe_getBookmarkDetails{
+        @Test
+        @DisplayName("북마크 상세 정보를 DTO로 반환한다.")
+        void it_returns_DTO(){
+            // given
+            GetBookmarkDetailParam param = new GetBookmarkDetailParam(1L, 2L, 10, 3L);
+            Member member = createMember();
+            Bookmark bookmark = createBookmark(member);
+            Walkway walkway = createWalkway(member);
+            LocalDateTime lastCreatedAt = LocalDateTime.of(2024, 12, 9, 11, 11);
+            List<Walkway> walkways = List.of(
+                    createWalkway(null),
+                    createWalkway(null));
+            when(memberQueryService.getMember(param.memberId())).thenReturn(member);
+            when(bookmarkQueryService.getBookmark(param.bookmarkId())).thenReturn(bookmark);
+            when(walkwayQueryService.getWalkway(param.walkwayId())).thenReturn(walkway);
+            when(markedWalkwayQueryService.getCreatedAt(bookmark, walkway)).thenReturn(lastCreatedAt);
+            when(walkwayQueryService.getBookmarkWalkway(bookmark, param.size(), lastCreatedAt)).thenReturn(walkways);
+
+            // when
+            GetBookmarkDetailResponse response = bookmarkUseCase.getBookmarkDetails(param);
+
+            // then
+            assertThat(response.name()).isEqualTo(bookmark.getName());
+            assertThat(response.walkways()).hasSize(walkways.size());
+            for(int i=0; i<response.walkways().size(); i++){
+                assertThat(response.walkways().get(i).name()).isEqualTo(walkways.get(i).getName());
+            }
         }
     }
 }

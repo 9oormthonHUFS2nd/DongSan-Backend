@@ -1,5 +1,8 @@
 package com.dongsan.domains.walkway.service;
 
+import com.dongsan.domains.bookmark.entity.Bookmark;
+import com.dongsan.domains.bookmark.entity.MarkedWalkway;
+import com.dongsan.domains.bookmark.repository.MarkedWalkwayQueryDSLRepository;
 import com.dongsan.domains.walkway.dto.SearchWalkwayPopular;
 import com.dongsan.domains.walkway.dto.SearchWalkwayRating;
 import com.dongsan.domains.walkway.entity.Walkway;
@@ -7,6 +10,7 @@ import com.dongsan.domains.walkway.repository.WalkwayQueryDSLRepository;
 import com.dongsan.domains.walkway.repository.WalkwayRepository;
 import com.dongsan.error.code.WalkwayErrorCode;
 import com.dongsan.error.exception.CustomException;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +23,7 @@ public class WalkwayQueryService {
 
     private final WalkwayRepository walkwayRepository;
     private final WalkwayQueryDSLRepository walkwayQueryDSLRepository;
+    private final MarkedWalkwayQueryDSLRepository markedWalkwayQueryDSLRepository;
 
     public Walkway getWalkwayWithHashtagAndLike(Long userId, Long walkwayId) {
         return walkwayQueryDSLRepository.getUserWalkwayWithHashtagAndLike(userId, walkwayId);
@@ -51,5 +56,10 @@ public class WalkwayQueryService {
 
     public Walkway getWalkwayWithHashtag(Long walkwayId) {
         return walkwayQueryDSLRepository.getWalkwayWithHashtag(walkwayId);
+    }
+
+    public List<Walkway> getBookmarkWalkway(Bookmark bookmark, Integer size, LocalDateTime lastCreatedAt) {
+        return markedWalkwayQueryDSLRepository.getBookmarkWalkway(bookmark.getId(), size, lastCreatedAt)
+                .stream().map(MarkedWalkway::getWalkway).toList();
     }
 }

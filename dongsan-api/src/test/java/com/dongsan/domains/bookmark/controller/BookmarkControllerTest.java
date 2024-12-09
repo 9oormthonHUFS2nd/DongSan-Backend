@@ -3,20 +3,27 @@ package com.dongsan.domains.bookmark.controller;
 import static fixture.MemberFixture.createMemberWithId;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.dongsan.domains.auth.security.oauth2.dto.CustomOAuth2User;
+import com.dongsan.domains.bookmark.dto.param.GetBookmarkDetailParam;
 import com.dongsan.domains.bookmark.dto.request.BookmarkNameRequest;
 import com.dongsan.domains.bookmark.dto.request.WalkwayIdRequest;
 import com.dongsan.domains.bookmark.dto.response.BookmarkIdResponse;
+import com.dongsan.domains.bookmark.dto.response.GetBookmarkDetailResponse;
+import com.dongsan.domains.bookmark.dto.response.GetBookmarkDetailResponse.WalkwayInfo;
 import com.dongsan.domains.bookmark.service.BookmarkQueryService;
 import com.dongsan.domains.bookmark.usecase.BookmarkUseCase;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.LocalDateTime;
+import java.util.List;
+import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -286,6 +293,96 @@ class BookmarkControllerTest {
             mockMvc.perform(delete("/bookmarks/{bookmarkId}/walkways/{walkwayId}", bookmarkId, walkwayId)
                             .contentType("application/json;charset=UTF-8"))
                     .andExpect(status().isNoContent())
+                    .andReturn();
+        }
+    }
+
+    @Nested
+    @DisplayName("deleteBookmark 메서드는")
+    class Describe_deleteBookmark{
+        @Test
+        @DisplayName("bookmark가 존재하지 않으면 예외를 반환한다.")
+        void it_returns_400_when_bookmark_not_exist() throws Exception{
+            // given
+            Long bookmarkId = 1L;
+            when(bookmarkQueryService.existsById(bookmarkId)).thenReturn(false);
+
+            // when & then
+            mockMvc.perform(delete("/bookmarks/{bookmarkId}", bookmarkId)
+                            .contentType("application/json;charset=UTF-8"))
+                    .andExpect(status().isBadRequest())
+                    .andReturn();
+        }
+
+        @Test
+        @DisplayName("북마크를 삭제하면 204를 반환한다.")
+        void it_returns_204() throws Exception{
+            // given
+            Long bookmarkId = 1L;
+            when(bookmarkQueryService.existsById(bookmarkId)).thenReturn(true);
+
+            // when & then
+            mockMvc.perform(delete("/bookmarks/{bookmarkId}", bookmarkId)
+                            .contentType("application/json;charset=UTF-8"))
+                    .andExpect(status().isNoContent())
+                    .andReturn();
+        }
+    }
+
+    @Nested
+    @DisplayName("getBookmarkDetail 메서드는")
+    class Describe_getBookmarkDetail{
+        @Test
+        @DisplayName("bookmark가 존재하지 않으면 예외를 반환한다.")
+        void it_returns_400_when_bookmark_not_exist() throws Exception{
+            // given
+            Long bookmarkId = 1L;
+            Integer size = 10;
+            Long walkwayId = 3L;
+            when(bookmarkQueryService.existsById(bookmarkId)).thenReturn(false);
+
+            // when & then
+            mockMvc.perform(get("/bookmarks/{bookmarkId}/walkways", bookmarkId)
+                            .param("size", size.toString())
+                            .param("walkwayId", walkwayId.toString())
+                            .contentType("application/json;charset=UTF-8"))
+                    .andExpect(status().isBadRequest())
+                    .andReturn();
+        }
+
+        @Test
+        @DisplayName("북마크 상세 조회 결과를 DTO로 반환한다.")
+        void it_returns_DTO() throws Exception{
+            // given
+            Long bookmarkId = 1L;
+            Integer size = 10;
+            Long walkwayId = 3L;
+            GetBookmarkDetailParam param = new GetBookmarkDetailParam(customOAuth2User.getMemberId(), bookmarkId, size, walkwayId);
+            GetBookmarkDetailResponse response = GetBookmarkDetailResponse.builder()
+                    .name("북마크 이름")
+                    .walkways(List.of(
+                            WalkwayInfo.builder()
+                                    .walkwayId(1L)
+                                    .name("산책로이름")
+                                    .date(LocalDateTime.now())
+                                    .distance(3.5)
+                                    .hashtags(List.of("a", "b", "c"))
+                                    .courseImageUrl("image.url")
+                                    .build()
+                    ))
+                    .build();
+            when(bookmarkQueryService.existsById(bookmarkId)).thenReturn(true);
+            when(bookmarkUseCase.getBookmarkDetails(param)).thenReturn(response);
+
+            // when & then
+            mockMvc.perform(get("/bookmarks/{bookmarkId}/walkways", bookmarkId)
+                            .param("size", size.toString())
+                            .param("walkwayId", walkwayId.toString())
+                            .contentType("application/json;charset=UTF-8"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data.name").value(response.name()))
+                    .andExpect(jsonPath("$.data.walkways.size()", CoreMatchers.is(response.walkways().size())))
+                    .andExpect(jsonPath("$.data.walkways[0].name").value(response.walkways().get(0).name()))
                     .andReturn();
         }
     }

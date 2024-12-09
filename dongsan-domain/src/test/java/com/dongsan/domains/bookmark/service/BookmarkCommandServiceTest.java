@@ -108,7 +108,6 @@ class BookmarkCommandServiceTest {
             reflectField(walkway, "id", 1L);
             doNothing().when(markedWalkwayRepository).deleteByBookmarkIdAndWalkwayId(bookmark.getId(), walkway.getId());
 
-
             // when
             bookmarkCommandService.deleteWalkway(bookmark, walkway);
 
@@ -116,4 +115,24 @@ class BookmarkCommandServiceTest {
             verify(markedWalkwayRepository).deleteByBookmarkIdAndWalkwayId(bookmark.getId(), walkway.getId());
         }
     }
+
+    @Nested
+    @DisplayName("deleteBookmark 메서드는")
+    class Describe_deleteBookmark{
+        @Test
+        @DisplayName("북마크와 MarkedWalkway를 삭제한다.")
+        void it_deletes_bookmark_and_markedWalkway(){
+            // given
+            Bookmark bookmark = createBookmark(null);
+            reflectField(bookmark, "id", 1L);
+
+            // when
+            bookmarkCommandService.deleteBookmark(bookmark);
+
+            // then
+            verify(bookmarkRepository).deleteById(bookmark.getId());
+            verify(markedWalkwayRepository).deleteAllByBookmarkId(bookmark.getId());
+        }
+    }
+
 }
