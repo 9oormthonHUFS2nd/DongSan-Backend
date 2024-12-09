@@ -79,7 +79,6 @@ class UserProfileControllerTest {
                     .andExpect(jsonPath("$.data.profileImageUrl").value(getProfileResponse.profileImageUrl()))
                     .andExpect(jsonPath("$.data.email").value(getProfileResponse.email()))
                     .andExpect(jsonPath("$.data.nickname").value(getProfileResponse.nickname()))
-                    //.andDo(print())
                     .andReturn();
             ;
 

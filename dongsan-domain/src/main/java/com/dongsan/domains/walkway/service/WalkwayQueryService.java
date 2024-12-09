@@ -1,6 +1,7 @@
 package com.dongsan.domains.walkway.service;
 
 import com.dongsan.domains.bookmark.entity.Bookmark;
+import com.dongsan.domains.bookmark.entity.MarkedWalkway;
 import com.dongsan.domains.bookmark.repository.MarkedWalkwayQueryDSLRepository;
 import com.dongsan.domains.walkway.dto.SearchWalkwayPopular;
 import com.dongsan.domains.walkway.dto.SearchWalkwayRating;
@@ -58,6 +59,7 @@ public class WalkwayQueryService {
     }
 
     public List<Walkway> getBookmarkWalkway(Bookmark bookmark, Integer size, LocalDateTime lastCreatedAt) {
-        return markedWalkwayQueryDSLRepository.getBookmarkWalkway(bookmark.getId(), size, lastCreatedAt);
+        return markedWalkwayQueryDSLRepository.getBookmarkWalkway(bookmark.getId(), size, lastCreatedAt)
+                .stream().map(MarkedWalkway::getWalkway).toList();
     }
 }

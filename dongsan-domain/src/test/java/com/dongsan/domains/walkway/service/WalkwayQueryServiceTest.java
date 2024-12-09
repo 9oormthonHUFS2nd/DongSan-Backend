@@ -1,10 +1,16 @@
 package com.dongsan.domains.walkway.service;
 
+import static fixture.BookmarkFixture.createBookmark;
+import static fixture.ReflectFixture.reflectField;
+import static fixture.WalkwayFixture.createWalkway;
 import static fixture.WalkwayFixture.createWalkwayWithId;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
+import com.dongsan.domains.bookmark.entity.Bookmark;
+import com.dongsan.domains.bookmark.entity.MarkedWalkway;
+import com.dongsan.domains.bookmark.repository.MarkedWalkwayQueryDSLRepository;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.walkway.dto.SearchWalkwayPopular;
 import com.dongsan.domains.walkway.dto.SearchWalkwayRating;
@@ -12,8 +18,10 @@ import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.repository.WalkwayQueryDSLRepository;
 import com.dongsan.domains.walkway.repository.WalkwayRepository;
 import com.dongsan.error.exception.CustomException;
+import fixture.MarkedWalkwayFixture;
 import fixture.MemberFixture;
 import fixture.WalkwayFixture;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -30,14 +38,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 @DisplayName("WalkwayQueryService Unit Test")
 class WalkwayQueryServiceTest {
-
+    @InjectMocks
+    WalkwayQueryService walkwayQueryService;
     @Mock
     WalkwayRepository walkwayRepository;
     @Mock
     WalkwayQueryDSLRepository walkwayQueryDSLRepository;
+    @Mock
+    MarkedWalkwayQueryDSLRepository markedWalkwayQueryDSLRepository;
 
-    @InjectMocks
-    WalkwayQueryService walkwayQueryService;
 
     @Nested
     @DisplayName("getWalkwayWithHashtagAndLike 메서드는")
@@ -250,6 +259,51 @@ class WalkwayQueryServiceTest {
 
             // Then
             assertThat(result).isEqualTo(walkway);
+        }
+    }
+
+    @Nested
+    @DisplayName("getBookmarkWalkway 메서드는")
+    class Describe_getBookmarkWalkway{
+        @Test
+        @DisplayName("산책로가 존재하면 산책로 리스트를 반환한다.")
+        void it_returns_walkway_list(){
+            // given
+            Bookmark bookmark = createBookmark(null);
+            reflectField(bookmark, "id", 1L);
+            Integer size = 10;
+            LocalDateTime lastCreatedAt = LocalDateTime.of(2024, 12, 9, 11, 11);
+            List<MarkedWalkway> markedWalkways = List.of(
+                    MarkedWalkwayFixture.createMarkedWalkway(createWalkway(null), bookmark),
+                    MarkedWalkwayFixture.createMarkedWalkway(createWalkway(null), bookmark),
+                    MarkedWalkwayFixture.createMarkedWalkway(createWalkway(null), bookmark));
+            when(markedWalkwayQueryDSLRepository.getBookmarkWalkway(bookmark.getId(), size, lastCreatedAt)).thenReturn(markedWalkways);
+
+            // when
+            List<Walkway> result = walkwayQueryService.getBookmarkWalkway(bookmark, size, lastCreatedAt);
+
+            // then
+            assertThat(result).hasSize(markedWalkways.size());
+            for(int i=0; i<result.size(); i++){
+                assertThat(result.get(i).getName()).isEqualTo(markedWalkways.get(i).getWalkway().getName());
+            }
+        }
+
+        @Test
+        @DisplayName("산책로가 존재하지 않으면 빈 리스트를 반환한다.")
+        void it_returns_empty_list(){
+            // given
+            Bookmark bookmark = createBookmark(null);
+            reflectField(bookmark, "id", 1L);
+            Integer size = 10;
+            LocalDateTime lastCreatedAt = LocalDateTime.of(2024, 12, 9, 11, 11);
+            when(markedWalkwayQueryDSLRepository.getBookmarkWalkway(bookmark.getId(), size, lastCreatedAt)).thenReturn(Collections.emptyList());
+
+            // when
+            List<Walkway> result = walkwayQueryService.getBookmarkWalkway(bookmark, size, lastCreatedAt);
+
+            // then
+            assertThat(result).isEmpty();
         }
     }
 }

@@ -1,7 +1,7 @@
 package com.dongsan.domains.bookmark.repository;
 
+import com.dongsan.domains.bookmark.entity.MarkedWalkway;
 import com.dongsan.domains.bookmark.entity.QMarkedWalkway;
-import com.dongsan.domains.walkway.entity.Walkway;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDateTime;
@@ -16,8 +16,8 @@ public class MarkedWalkwayQueryDSLRepository {
 
     private QMarkedWalkway markedWalkway = QMarkedWalkway.markedWalkway;
 
-    public List<Walkway> getBookmarkWalkway(Long bookmarkId, Integer size, LocalDateTime lastCreatedAt) {
-        return queryFactory.select(markedWalkway.walkway)
+    public List<MarkedWalkway> getBookmarkWalkway(Long bookmarkId, Integer size, LocalDateTime lastCreatedAt) {
+        return queryFactory.select(markedWalkway)
                 .from(markedWalkway)
                 .where(markedWalkway.bookmark.id.eq(bookmarkId), createdAtLt(lastCreatedAt))
                 .orderBy(markedWalkway.createdAt.desc())
