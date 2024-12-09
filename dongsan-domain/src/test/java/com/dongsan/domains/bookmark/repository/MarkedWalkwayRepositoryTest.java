@@ -95,4 +95,45 @@ class MarkedWalkwayRepositoryTest extends RepositoryTest {
         }
     }
 
+    @Nested
+    @DisplayName("deleteAllByBookmarkId 메서드는")
+    class Describe_deleteAllByBookmarkId{
+        Bookmark bookmark1;
+        Bookmark bookmark2;
+
+        @BeforeEach
+        void setUp(){
+            bookmark1 = createBookmark(null);
+            em.persist(bookmark1);
+            for(int i=0; i<5; i++){
+                Walkway walkway = createWalkway(null);
+                MarkedWalkway markedWalkway = createMarkedWalkway(walkway, bookmark1);
+                em.persist(walkway);
+                em.persist(markedWalkway);
+            }
+            bookmark2 = createBookmark(null);
+            em.persist(bookmark2);
+            for(int i=0; i<3; i++){
+                Walkway walkway = createWalkway(null);
+                MarkedWalkway markedWalkway = createMarkedWalkway(walkway, bookmark2);
+                em.persist(walkway);
+                em.persist(markedWalkway);
+            }
+        }
+
+        @Test
+        @DisplayName("북마크에 해당되는 MarkedWalkway들을 전부 삭제한다.")
+        void it_deletes_all_markedWalkway(){
+            // given
+            Long bookmarkId = bookmark1.getId();
+
+            // when
+            markedWalkwayRepository.deleteAllByBookmarkId(bookmarkId);
+
+            // then
+            int count = markedWalkwayRepository.countByBookmarkId(bookmarkId);
+            assertThat(count).isZero();
+        }
+    }
+
 }

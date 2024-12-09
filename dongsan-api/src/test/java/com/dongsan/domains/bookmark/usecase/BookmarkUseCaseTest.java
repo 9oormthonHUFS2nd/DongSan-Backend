@@ -231,4 +231,27 @@ class BookmarkUseCaseTest {
             assertThat(result.bookmarks()).hasSize(bookmarks.size());
         }
     }
+
+    @Nested
+    @DisplayName("deleteBookmark 메서드는")
+    class Describe_deleteBookmark{
+        @Test
+        @DisplayName("북마크를 삭제한다.")
+        void it_deletes_bookmark(){
+            // given
+            Long memberId = 1L;
+            Long bookmarkId = 2L;
+            Member member = createMember();
+            Bookmark bookmark = createBookmark(member);
+            when(memberQueryService.getMember(memberId)).thenReturn(member);
+            when(bookmarkQueryService.getBookmark(bookmarkId)).thenReturn(bookmark);
+
+            // when
+            bookmarkUseCase.deleteBookmark(memberId, bookmarkId);
+
+            // then
+            verify(bookmarkQueryService).isOwnerOfBookmark(member, bookmark);
+            verify(bookmarkCommandService).deleteBookmark(bookmark);
+        }
+    }
 }

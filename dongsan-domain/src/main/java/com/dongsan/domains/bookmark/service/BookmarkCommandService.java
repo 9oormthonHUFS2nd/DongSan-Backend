@@ -48,7 +48,7 @@ public class BookmarkCommandService {
     }
 
     /**
-     * Bookmark & MarkedBookmark 삭제
+     * Bookmark & MarkedWalkway 삭제
      */
     public void deleteBookmark(Bookmark bookmark) {
         bookmarkRepository.deleteById(bookmark.getId());

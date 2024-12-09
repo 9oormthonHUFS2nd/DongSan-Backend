@@ -40,9 +40,10 @@ public class UserProfileController {
     @GetMapping("/users/bookmarks/title")
     public ResponseEntity<SuccessResponse<GetBookmarksResponse>> getBookmarks(
             @RequestParam(required = false) Long bookmarkId,
-            @RequestParam(defaultValue = "10") Integer limit,
+            @RequestParam(defaultValue = "10") Integer size,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {
-        return ResponseFactory.ok(userProfileUsecase.getUserBookmarks(customOAuth2User.getMemberId(), bookmarkId, limit));
+        GetBookmarksResponse response = userProfileUsecase.getUserBookmarks(customOAuth2User.getMemberId(), bookmarkId, size);
+        return ResponseFactory.ok(response);
     }
 }

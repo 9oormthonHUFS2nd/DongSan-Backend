@@ -290,4 +290,36 @@ class BookmarkControllerTest {
         }
     }
 
+    @Nested
+    @DisplayName("deleteBookmark 메서드는")
+    class Describe_deleteBookmark{
+        @Test
+        @DisplayName("bookmark가 존재하지 않으면 예외를 반환한다.")
+        void it_returns_400_when_bookmark_not_exist() throws Exception{
+            // given
+            Long bookmarkId = 1L;
+            when(bookmarkQueryService.existsById(bookmarkId)).thenReturn(false);
+
+            // when & then
+            mockMvc.perform(delete("/bookmarks/{bookmarkId}", bookmarkId)
+                            .contentType("application/json;charset=UTF-8"))
+                    .andExpect(status().isBadRequest())
+                    .andReturn();
+        }
+
+        @Test
+        @DisplayName("북마크를 삭제하면 204를 반환한다.")
+        void it_returns_204() throws Exception{
+            // given
+            Long bookmarkId = 1L;
+            when(bookmarkQueryService.existsById(bookmarkId)).thenReturn(true);
+
+            // when & then
+            mockMvc.perform(delete("/bookmarks/{bookmarkId}", bookmarkId)
+                            .contentType("application/json;charset=UTF-8"))
+                    .andExpect(status().isNoContent())
+                    .andReturn();
+        }
+    }
+
 }

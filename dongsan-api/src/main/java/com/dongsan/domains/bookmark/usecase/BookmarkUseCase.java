@@ -34,8 +34,6 @@ public class BookmarkUseCase {
     private final WalkwayQueryService walkwayQueryService;
     private final MarkedWalkwayQueryService markedWalkwayQueryService;
 
-
-
     @Transactional
     public BookmarkIdResponse createBookmark(Long memberId, BookmarkNameRequest request) {
         Member member = memberQueryService.getMember(memberId);

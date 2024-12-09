@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.dongsan.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.user.dto.response.GetBookmarksResponse;
+import com.dongsan.domains.user.dto.response.GetBookmarksResponse.BookmarkInfo;
 import com.dongsan.domains.user.dto.response.GetProfileResponse;
 import com.dongsan.domains.user.usecase.UserProfileUseCase;
 import java.util.ArrayList;
@@ -61,7 +62,6 @@ class UserProfileControllerTest {
         @Test
         @DisplayName("유저가 존재하면 프로필을 조회한다.")
         void it_returns_userProfile() throws Exception {
-
             // Given
             GetProfileResponse getProfileResponse = GetProfileResponse.builder()
                             .profileImageUrl("Test Url")
@@ -78,7 +78,10 @@ class UserProfileControllerTest {
             response.andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.profileImageUrl").value(getProfileResponse.profileImageUrl()))
                     .andExpect(jsonPath("$.data.email").value(getProfileResponse.email()))
-                    .andExpect(jsonPath("$.data.nickname").value(getProfileResponse.nickname()));
+                    .andExpect(jsonPath("$.data.nickname").value(getProfileResponse.nickname()))
+                    //.andDo(print())
+                    .andReturn();
+            ;
 
         }
 
@@ -91,11 +94,10 @@ class UserProfileControllerTest {
         @DisplayName("북마크가 존재하면 북마크를 아이디 기준 내림차순으로 반환한다.")
         void getUserBookmarks() throws Exception {
             // Given
-            List<GetBookmarksResponse.BookmarkInfo> bookmarkInfoList = new ArrayList<>();
+            List<BookmarkInfo> bookmarkInfoList = new ArrayList<>();
 
             for(long id = 2L; id != 0L; id--) {
-                GetBookmarksResponse.BookmarkInfo bookmarkInfo =
-                        GetBookmarksResponse.BookmarkInfo.builder()
+                BookmarkInfo bookmarkInfo = BookmarkInfo.builder()
                                 .bookmarkId(id)
                                 .title("test" + id)
                                 .build();
@@ -122,7 +124,6 @@ class UserProfileControllerTest {
                     .andExpect(jsonPath("$.data.bookmarks.size()", CoreMatchers.is(limit)))
                     .andExpect(jsonPath("$.data.bookmarks[0].title").value(getBookmarksResponse.bookmarks().get(0).title()))
                     .andExpect(jsonPath("$.data.bookmarks[1].title").value(getBookmarksResponse.bookmarks().get(1).title()));
-
         }
     }
 }
