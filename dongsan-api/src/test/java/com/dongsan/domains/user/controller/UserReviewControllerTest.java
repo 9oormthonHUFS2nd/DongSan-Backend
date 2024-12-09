@@ -73,7 +73,7 @@ class UserReviewControllerTest {
 
             // when & then
             mockMvc.perform(get("/users/reviews")
-                            .param("limit", String.valueOf(limit))
+                            .param("size", String.valueOf(limit))
                             .param("reviewId", String.valueOf(reviewId))
                             .contentType("application/json;charset=UTF-8")
                     )
@@ -93,7 +93,7 @@ class UserReviewControllerTest {
 
             // when & then
             mockMvc.perform(get("/users/reviews")
-                            .param("limit", String.valueOf(limit))
+                            .param("size", String.valueOf(limit))
                             .param("reviewId", String.valueOf(reviewId))
                             .contentType("application/json;charset=UTF-8"))
                     .andExpect(status().isBadRequest())

@@ -102,6 +102,7 @@ public class WalkwayQueryDSLRepository {
         return walkwayId != null ? walkway.id.lt(walkwayId) : null;
     }
 
+
     public Walkway getWalkwayWithHashtag(Long walkwayId) {
         return queryFactory.selectFrom(walkway)
                 .join(walkway.hashtagWalkways, hashtagWalkway)
@@ -113,4 +114,5 @@ public class WalkwayQueryDSLRepository {
                 .where(walkway.id.eq(walkwayId))
                 .fetchOne();
     }
+
 }

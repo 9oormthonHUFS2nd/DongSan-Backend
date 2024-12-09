@@ -114,7 +114,7 @@ class UserProfileControllerTest {
             ResultActions response = mockMvc.perform(get("/users/bookmarks/title")
                     .contentType(MediaType.APPLICATION_JSON)
                     .param("bookmarkId", "3")
-                    .param("limit", "2"));
+                    .param("size", "2"));
 
 
             // Then
