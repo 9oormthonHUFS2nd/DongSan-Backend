@@ -96,7 +96,7 @@ public class SecurityConfig {
         http
                 .securityMatchers(auth -> auth
                         .requestMatchers(
-                                "/api/v1/**"
+                                "/**"
                         )
                 )
                 .cors(corsCustomizer -> corsCustomizer.configurationSource(corsConfigurationSource()))
@@ -112,16 +112,14 @@ public class SecurityConfig {
                 .addFilterBefore(new AuthFilter(jwtService),
                         UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests((auth) -> auth
-                        // 헬스 체크 경로는 jwt 인증 비활성화
-                        .requestMatchers("/admin/**")
-                        .hasRole("ADMIN")
-                        // 헬스 체크 경로는 jwt 인증 비활성화
+                        // Admin 경로에 있어야 하는 role
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        // 인증 없이 접근 가능
                         .requestMatchers(
                                 "/",
                                 "/health",
                                 "/dev/**"
-                        )
-                        .permitAll()
+                        ).permitAll()
                         // 이외 요청 모두 jwt 필터를 타도록 설정
                         .anyRequest()
                         .authenticated())
