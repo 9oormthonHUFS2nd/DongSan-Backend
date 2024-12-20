@@ -54,7 +54,9 @@ public class SecurityConfig {
                         "http://localhost:8080",
                         "http://localhost:3000",
                         "http://dongsanwalk.site",
-                        "http://api.dongsanwalk.site:8080"
+                        "http://api.dongsanwalk.site:8080",
+                        "https://dongsanwalk.site",
+                        "https://api.dongsanwalk.site"
                 )
         );
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
