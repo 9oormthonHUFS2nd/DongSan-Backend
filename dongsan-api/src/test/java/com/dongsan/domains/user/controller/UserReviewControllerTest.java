@@ -57,7 +57,7 @@ class UserReviewControllerTest {
     class Describe_getReviews{
 
         @Test
-        @DisplayName("리뷰가 존재하면 작성한 리뷰를 생성 날짜를 기준으로 내림차순으로 조회한다.")
+        @DisplayName("리뷰를 생성 날짜를 기준으로 내림차순으로 조회한다.")
         void it_returns_reviews() throws Exception{
             // given
             int limit = 5;
@@ -83,25 +83,24 @@ class UserReviewControllerTest {
                     .andReturn();
         }
 
-        @Test
-        @DisplayName("전달한 마지막 리뷰ID 존재하지 않으면 400를 반환한다.")
-        void it_returns_400() throws Exception{
-            // given
-            int limit = 5;
-            long reviewId = 10L;
-            when(reviewQueryService.existsByReviewId(reviewId)).thenReturn(false);
-
-            // when & then
-            mockMvc.perform(get("/users/reviews")
-                            .param("size", String.valueOf(limit))
-                            .param("reviewId", String.valueOf(reviewId))
-                            .contentType("application/json;charset=UTF-8"))
-                    .andExpect(status().isBadRequest())
-                    .andDo(print())
-                    .andReturn();
-        }
+//        reviewId 검증은 controller가 아닌, 비즈니스 레이어 에서 검증하는 걸로 변경
+//        @Test
+//        @DisplayName("전달한 마지막 리뷰ID 존재하지 않으면 400를 반환한다.")
+//        void it_returns_400() throws Exception{
+//            // given
+//            int limit = 5;
+//            long reviewId = 10L;
+//            when(reviewQueryService.existsByReviewId(reviewId)).thenReturn(false);
+//
+//            // when & then
+//            mockMvc.perform(get("/users/reviews")
+//                            .param("size", String.valueOf(limit))
+//                            .param("reviewId", String.valueOf(reviewId))
+//                            .contentType("application/json;charset=UTF-8"))
+//                    .andExpect(status().isBadRequest())
+//                    .andDo(print())
+//                    .andReturn();
+//        }
     }
-
-
 
 }

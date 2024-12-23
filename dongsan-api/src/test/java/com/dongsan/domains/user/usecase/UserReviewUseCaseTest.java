@@ -1,6 +1,9 @@
 package com.dongsan.domains.user.usecase;
 
 import static fixture.MemberFixture.createMemberWithId;
+import static fixture.ReflectFixture.reflectCreatedAt;
+import static fixture.ReflectFixture.reflectField;
+import static fixture.ReviewFixture.createReview;
 import static fixture.ReviewFixture.createReviewWithId;
 import static fixture.WalkwayFixture.createWalkwayWithId;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -12,6 +15,7 @@ import com.dongsan.domains.review.service.ReviewQueryService;
 import com.dongsan.domains.user.dto.response.GetReviewResponse;
 import com.dongsan.domains.user.dto.response.GetReviewResponse.ReviewInfo;
 import com.dongsan.domains.walkway.entity.Walkway;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.DisplayName;
@@ -38,8 +42,13 @@ class UserReviewUseCaseTest {
         void it_returns_responseDTO(){
             // given
             Integer limit = 5;
-            Long reviewId = 6L;
+            Long reviewId = 2L;
             Long memberId = 1L;
+
+            Review review = createReview(null, null);
+            LocalDateTime lastCreatedAt = LocalDateTime.of(2024, 12, 23, 11, 11);
+            reflectField(review, "id", reviewId);
+            reflectCreatedAt(review, lastCreatedAt);
 
             Member member = createMemberWithId(memberId);
             Walkway walkway = createWalkwayWithId(1L, member);
@@ -47,7 +56,9 @@ class UserReviewUseCaseTest {
                     .mapToObj(index ->
                             createReviewWithId((long) (index+1), member, walkway)
                     ).toList();
-            when(reviewQueryService.getReviews(limit, reviewId, memberId)).thenReturn(reviews);
+
+            when(reviewQueryService.getReview(reviewId)).thenReturn(review);
+            when(reviewQueryService.getReviews(limit, lastCreatedAt, memberId)).thenReturn(reviews);
 
             // when
             GetReviewResponse result = userReviewUseCase.getReviews(limit, reviewId, memberId);

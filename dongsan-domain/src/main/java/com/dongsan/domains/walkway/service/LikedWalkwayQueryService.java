@@ -5,6 +5,7 @@ import com.dongsan.domains.walkway.repository.LikedWalkwayQueryDSLRepository;
 import com.dongsan.domains.walkway.repository.LikedWalkwayRepository;
 import com.dongsan.error.code.LikedWalkwayErrorCode;
 import com.dongsan.error.exception.CustomException;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,11 +20,11 @@ public class LikedWalkwayQueryService {
 
     public List<LikedWalkway> getUserLikedWalkway(Long memberId, Integer size, Long walkwayId) {
         // walkwayId가 null 이면 첫 페이지 라는 뜻
-        Long likedWalkwayId = null;
+        LocalDateTime lastCreatedAt = null;
         if(walkwayId != null){
-            likedWalkwayId = findByMemberIdAndWalkwayId(memberId, walkwayId).getId();
+            lastCreatedAt = findByMemberIdAndWalkwayId(memberId, walkwayId).getCreatedAt();
         }
-        return likedWalkwayQueryDSLRepository.getUserLikedWalkway(memberId, size, likedWalkwayId);
+        return likedWalkwayQueryDSLRepository.getUserLikedWalkway(memberId, size, lastCreatedAt);
     }
 
     public LikedWalkway findByMemberIdAndWalkwayId(Long memberId, Long walkwayId){

@@ -74,37 +74,37 @@ class WalkwayQueryServiceTest {
     @DisplayName("getUserWalkWay 메서드는")
     class Describe_getUserWalkWay{
         @Test
-        @DisplayName("walkwayId보다 Id가 작은 walkway가 있으면 walkway를 리스트로 반환한다.")
+        @DisplayName("lastCreated보다 created가 작은 walkway가 있으면 walkway를 리스트로 반환한다.")
         void it_returns_walkway_list(){
             // given
             Long memberId = 1L;
             Integer size = 5;
-            Long walkwayId = 3L;
+            LocalDateTime lastCreatedAt = LocalDateTime.of(2024, 12, 23, 11, 11);
             List<Walkway> walkways = IntStream.range(0, 2)
                     .mapToObj(index ->
                             createWalkwayWithId((long)(index+1), null)
                     ).toList();
-            when(walkwayQueryDSLRepository.getUserWalkway(memberId, size, walkwayId)).thenReturn(walkways);
+            when(walkwayQueryDSLRepository.getUserWalkway(memberId, size, lastCreatedAt)).thenReturn(walkways);
 
             // when
-            List<Walkway> result = walkwayQueryService.getUserWalkWay(memberId, size, walkwayId);
+            List<Walkway> result = walkwayQueryService.getUserWalkWay(memberId, size, lastCreatedAt);
 
             // then
             assertThat(result).isEqualTo(walkways);
         }
 
         @Test
-        @DisplayName("walkwayId보다 Id가 작은 walkway가 없으면 빈 리스트를 반환한다.")
+        @DisplayName("lastCreated보다 created가 작은 walkway가 없으면 빈 리스트를 반환한다.")
         void it_returns_emtpy_list(){
             // given
             Long memberId = 1L;
             Integer size = 5;
-            Long walkwayId = 3L;
+            LocalDateTime lastCreatedAt = LocalDateTime.of(2024, 12, 23, 11, 11);
             List<Walkway> walkways = Collections.emptyList();
-            when(walkwayQueryDSLRepository.getUserWalkway(memberId, size, walkwayId)).thenReturn(walkways);
+            when(walkwayQueryDSLRepository.getUserWalkway(memberId, size, lastCreatedAt)).thenReturn(walkways);
 
             // when
-            List<Walkway> result = walkwayQueryService.getUserWalkWay(memberId, size, walkwayId);
+            List<Walkway> result = walkwayQueryService.getUserWalkWay(memberId, size, lastCreatedAt);
 
             // then
             assertThat(result).isEmpty();

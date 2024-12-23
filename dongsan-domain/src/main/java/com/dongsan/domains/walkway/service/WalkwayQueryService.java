@@ -46,8 +46,8 @@ public class WalkwayQueryService {
         return walkwayQueryDSLRepository.getWalkwaysRating(searchWalkwayRating);
     }
 
-    public List<Walkway> getUserWalkWay(Long memberId, Integer size, Long walkwayId){
-        return walkwayQueryDSLRepository.getUserWalkway(memberId, size, walkwayId);
+    public List<Walkway> getUserWalkWay(Long memberId, Integer size, LocalDateTime lastCreatedAt){
+        return walkwayQueryDSLRepository.getUserWalkway(memberId, size, lastCreatedAt);
     }
 
     public boolean existsByWalkwayId(Long walkwayId) {
@@ -61,5 +61,12 @@ public class WalkwayQueryService {
     public List<Walkway> getBookmarkWalkway(Bookmark bookmark, Integer size, LocalDateTime lastCreatedAt) {
         return markedWalkwayQueryDSLRepository.getBookmarkWalkway(bookmark.getId(), size, lastCreatedAt)
                 .stream().map(MarkedWalkway::getWalkway).toList();
+    }
+
+    public void isOwnerOfWalkway(Long walkwayId, Long memberId){
+        boolean result = walkwayRepository.existsByIdAndMemberId(walkwayId, memberId);
+        if(!result){
+            throw new CustomException(WalkwayErrorCode.NOT_WALKWAY_OWNER);
+        }
     }
 }

@@ -2,7 +2,6 @@ package com.dongsan.domains.user.controller;
 
 import com.dongsan.apiResponse.ResponseFactory;
 import com.dongsan.apiResponse.SuccessResponse;
-import com.dongsan.common.validation.annotation.ExistReview;
 import com.dongsan.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.domains.user.dto.response.GetReviewResponse;
 import com.dongsan.domains.user.usecase.UserReviewUseCase;
@@ -32,7 +31,7 @@ public class UserReviewController {
     @GetMapping()
     public ResponseEntity<SuccessResponse<GetReviewResponse>> getReviews(
             @RequestParam(defaultValue = "5") Integer limit,
-            @ExistReview @RequestParam(required = false) Long reviewId,
+            @RequestParam(required = false) Long reviewId,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ){
         GetReviewResponse response = userReviewUsecase.getReviews(limit, reviewId, customOAuth2User.getMemberId());
