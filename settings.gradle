@@ -1,2 +1,5 @@
 rootProject.name = 'DongSan'
-include 'dongsan-api', 'dongsan-common', 'dongsan-domain'
+
+include 'app-external-api'
+include 'domain:domain-rdb'
+include 'domain:domain-redis'
