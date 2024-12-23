@@ -1,6 +1,7 @@
 package com.dongsan.domains.walkway.service;
 
 import static fixture.LikedWalkwayFixture.createLikedWalkway;
+import static fixture.ReflectFixture.reflectCreatedAt;
 import static fixture.ReflectFixture.reflectField;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -12,6 +13,7 @@ import com.dongsan.domains.walkway.repository.LikedWalkwayQueryDSLRepository;
 import com.dongsan.domains.walkway.repository.LikedWalkwayRepository;
 import com.dongsan.error.code.LikedWalkwayErrorCode;
 import com.dongsan.error.exception.CustomException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
@@ -66,11 +68,13 @@ class LikedWalkwayQueryServiceTest {
             Long walkwayId = 6L;
             LikedWalkway likedWalkway = createLikedWalkway(null, null);
             reflectField(likedWalkway, "id", 1L);
+            LocalDateTime lastCreatedAt = LocalDateTime.of(2024, 12, 23, 11, 11);
+            reflectCreatedAt(likedWalkway, lastCreatedAt);
             List<LikedWalkway> likedWalkways = IntStream.range(0, 5)
                     .mapToObj(index -> createLikedWalkway(null, null))
                     .toList();
             when(likedWalkwayRepository.findByMemberIdAndWalkwayId(memberId, walkwayId)).thenReturn(Optional.of(likedWalkway));
-            when(likedWalkwayQueryDSLRepository.getUserLikedWalkway(memberId, size, likedWalkway.getId())).thenReturn(likedWalkways);
+            when(likedWalkwayQueryDSLRepository.getUserLikedWalkway(memberId, size, likedWalkway.getCreatedAt())).thenReturn(likedWalkways);
 
             // when
             List<LikedWalkway> result = likedWalkwayQueryService.getUserLikedWalkway(memberId, size, walkwayId);

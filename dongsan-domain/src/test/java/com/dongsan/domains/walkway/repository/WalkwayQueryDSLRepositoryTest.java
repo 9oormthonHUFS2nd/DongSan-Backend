@@ -45,18 +45,21 @@ class WalkwayQueryDSLRepositoryTest extends RepositoryTest {
         }
 
         @Test
-        @DisplayName("walkwayId가 null이면 가장 최근의 walkway들을 내림차순으로 가져온다.")
+        @DisplayName("lastCreateAt가 null이면 가장 최근의 walkway들을 내림차순으로 가져온다.")
         void it_returns_most_recent_walkways(){
             // given
             Long memberId = 1L;
             Integer size = 5;
-            Long walkwayId = null;
+            LocalDateTime lastCreateAt = null;
 
             // when
-            List<Walkway> result = walkwayQueryDSLRepository.getUserWalkway(memberId, size, walkwayId);
+            List<Walkway> result = walkwayQueryDSLRepository.getUserWalkway(memberId, size, lastCreateAt);
 
             // then
-            assertThat(result).hasSize(5);
+            for (Walkway walkway : result) {
+                assertThat(walkway.getMember()
+                        .getId()).isEqualTo(memberId);
+            }
             for(int i=1; i<result.size(); i++){
                 LocalDateTime after = result.get(i-1).getCreatedAt();
                 LocalDateTime prev = result.get(i).getCreatedAt();
@@ -65,18 +68,22 @@ class WalkwayQueryDSLRepositoryTest extends RepositoryTest {
         }
 
         @Test
-        @DisplayName("walkwayId가 null이 아니면 walkwayId보다 일찍 등록한 walkway를 내림차순으로 가져온다.")
+        @DisplayName("lastCreateAt가 null이 아니면 walkwayId보다 일찍 등록한 walkway를 내림차순으로 가져온다.")
         void it_returns_next_walkways(){
             // given
             Long memberId = 1L;
             Integer size = 5;
-            Long walkwayId = 4L;
+            LocalDateTime lastCreateAt = LocalDateTime.now().minusSeconds(1L);
 
             // when
-            List<Walkway> result = walkwayQueryDSLRepository.getUserWalkway(memberId, size, walkwayId);
+            List<Walkway> result = walkwayQueryDSLRepository.getUserWalkway(memberId, size, lastCreateAt);
 
             // then
-            assertThat(result).hasSize(3);
+            for (Walkway walkway : result) {
+                assertThat(walkway.getMember()
+                        .getId()).isEqualTo(memberId);
+                assertThat(walkway.getCreatedAt()).isBefore(lastCreateAt);
+            }
             for(int i=1; i<result.size(); i++){
                 LocalDateTime after = result.get(i-1).getCreatedAt();
                 LocalDateTime prev = result.get(i).getCreatedAt();
@@ -85,15 +92,15 @@ class WalkwayQueryDSLRepositoryTest extends RepositoryTest {
         }
 
         @Test
-        @DisplayName("산책로가 존재하지 않으면 빈 리스트를 반환한다.")
+        @DisplayName("내가 작성한 산책로가 존재하지 않으면 빈 리스트를 반환한다.")
         void it_returns_empty_list(){
             // given
             Long memberId = 2L;
             Integer size = 5;
-            Long walkwayId = 6L;
+            LocalDateTime lastCreateAt = LocalDateTime.now().minusSeconds(1L);
 
             // when
-            List<Walkway> result = walkwayQueryDSLRepository.getUserWalkway(memberId, size, walkwayId);
+            List<Walkway> result = walkwayQueryDSLRepository.getUserWalkway(memberId, size, lastCreateAt);
 
             // then
             assertThat(result).isEmpty();

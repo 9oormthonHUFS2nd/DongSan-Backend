@@ -81,9 +81,9 @@ class ReviewQueryDSLRepositoryTest extends RepositoryTest {
             List<Review> result = reviewQueryDSLRepository.getReviews(limit, lastCreateAt, memberId);
 
             // then
-            for(int i=0; i<result.size(); i++){
-                Review review = result.get(i);
-                assertThat(review.getMember().getId()).isEqualTo(memberId);
+            for (Review review : result) {
+                assertThat(review.getMember()
+                        .getId()).isEqualTo(memberId);
                 assertThat(review.getCreatedAt()).isBefore(lastCreateAt);
             }
             for(int i=1; i<result.size(); i++){

@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/walkways")
 @Tag(name = "🚶🏻‍산책로", description = "Walkway")
 @RequiredArgsConstructor
+@Validated
 public class WalkwayController {
 
     private final WalkwayUseCase walkwayUseCase;

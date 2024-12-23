@@ -11,6 +11,7 @@ import com.dongsan.domains.walkway.entity.Walkway;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -85,9 +86,9 @@ public class WalkwayQueryDSLRepository {
                 .fetch();
     }
 
-    public List<Walkway> getUserWalkway(Long memberId, Integer size, Long walkwayId){
+    public List<Walkway> getUserWalkway(Long memberId, Integer size, LocalDateTime lastCreatedAt){
         return queryFactory.selectFrom(walkway)
-                .where(walkway.member.id.eq(memberId), walkwayIdLt(walkwayId))
+                .where(walkway.member.id.eq(memberId), createdAtLt(lastCreatedAt))
                 .orderBy(walkway.createdAt.desc())
                 .limit(size)
                 .fetch();
@@ -102,6 +103,14 @@ public class WalkwayQueryDSLRepository {
         return walkwayId != null ? walkway.id.lt(walkwayId) : null;
     }
 
+    /**
+     * lastCreatedAt 보다 작은 createdAt 를 가진 walkway를 조회하는 조건
+     * @param createdAt 마지막으로 가져온 createdAt
+     * @return 조건 만족 안하면 null 반환, where 절에서 null은 무시된다.
+     */
+    private BooleanExpression createdAtLt(LocalDateTime createdAt){
+        return createdAt != null ? walkway.createdAt.lt(createdAt) : null;
+    }
 
     public Walkway getWalkwayWithHashtag(Long walkwayId) {
         return queryFactory.selectFrom(walkway)

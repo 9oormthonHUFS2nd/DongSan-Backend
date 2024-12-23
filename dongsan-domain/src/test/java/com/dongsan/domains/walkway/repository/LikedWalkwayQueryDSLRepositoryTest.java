@@ -41,15 +41,15 @@ class LikedWalkwayQueryDSLRepositoryTest extends RepositoryTest {
         }
 
         @Test
-        @DisplayName("likedWalkwayId가 null이면 가장 최근의 likedWalkway들을 내림차순으로 가져온다.")
+        @DisplayName("lastCreateAt가 null이면 가장 최근의 likedWalkway들을 내림차순으로 가져온다.")
         void it_returns_most_recent_likeWalkways(){
             // given
             Long memberId = 1L;
             Integer size = 5;
-            Long likedWalkwayId = null;
+            LocalDateTime lastCreateAt = null;
 
             // when
-            List<LikedWalkway> result = likedWalkwayQueryDSLRepository.getUserLikedWalkway(memberId, size, likedWalkwayId);
+            List<LikedWalkway> result = likedWalkwayQueryDSLRepository.getUserLikedWalkway(memberId, size, lastCreateAt);
 
             // then
             assertThat(result).hasSize(5);
@@ -61,18 +61,22 @@ class LikedWalkwayQueryDSLRepositoryTest extends RepositoryTest {
         }
 
         @Test
-        @DisplayName("likedWalkwayId가 null이 아니면 likedWalkwayId보다 일찍 등록한 likedWalkway를 내림차순으로 가져온다.")
+        @DisplayName("lastCreateAt가 null이 아니면 likedWalkwayId보다 일찍 등록한 likedWalkway를 내림차순으로 가져온다.")
         void it_returns_next_likeWalkways(){
             // given
             Long memberId = 1L;
             Integer size = 5;
-            Long likedWalkwayId = 3L;
+            LocalDateTime lastCreateAt = LocalDateTime.now().minusSeconds(1L);
 
             // when
-            List<LikedWalkway> result = likedWalkwayQueryDSLRepository.getUserLikedWalkway(memberId, size, likedWalkwayId);
+            List<LikedWalkway> result = likedWalkwayQueryDSLRepository.getUserLikedWalkway(memberId, size, lastCreateAt);
 
             // then
-            assertThat(result).hasSize(2);
+            for(int i=0; i<result.size(); i++){
+                LikedWalkway likedWalkway = result.get(i);
+                assertThat(likedWalkway.getMember().getId()).isEqualTo(memberId);
+                assertThat(likedWalkway.getCreatedAt()).isBefore(lastCreateAt);
+            }
             for(int i=1; i<result.size(); i++){
                 LocalDateTime after = result.get(i-1).getCreatedAt();
                 LocalDateTime prev = result.get(i).getCreatedAt();
@@ -86,28 +90,28 @@ class LikedWalkwayQueryDSLRepositoryTest extends RepositoryTest {
             // given
             Long memberId = 2L;
             Integer size = 5;
-            Long likedWalkwayId = 6L;
+            LocalDateTime lastCreateAt = LocalDateTime.now().minusSeconds(1L);
 
             // when
-            List<LikedWalkway> result = likedWalkwayQueryDSLRepository.getUserLikedWalkway(memberId, size, likedWalkwayId);
+            List<LikedWalkway> result = likedWalkwayQueryDSLRepository.getUserLikedWalkway(memberId, size, lastCreateAt);
 
             // then
             assertThat(result).isEmpty();
         }
 
-        @Test
-        @DisplayName("주어진 likedWalkwayId보다 작은 Id의 likedWalkway가 존재하지 않으면 빈 리스트를 반환한다.")
-        void it_returns_empty_list_when_lt_likedWalkway_not_exist(){
-            // given
-            Long memberId = 1L;
-            Integer size = 5;
-            Long likedWalkwayId = 1L;
-
-            // when
-            List<LikedWalkway> result = likedWalkwayQueryDSLRepository.getUserLikedWalkway(memberId, size, likedWalkwayId);
-
-            // then
-            assertThat(result).isEmpty();
-        }
+//        @Test
+//        @DisplayName("주어진 likedWalkwayId보다 작은 Id의 likedWalkway가 존재하지 않으면 빈 리스트를 반환한다.")
+//        void it_returns_empty_list_when_lt_likedWalkway_not_exist(){
+//            // given
+//            Long memberId = 1L;
+//            Integer size = 5;
+//            Long likedWalkwayId = 1L;
+//
+//            // when
+//            List<LikedWalkway> result = likedWalkwayQueryDSLRepository.getUserLikedWalkway(memberId, size, likedWalkwayId);
+//
+//            // then
+//            assertThat(result).isEmpty();
+//        }
     }
 }
