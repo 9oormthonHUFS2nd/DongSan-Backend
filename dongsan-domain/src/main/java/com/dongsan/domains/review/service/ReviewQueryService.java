@@ -4,6 +4,9 @@ import com.dongsan.domains.review.dto.RatingCount;
 import com.dongsan.domains.review.entity.Review;
 import com.dongsan.domains.review.repository.ReviewQueryDSLRepository;
 import com.dongsan.domains.review.repository.ReviewRepository;
+import com.dongsan.error.code.ReviewErrorCode;
+import com.dongsan.error.exception.CustomException;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,8 +19,12 @@ public class ReviewQueryService {
     private final ReviewQueryDSLRepository reviewQueryDSLRepository;
     private final ReviewRepository reviewRepository;
 
-    public List<Review> getReviews(Integer limit, Long reviewId, Long memberId) {
-        return reviewQueryDSLRepository.getReviews(limit, reviewId, memberId);
+    public Review getReview(Long reviewId){
+        return reviewRepository.findById(reviewId).orElseThrow(() -> new CustomException(ReviewErrorCode.REVIEW_NOT_FOUND));
+    }
+
+    public List<Review> getReviews(Integer limit, LocalDateTime lastCreatedAt, Long memberId) {
+        return reviewQueryDSLRepository.getReviews(limit, lastCreatedAt, memberId);
     }
 
     public boolean existsByReviewId(Long reviewId){
@@ -34,5 +41,12 @@ public class ReviewQueryService {
 
     public List<RatingCount> getWalkwaysRating(Long walkwayId) {
         return reviewQueryDSLRepository.getWalkwaysRating(walkwayId);
+    }
+
+    public void isReviewOwner(Long reviewId, Long memberId){
+        boolean result = reviewRepository.existsByIdAndMemberId(reviewId, memberId);
+        if(!result){
+            throw new CustomException(ReviewErrorCode.NOT_REVIEW_OWNER);
+        }
     }
 }

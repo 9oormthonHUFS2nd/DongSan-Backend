@@ -5,6 +5,7 @@ import com.dongsan.domains.review.entity.Review;
 import com.dongsan.domains.review.service.ReviewQueryService;
 import com.dongsan.domains.user.dto.response.GetReviewResponse;
 import com.dongsan.domains.user.mapper.UserReviewMapper;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,7 +17,17 @@ public class UserReviewUseCase {
 
     @Transactional(readOnly = true)
     public GetReviewResponse getReviews(Integer limit, Long reviewId, Long memberId) {
-        List<Review> reviews = reviewQueryService.getReviews(limit, reviewId, memberId);
+        LocalDateTime lastCreatedAt = null;
+        if(reviewId != null){
+            // reviewId 검증
+            // 1. 존재하는 reviewId 인지
+            Review review = reviewQueryService.getReview(reviewId);
+            // 2. 내가 작성한 review 인지 아닌지
+            reviewQueryService.isReviewOwner(review.getId(), memberId);
+            lastCreatedAt = review.getCreatedAt();
+        }
+
+        List<Review> reviews = reviewQueryService.getReviews(limit, lastCreatedAt, memberId);
         return UserReviewMapper.toGetReview(reviews);
     }
 

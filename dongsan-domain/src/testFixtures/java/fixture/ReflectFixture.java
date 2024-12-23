@@ -1,7 +1,6 @@
 package fixture;
 
 import com.dongsan.domains.common.entity.BaseEntity;
-import com.dongsan.domains.member.entity.Member;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 
@@ -17,7 +16,7 @@ public class ReflectFixture {
         }
     }
 
-    public static void reflectCreatedAt(LocalDateTime createdAt, Object object){
+    public static void reflectCreatedAt(Object object, LocalDateTime createdAt){
         try {
             Field createdAtField = BaseEntity.class.getDeclaredField("createdAt");
             createdAtField.setAccessible(true);

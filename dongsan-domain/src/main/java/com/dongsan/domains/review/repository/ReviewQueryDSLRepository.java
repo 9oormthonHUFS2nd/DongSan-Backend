@@ -5,6 +5,7 @@ import com.dongsan.domains.review.entity.QReview;
 import com.dongsan.domains.review.entity.Review;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -16,10 +17,10 @@ public class ReviewQueryDSLRepository{
 
     private QReview review = QReview.review;
 
-    public List<Review> getReviews(Integer limit, Long reviewId, Long memberId) {
+    public List<Review> getReviews(Integer limit, LocalDateTime lastCreateAt, Long memberId) {
         return queryFactory.selectFrom(review)
                 .join(review.walkway).fetchJoin()
-                .where(review.member.id.eq(memberId), reviewIdLt(reviewId))
+                .where(review.member.id.eq(memberId), createdAtLt(lastCreateAt))
                 .limit(limit)
                 .orderBy(review.createdAt.desc())
                 .fetch();
@@ -32,6 +33,15 @@ public class ReviewQueryDSLRepository{
      */
     private BooleanExpression reviewIdLt(Long reviewId){
         return reviewId != null ? review.id.lt(reviewId) : null;
+    }
+
+    /**
+     * createdAt보다 작은 createdAt를 검색하는 조건
+     * @param createdAt 마지막으로 가져온 createdAt
+     * @return 조건 만족 안하면 null 반환, where 절에서 null은 무시된다.
+     */
+    private BooleanExpression createdAtLt(LocalDateTime createdAt){
+        return createdAt != null ? review.createdAt.lt(createdAt) : null;
     }
 
     public List<Review> getWalkwayReviewsLatest(Integer limit, Long reviewId, Long walkwayId) {

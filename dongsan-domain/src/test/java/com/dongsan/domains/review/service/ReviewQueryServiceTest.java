@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import com.dongsan.domains.review.entity.Review;
 import com.dongsan.domains.review.repository.ReviewQueryDSLRepository;
 import com.dongsan.domains.review.repository.ReviewRepository;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -39,7 +40,7 @@ class ReviewQueryServiceTest {
         void it_returns_reviews(){
             // given
             Integer limit = 5;
-            Long reviewId = 1L;
+            LocalDateTime lastCreatedAt = LocalDateTime.of(2024, 12, 23, 11, 11);
             Long memberId = 1L;
 
             List<Review> reviews = new ArrayList<>();
@@ -47,32 +48,32 @@ class ReviewQueryServiceTest {
                 reviews.add(createReview(null, null));
             }
 
-            when(reviewQueryDSLRepository.getReviews(limit, reviewId, memberId)).thenReturn(reviews);
+            when(reviewQueryDSLRepository.getReviews(limit, lastCreatedAt, memberId)).thenReturn(reviews);
 
             // when
-            List<Review> result = reviewQueryService.getReviews(limit, reviewId, memberId);
+            List<Review> result = reviewQueryService.getReviews(limit, lastCreatedAt, memberId);
 
             // then
             assertThat(result.size()).isEqualTo(5);
-            verify(reviewQueryDSLRepository).getReviews(limit, reviewId, memberId);
+            verify(reviewQueryDSLRepository).getReviews(limit, lastCreatedAt, memberId);
         }
 
         @Test
-        @DisplayName("리뷰가 존재하지 않으면 비어 있는 리뷰 목록을 반환한다.")
+        @DisplayName("lastCreatedAt가 존재하지 않으면 비어 있는 리뷰 목록을 반환한다.")
         void it_returns_empty_review(){
             // given
             Integer limit = 5;
-            Long reviewId = 1L;
+            LocalDateTime lastCreatedAt = null;
             Long memberId = 1L;
 
-            when(reviewQueryDSLRepository.getReviews(limit, reviewId, memberId)).thenReturn(Collections.emptyList());
+            when(reviewQueryDSLRepository.getReviews(limit, lastCreatedAt, memberId)).thenReturn(Collections.emptyList());
 
             // when
-            List<Review> result = reviewQueryService.getReviews(limit, reviewId, memberId);
+            List<Review> result = reviewQueryService.getReviews(limit, lastCreatedAt, memberId);
 
             // then
             assertThat(result).isEmpty();
-            verify(reviewQueryDSLRepository).getReviews(limit, reviewId, memberId);
+            verify(reviewQueryDSLRepository).getReviews(limit, lastCreatedAt, memberId);
         }
     }
 
