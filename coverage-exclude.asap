@@ -1,4 +1,6 @@
 exclude com/dongsan/error/handler/*
+exclude com/dongsan/error/code/*
+exclude com/dongsan/error/exception/*
 exclude com/dongsan/logging/dto/*
 exclude com/dongsan/logging/*
 exclude com/dongsan/apiResponse/*
