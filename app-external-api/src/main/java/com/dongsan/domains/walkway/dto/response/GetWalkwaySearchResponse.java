@@ -39,7 +39,7 @@ public record GetWalkwaySearchResponse(
                     walkway.getName(),
                     walkway.getDistance(),
                     walkway.getHashtagWalkways().stream()
-                            .map(hashtagWalkway -> hashtagWalkway.getHashtag().getName())
+                            .map(hashtagWalkway -> "#" + hashtagWalkway.getHashtag().getName())
                             .collect(Collectors.toList()),
                     !walkway.getLikedWalkways().isEmpty(),
                     walkway.getLikeCount(),

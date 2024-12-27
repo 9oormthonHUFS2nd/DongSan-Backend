@@ -13,7 +13,6 @@ import com.dongsan.domains.walkway.dto.SearchWalkwayRating;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.request.UpdateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.response.CreateWalkwayResponse;
-import com.dongsan.domains.walkway.dto.response.GetWalkwayWithLikedResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.mapper.WalkwayMapper;
 import com.dongsan.domains.walkway.service.WalkwayCommandService;
@@ -54,13 +53,13 @@ public class WalkwayUseCase {
     }
 
     @Transactional(readOnly = true)
-    public GetWalkwayWithLikedResponse getWalkwayWithLiked(Long walkwayId, Long memberId) {
+    public Walkway getWalkwayWithLiked(Long walkwayId, Long memberId) {
         Walkway walkway = walkwayQueryService.getWalkwayWithHashtagAndLike(memberId, walkwayId);
         if (walkway == null) {
             throw new CustomException(WalkwayErrorCode.INVALID_COURSE);
         }
 
-        return WalkwayMapper.toGetWalkwayWithLikedResponse(walkway);
+        return walkway;
     }
 
     @Transactional(readOnly = true)

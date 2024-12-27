@@ -142,22 +142,20 @@ class WalkwayControllerTest {
         void it_returns_DTO() throws Exception {
             // Given
             Long walkwayId = 1L;
+            Walkway walkway = WalkwayFixture.createWalkwayWithId(1L, null);
+            GetWalkwayWithLikedResponse getWalkwayWithLikedResponse = new GetWalkwayWithLikedResponse(walkway);
 
-            GetWalkwayWithLikedResponse getWalkwayWithLikedResponse = GetWalkwayWithLikedResponse.builder()
-                    .name("test")
-                    .build();
-
-            when(walkwayUseCase.getWalkwayWithLiked(walkwayId, customOAuth2User.getMemberId())).thenReturn(
-                    getWalkwayWithLikedResponse);
+            when(walkwayUseCase.getWalkwayWithLiked(walkwayId, customOAuth2User.getMemberId()))
+                    .thenReturn(walkway);
 
             // When
-            ResultActions response = mockMvc.perform(get("/walkways/1")
+            ResultActions response = mockMvc.perform(get("/walkways/" + walkwayId)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(getWalkwayWithLikedResponse)));
 
             // Then
             response.andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.name").value("test"));
+                    .andExpect(jsonPath("$.data.name").value(walkway.getName()));
         }
     }
 

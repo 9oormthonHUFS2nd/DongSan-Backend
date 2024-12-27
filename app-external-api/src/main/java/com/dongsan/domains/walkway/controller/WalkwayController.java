@@ -54,7 +54,8 @@ public class WalkwayController {
             @PathVariable Long walkwayId,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {
-        return ResponseFactory.ok(walkwayUseCase.getWalkwayWithLiked(walkwayId, customOAuth2User.getMemberId()));
+        Walkway walkway = walkwayUseCase.getWalkwayWithLiked(walkwayId, customOAuth2User.getMemberId());
+        return ResponseFactory.ok(new GetWalkwayWithLikedResponse(walkway));
     }
 
     @Operation(summary = "산책로 검색")

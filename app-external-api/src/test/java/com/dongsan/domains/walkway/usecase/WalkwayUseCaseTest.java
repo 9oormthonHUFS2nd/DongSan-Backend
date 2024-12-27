@@ -16,10 +16,8 @@ import com.dongsan.domains.walkway.dto.SearchWalkwayRating;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.request.UpdateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.response.CreateWalkwayResponse;
-import com.dongsan.domains.walkway.dto.response.GetWalkwayWithLikedResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.enums.ExposeLevel;
-import com.dongsan.domains.walkway.mapper.WalkwayMapper;
 import com.dongsan.domains.walkway.service.WalkwayCommandService;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
 import fixture.MemberFixture;
@@ -116,14 +114,11 @@ class WalkwayUseCaseTest {
 
             when(walkwayQueryService.getWalkwayWithHashtagAndLike(any(), any())).thenReturn(walkway);
 
-            GetWalkwayWithLikedResponse getWalkwayWithLikedResponse
-                    = WalkwayMapper.toGetWalkwayWithLikedResponse(walkway);
-
             // when
-            GetWalkwayWithLikedResponse result = walkwayUseCase.getWalkwayWithLiked(walkway.getId(), member.getId());
+            Walkway result = walkwayUseCase.getWalkwayWithLiked(walkway.getId(), member.getId());
 
             // then
-            assertThat(result).isEqualTo(getWalkwayWithLikedResponse);
+            assertThat(result).isEqualTo(walkway);
         }
     }
 
