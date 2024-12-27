@@ -1,6 +1,8 @@
 package com.dongsan.domains.walkway.usecase;
 
 import com.dongsan.common.annotation.UseCase;
+import com.dongsan.common.error.code.WalkwayErrorCode;
+import com.dongsan.common.error.exception.CustomException;
 import com.dongsan.domains.hashtag.service.HashtagCommandService;
 import com.dongsan.domains.hashtag.service.HashtagQueryService;
 import com.dongsan.domains.hashtag.service.HashtagWalkwayCommandService;
@@ -11,14 +13,13 @@ import com.dongsan.domains.walkway.dto.SearchWalkwayRating;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.request.UpdateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.response.CreateWalkwayResponse;
-import com.dongsan.domains.walkway.dto.response.GetWalkwaySearchResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayWithLikedResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.mapper.WalkwayMapper;
 import com.dongsan.domains.walkway.service.WalkwayCommandService;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
-import com.dongsan.common.error.code.WalkwayErrorCode;
-import com.dongsan.common.error.exception.CustomException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,7 +64,7 @@ public class WalkwayUseCase {
     }
 
     @Transactional(readOnly = true)
-    public GetWalkwaySearchResponse getWalkwaysSearch(
+    public List<Walkway> getWalkwaysSearch(
             Long userId,
             String type,
             Double latitude,
@@ -71,27 +72,35 @@ public class WalkwayUseCase {
             Double distance,
             String hashtags,
             Long lastId,
-            Double lastRating,
-            Integer lastLikes,
             int size
     ) {
-        List<String> hashtagsList = List.of(hashtags.split(","));
+        List<String> hashtagsList = new ArrayList<>();
+        Arrays.stream(hashtags.split(",")).forEach(hashtag -> hashtagsList.add(hashtag.trim()));
 
         int distanceInt = (int) (distance * 1000);
 
+        int likeCount = 2147483647;
+        double rating = 5;
+
+        if (lastId != null) {
+            Walkway walkway = walkwayQueryService.getWalkway(lastId);
+            likeCount = walkway.getLikeCount();
+            rating = walkway.getRating();
+        }
+
         List<Walkway> walkways = switch (type) {
             case "liked" -> walkwayQueryService.getWalkwaysPopular(
-                    new SearchWalkwayPopular(userId, longitude, latitude, distanceInt, hashtagsList, lastId, lastLikes,
+                    new SearchWalkwayPopular(userId, longitude, latitude, distanceInt, hashtagsList, lastId, likeCount,
                             size)
             );
             case "rating" -> walkwayQueryService.getWalkwaysRating(
-                    new SearchWalkwayRating(userId, longitude, latitude, distanceInt, hashtagsList, lastId, lastRating,
+                    new SearchWalkwayRating(userId, longitude, latitude, distanceInt, hashtagsList, lastId, rating,
                             size)
             );
             default -> throw new CustomException(WalkwayErrorCode.INVALID_SEARCH_TYPE);
         };
 
-        return WalkwayMapper.toGetWalkwaySearchResponse(walkways, size);
+        return walkways;
     }
 
     @Transactional

@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.dongsan.common.error.code.SystemErrorCode;
 import com.dongsan.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.domains.bookmark.dto.BookmarksWithMarkedWalkwayDTO;
 import com.dongsan.domains.bookmark.dto.response.BookmarksWithMarkedWalkwayResponse;
@@ -20,10 +21,8 @@ import com.dongsan.domains.walkway.dto.response.CreateWalkwayResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwaySearchResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayWithLikedResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
-import com.dongsan.domains.walkway.mapper.WalkwayMapper;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
 import com.dongsan.domains.walkway.usecase.WalkwayUseCase;
-import com.dongsan.common.error.code.SystemErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fixture.WalkwayFixture;
 import java.util.ArrayList;
@@ -166,16 +165,14 @@ class WalkwayControllerTest {
     @DisplayName("getWalkwaysSearch 메서드는")
     class Describe_getWalkwaysSearch {
 
-        GetWalkwaySearchResponse getWalkwaySearchResponse;
+        List<Walkway> walkways;
 
         @BeforeEach
         void setUp() {
-            List<Walkway> walkways = new ArrayList<>();
-            for (int i = 0; i < 10; i++) {
-                walkways.add(WalkwayFixture.createWalkway(member));
+            walkways = new ArrayList<>();
+            for (long i = 0; i < 10; i++) {
+                walkways.add(WalkwayFixture.createWalkwayWithId(i, member));
             }
-
-            getWalkwaySearchResponse = WalkwayMapper.toGetWalkwaySearchResponse(walkways, 10);
         }
 
         @Test
@@ -187,33 +184,28 @@ class WalkwayControllerTest {
             Double longitude = 1.0;
             Double distance = 1.3;
             String hashtags = "test";
-            Long lastId = 1L;
-            Double rating = 0.0;
-            Integer likes = 1000;
-            int size = 10;
+            Long lastId = null;
+            Integer size = 10;
 
             when(walkwayUseCase.getWalkwaysSearch(customOAuth2User.getMemberId(), type, latitude, longitude, distance,
-                    hashtags, lastId, rating,
-                    likes, size))
-                    .thenReturn(getWalkwaySearchResponse);
+                    hashtags, lastId, size))
+                    .thenReturn(walkways);
 
             // When
             ResultActions response = mockMvc.perform(get("/walkways")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .param("type", "liked")
-                    .param("hashtags", "test")
-                    .param("latitude", "1.0")
-                    .param("longitude", "1.0")
-                    .param("distance", "1.3")
-                    .param("lastId", "1")
-                    .param("likes", "1000")
-                    .param("size", "10")
-                    .content(objectMapper.writeValueAsString(getWalkwaySearchResponse)));
+                    .param("type", type)
+                    .param("hashtags", hashtags)
+                    .param("latitude", latitude.toString())
+                    .param("longitude", longitude.toString())
+                    .param("distance", distance.toString())
+                    .param("size", size.toString())
+                    .content(objectMapper.writeValueAsString(new GetWalkwaySearchResponse(walkways, size))));
             // Then
             response.andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.walkways").isArray())
                     .andExpect(jsonPath("$.data.walkways").isNotEmpty())
-                    .andExpect(jsonPath("$.data.walkways.size()").value(10));
+                    .andExpect(jsonPath("$.data.walkways.size()").value(size));
         }
 
         @Test
@@ -225,33 +217,28 @@ class WalkwayControllerTest {
             Double longitude = 1.0;
             Double distance = 1.3;
             String hashtags = "test";
-            Long lastId = 1L;
-            Double rating = 5.0;
-            Integer likes = 0;
-            int size = 10;
+            Long lastId = null;
+            Integer size = 10;
 
             when(walkwayUseCase.getWalkwaysSearch(customOAuth2User.getMemberId(), type, latitude, longitude, distance,
-                    hashtags, lastId, rating,
-                    likes, size))
-                    .thenReturn(getWalkwaySearchResponse);
+                    hashtags, lastId, size))
+                    .thenReturn(walkways);
 
             // When
             ResultActions response = mockMvc.perform(get("/walkways")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .param("type", "rating")
-                    .param("hashtags", "test")
-                    .param("latitude", "1.0")
-                    .param("longitude", "1.0")
-                    .param("distance", "1.3")
-                    .param("lastId", "1")
-                    .param("rating", "5.0")
-                    .param("size", "10")
-                    .content(objectMapper.writeValueAsString(getWalkwaySearchResponse)));
+                    .param("type", type)
+                    .param("hashtags", hashtags)
+                    .param("latitude", latitude.toString())
+                    .param("longitude", longitude.toString())
+                    .param("distance", distance.toString())
+                    .param("size", size.toString())
+                    .content(objectMapper.writeValueAsString(new GetWalkwaySearchResponse(walkways, size))));
             // Then
             response.andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.walkways").isArray())
                     .andExpect(jsonPath("$.data.walkways").isNotEmpty())
-                    .andExpect(jsonPath("$.data.walkways.size()").value(10));
+                    .andExpect(jsonPath("$.data.walkways.size()").value(size));
         }
     }
 

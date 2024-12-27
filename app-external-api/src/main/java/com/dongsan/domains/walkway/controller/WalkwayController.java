@@ -11,9 +11,11 @@ import com.dongsan.domains.walkway.dto.request.UpdateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.response.CreateWalkwayResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwaySearchResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayWithLikedResponse;
+import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.usecase.WalkwayUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -64,12 +66,11 @@ public class WalkwayController {
             @RequestParam Double longitude,
             @RequestParam Double distance,
             @RequestParam(required = false) Long lastId,
-            @RequestParam(defaultValue = "0") Double rating,
-            @RequestParam(defaultValue = "0") Integer likes,
             @RequestParam(defaultValue = "10") Integer size,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {
-        return ResponseFactory.ok(walkwayUseCase.getWalkwaysSearch(customOAuth2User.getMemberId(), type, latitude, longitude, distance, hashtags, lastId, rating, likes, size));
+        List<Walkway> walkways = walkwayUseCase.getWalkwaysSearch(customOAuth2User.getMemberId(), type, latitude, longitude, distance, hashtags, lastId, size);
+        return ResponseFactory.ok(new GetWalkwaySearchResponse(walkways, size));
     }
 
     @Operation(summary = "북마크 목록 보기(산책로 마크 여부 포함)")

@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import com.dongsan.common.error.exception.CustomException;
 import com.dongsan.domains.hashtag.service.HashtagQueryService;
 import com.dongsan.domains.hashtag.service.HashtagWalkwayCommandService;
 import com.dongsan.domains.member.entity.Member;
@@ -15,17 +16,16 @@ import com.dongsan.domains.walkway.dto.SearchWalkwayRating;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.request.UpdateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.response.CreateWalkwayResponse;
-import com.dongsan.domains.walkway.dto.response.GetWalkwaySearchResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayWithLikedResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.enums.ExposeLevel;
 import com.dongsan.domains.walkway.mapper.WalkwayMapper;
 import com.dongsan.domains.walkway.service.WalkwayCommandService;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
-import com.dongsan.common.error.exception.CustomException;
 import fixture.MemberFixture;
 import fixture.WalkwayFixture;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -151,12 +151,12 @@ class WalkwayUseCaseTest {
             Double longitude = 2.0;
             Double distance = 10.0;
             String hashtags = "test0,test1";
-            Long lastId = 0L;
-            Double lastRating = null;
-            Integer lastLikes = 1000;
+            Long lastId = null;
+            Integer lastLikes = 2147483647;
             int size = 10;
 
-            List<String> hashtagsList = List.of(hashtags.split(","));
+            List<String> hashtagsList = new ArrayList<>();
+            Arrays.stream(hashtags.split(",")).forEach(hashtag -> hashtagsList.add(hashtag.trim()));
 
             int distanceInt = (int) (distance * 1000);
 
@@ -167,12 +167,12 @@ class WalkwayUseCaseTest {
                     .thenReturn(walkways);
 
             // when
-            GetWalkwaySearchResponse result
-                    = walkwayUseCase.getWalkwaysSearch(userId, type, latitude, longitude, distance, hashtags, lastId, lastRating, lastLikes, size);
+            List<Walkway> result
+                    = walkwayUseCase.getWalkwaysSearch(userId, type, latitude, longitude, distance, hashtags, lastId, size);
 
             // then
-            assertThat(result.nextCursor()).isNotNull();
-            assertThat(result.walkways().size()).isEqualTo(10);
+            assertThat(result).isNotNull();
+            assertThat(result).hasSize(size);
         }
 
         @Test
@@ -185,12 +185,12 @@ class WalkwayUseCaseTest {
             Double longitude = 2.0;
             Double distance = 10.0;
             String hashtags = "test0,test1";
-            Long lastId = 0L;
+            Long lastId = null;
             Double lastRating = 5.0;
-            Integer lastLikes = null;
             int size = 10;
 
-            List<String> hashtagsList = List.of(hashtags.split(","));
+            List<String> hashtagsList = new ArrayList<>();
+            Arrays.stream(hashtags.split(",")).forEach(hashtag -> hashtagsList.add(hashtag.trim()));
 
             int distanceInt = (int) (distance * 1000);
 
@@ -199,13 +199,13 @@ class WalkwayUseCaseTest {
                     .thenReturn(walkways);
 
             // when
-            GetWalkwaySearchResponse result
+            List<Walkway> result
                     = walkwayUseCase.getWalkwaysSearch(userId, type, latitude, longitude, distance, hashtags, lastId,
-                    lastRating, lastLikes, size);
+                    size);
 
             // then
-            assertThat(result.nextCursor()).isNotNull();
-            assertThat(result.walkways().size()).isEqualTo(10);
+            assertThat(result).isNotNull();
+            assertThat(result).hasSize(10);
         }
 
         @Test
@@ -218,14 +218,12 @@ class WalkwayUseCaseTest {
             Double longitude = 2.0;
             Double distance = 10.0;
             String hashtags = "test0,test1";
-            Long lastId = 0L;
-            Double lastRating = 5.0;
-            Integer lastLikes = null;
+            Long lastId = null;
             int size = 10;
 
             assertThatThrownBy(
                     () -> walkwayUseCase.getWalkwaysSearch(userId, type, latitude, longitude, distance, hashtags,
-                            lastId, lastRating, lastLikes, size))
+                            lastId, size))
                     .isInstanceOf(CustomException.class);
         }
 
