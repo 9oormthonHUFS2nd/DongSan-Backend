@@ -2,7 +2,6 @@ package com.dongsan.domains.walkway.controller;
 
 import com.dongsan.common.apiResponse.ResponseFactory;
 import com.dongsan.common.apiResponse.SuccessResponse;
-import com.dongsan.common.validation.annotation.ExistWalkway;
 import com.dongsan.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.domains.bookmark.dto.response.BookmarksWithMarkedWalkwayResponse;
 import com.dongsan.domains.bookmark.usecase.BookmarkUseCase;
@@ -77,7 +76,7 @@ public class WalkwayController {
     @Operation(summary = "북마크 목록 보기(산책로 마크 여부 포함)")
     @GetMapping("/{walkwayId}/bookmarks")
     public ResponseEntity<SuccessResponse<BookmarksWithMarkedWalkwayResponse>> getBookmarksWithMarkedWalkway(
-            @ExistWalkway @PathVariable Long walkwayId,
+            @PathVariable Long walkwayId,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {
         return ResponseFactory.ok(bookmarkUseCase.getBookmarksWithMarkedWalkway(customOAuth2User.getMemberId(), walkwayId));
@@ -86,7 +85,7 @@ public class WalkwayController {
     @Operation(summary = "산책로 수정")
     @PutMapping("/{walkwayId}")
     public ResponseEntity<Void> updateWalkway(
-            @ExistWalkway @PathVariable Long walkwayId,
+            @PathVariable Long walkwayId,
             @RequestBody UpdateWalkwayRequest updateWalkwayRequest,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {

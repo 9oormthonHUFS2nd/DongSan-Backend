@@ -13,6 +13,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -112,8 +113,8 @@ public class WalkwayQueryDSLRepository {
         return createdAt != null ? walkway.createdAt.lt(createdAt) : null;
     }
 
-    public Walkway getWalkwayWithHashtag(Long walkwayId) {
-        return queryFactory.selectFrom(walkway)
+    public Optional<Walkway> getWalkwayWithHashtag(Long walkwayId) {
+        return Optional.ofNullable(queryFactory.selectFrom(walkway)
                 .join(walkway.hashtagWalkways, hashtagWalkway)
                 .fetchJoin()
                 .join(hashtagWalkway.hashtag)
@@ -121,7 +122,7 @@ public class WalkwayQueryDSLRepository {
                 .join(walkway.member)
                 .fetchJoin()
                 .where(walkway.id.eq(walkwayId))
-                .fetchOne();
+                .fetchOne());
     }
 
 }

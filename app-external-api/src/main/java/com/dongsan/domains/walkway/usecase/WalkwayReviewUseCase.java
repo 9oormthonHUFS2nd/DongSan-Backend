@@ -1,6 +1,7 @@
 package com.dongsan.domains.walkway.usecase;
 
 import com.dongsan.common.annotation.UseCase;
+import com.dongsan.common.error.code.WalkwayErrorCode;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.member.service.MemberQueryService;
 import com.dongsan.domains.review.dto.RatingCount;
@@ -46,6 +47,10 @@ public class WalkwayReviewUseCase {
     }
 
     public GetWalkwayReviewsResponse getWalkwayReviews(String type, Long lastId, Long walkwayId, Byte rating, Integer size) {
+        if (!walkwayQueryService.existsByWalkwayId(walkwayId)) {
+            throw new CustomException(WalkwayErrorCode.WALKWAY_NOT_FOUND);
+        }
+
         List<Review> reviews;
 
         switch (type) {

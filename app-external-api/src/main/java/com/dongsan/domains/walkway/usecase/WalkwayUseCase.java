@@ -104,12 +104,10 @@ public class WalkwayUseCase {
 
     @Transactional
     public void updateWalkway(UpdateWalkwayRequest updateWalkwayRequest, Long memberId, Long walkwayId) {
-        Member member = memberQueryService.getMember(memberId);
-
         // 산책로 불러오기
         Walkway walkway = walkwayQueryService.getWalkwayWithHashtag(walkwayId);
 
-        if (!walkway.getMember().equals(member)) {
+        if (!walkway.getMember().getId().equals(memberId)) {
             throw new CustomException(WalkwayErrorCode.NOT_WALKWAY_OWNER);
         }
 

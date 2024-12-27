@@ -55,7 +55,8 @@ public class WalkwayQueryService {
     }
 
     public Walkway getWalkwayWithHashtag(Long walkwayId) {
-        return walkwayQueryDSLRepository.getWalkwayWithHashtag(walkwayId);
+        return walkwayQueryDSLRepository.getWalkwayWithHashtag(walkwayId)
+                .orElseThrow(() -> new CustomException(WalkwayErrorCode.WALKWAY_NOT_FOUND));
     }
 
     public List<Walkway> getBookmarkWalkway(Bookmark bookmark, Integer size, LocalDateTime lastCreatedAt) {

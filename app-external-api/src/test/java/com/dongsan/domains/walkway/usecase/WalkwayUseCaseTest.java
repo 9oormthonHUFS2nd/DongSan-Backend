@@ -232,12 +232,11 @@ class WalkwayUseCaseTest {
         void it_returns_exceptions() {
             // Given
             Long memberId = 1L;
+            Long otherMemberId = 2L;
             Long walkwayId = 1L;
-            Member member = MemberFixture.createMemberWithId(memberId);
-            Member otherMember = MemberFixture.createMember();
+            Member otherMember = MemberFixture.createMemberWithId(otherMemberId);
             Walkway walkway = WalkwayFixture.createWalkwayWithId(walkwayId, otherMember);
 
-            when(memberQueryService.getMember(member.getId())).thenReturn(member);
             when(walkwayQueryService.getWalkwayWithHashtag(walkway.getId())).thenReturn(walkway);
 
             // When & Then
@@ -250,7 +249,7 @@ class WalkwayUseCaseTest {
         @DisplayName("산책로를 수정한다.")
         void it_update_walkway() {
             // Given
-            Member member = MemberFixture.createMember();
+            Member member = MemberFixture.createMemberWithId(1L);
             Long walkwayId = 1L;
             Walkway walkway = WalkwayFixture.createWalkwayWithId(walkwayId, member);
             UpdateWalkwayRequest updateWalkwayRequest = new UpdateWalkwayRequest(
@@ -259,7 +258,6 @@ class WalkwayUseCaseTest {
                     List.of(),
                     "비공개");
 
-            when(memberQueryService.getMember(member.getId())).thenReturn(member);
             when(walkwayQueryService.getWalkwayWithHashtag(walkway.getId())).thenReturn(walkway);
             when(walkwayCommandService.createWalkway(walkway)).thenReturn(null);
 

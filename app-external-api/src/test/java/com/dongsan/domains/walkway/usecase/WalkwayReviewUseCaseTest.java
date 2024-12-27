@@ -97,6 +97,7 @@ class WalkwayReviewUseCaseTest {
                 reviews.add(createReviewWithId(1L, member, walkway));
             }
 
+            when(walkwayQueryService.existsByWalkwayId(walkwayId)).thenReturn(true);
             when(reviewQueryService.getWalkwayReviewsRating(size, null, walkwayId, rating)).thenReturn(reviews);
 
             // When
@@ -122,6 +123,7 @@ class WalkwayReviewUseCaseTest {
                 reviews.add(createReviewWithId(1L, member, walkway));
             }
 
+            when(walkwayQueryService.existsByWalkwayId(walkwayId)).thenReturn(true);
             when(reviewQueryService.getWalkwayReviewsLatest(size, null, walkwayId)).thenReturn(reviews);
 
             // When

@@ -252,7 +252,7 @@ class WalkwayQueryServiceTest {
         void it_returns_walkway() {
             // Given
             Walkway walkway = WalkwayFixture.createWalkway(null);
-            when(walkwayQueryDSLRepository.getWalkwayWithHashtag(walkway.getId())).thenReturn(walkway);
+            when(walkwayQueryDSLRepository.getWalkwayWithHashtag(walkway.getId())).thenReturn(Optional.of(walkway));
 
             // When
             Walkway result = walkwayQueryService.getWalkwayWithHashtag(walkway.getId());

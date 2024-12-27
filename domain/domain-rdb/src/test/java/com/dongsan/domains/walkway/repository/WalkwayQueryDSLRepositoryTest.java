@@ -15,6 +15,7 @@ import fixture.MemberFixture;
 import fixture.WalkwayFixture;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -155,12 +156,13 @@ class WalkwayQueryDSLRepositoryTest extends RepositoryTest {
             em.persist(hashtagWalkway);
 
             // When
-            Walkway result = walkwayQueryDSLRepository.getWalkwayWithHashtag(walkway.getId());
+            Optional<Walkway> result = walkwayQueryDSLRepository.getWalkwayWithHashtag(walkway.getId());
 
             // Then
-            assertThat(result.getId()).isEqualTo(walkway.getId());
-            assertThat(result.getMember()).isEqualTo(member);
-            assertThat(result.getHashtagWalkways()).hasSize(4);
+            assertThat(result.isPresent()).isTrue();
+            assertThat(result.get().getId()).isEqualTo(walkway.getId());
+            assertThat(result.get().getMember()).isEqualTo(member);
+            assertThat(result.get().getHashtagWalkways()).hasSize(4);
         }
     }
 }
