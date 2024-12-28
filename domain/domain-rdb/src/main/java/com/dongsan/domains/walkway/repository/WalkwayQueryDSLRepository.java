@@ -8,8 +8,10 @@ import com.dongsan.domains.walkway.dto.SearchWalkwayPopular;
 import com.dongsan.domains.walkway.dto.SearchWalkwayRating;
 import com.dongsan.domains.walkway.entity.QWalkway;
 import com.dongsan.domains.walkway.entity.Walkway;
+import com.dongsan.domains.walkway.enums.ExposeLevel;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -39,11 +41,14 @@ public class WalkwayQueryDSLRepository {
             SearchWalkwayPopular searchWalkwayPopular
     ) {
         String point
-                = String.format("ST_GeomFromText('POINT(%f %f)', 4326)", searchWalkwayPopular.longitude(), searchWalkwayPopular.latitude());
+                = String.format("ST_GeomFromText('POINT(%f %f)', 4326)", searchWalkwayPopular.longitude(),
+                searchWalkwayPopular.latitude());
 
         return queryFactory.selectFrom(walkway)
-                .leftJoin(walkway.hashtagWalkways, hashtagWalkway)
-                .leftJoin(hashtagWalkway.hashtag, hashtag)
+                .join(walkway.hashtagWalkways, hashtagWalkway)
+                .fetchJoin()
+                .join(hashtagWalkway.hashtag, hashtag)
+                .fetchJoin()
                 .leftJoin(walkway.likedWalkways, likedWalkway)
                 .on(likedWalkway.member.id.eq(searchWalkwayPopular.userId()))
                 .where(
@@ -52,11 +57,21 @@ public class WalkwayQueryDSLRepository {
                                 walkway.startLocation,
                                 searchWalkwayPopular.distance()
                         ),
-                        hashtag.name.in(searchWalkwayPopular.hashtags()),
-                        walkway.likeCount.eq(searchWalkwayPopular.lastLikes()).and(walkwayIdLt(searchWalkwayPopular.lastId()))
-                                        .or(walkway.likeCount.lt(searchWalkwayPopular.lastLikes()))
+                        walkway.in(
+                                JPAExpressions
+                                        .selectFrom(walkway)
+                                        .join(hashtagWalkway)
+                                        .on(hashtagWalkway.walkway.eq(walkway))
+                                        .join(hashtag)
+                                        .on(hashtagWalkway.hashtag.eq(hashtag))
+                                        .where(walkwayHashtagIn(searchWalkwayPopular.hashtags()))
+                        ),
+                        walkway.likeCount.eq(searchWalkwayPopular.lastLikes())
+                                .or(createdAtLt(searchWalkwayPopular.createdAt()))
+                                .or(walkway.likeCount.lt(searchWalkwayPopular.lastLikes())),
+                        walkway.exposeLevel.eq(ExposeLevel.PUBLIC)
                 )
-                .orderBy(walkway.likeCount.desc(), walkway.id.desc())
+                .orderBy(walkway.likeCount.desc(), walkway.createdAt.desc())
                 .limit(searchWalkwayPopular.size())
                 .fetch();
     }
@@ -65,11 +80,14 @@ public class WalkwayQueryDSLRepository {
             SearchWalkwayRating searchWalkwayRating
     ) {
         String point
-                = String.format("ST_GeomFromText('POINT(%f %f)', 4326)", searchWalkwayRating.longitude(), searchWalkwayRating.latitude());
+                = String.format("ST_GeomFromText('POINT(%f %f)', 4326)", searchWalkwayRating.longitude(),
+                searchWalkwayRating.latitude());
 
         return queryFactory.selectFrom(walkway)
-                .leftJoin(walkway.hashtagWalkways, hashtagWalkway)
-                .leftJoin(hashtagWalkway.hashtag, hashtag)
+                .join(walkway.hashtagWalkways, hashtagWalkway)
+                .fetchJoin()
+                .join(hashtagWalkway.hashtag, hashtag)
+                .fetchJoin()
                 .leftJoin(walkway.likedWalkways, likedWalkway)
                 .on(likedWalkway.member.id.eq(searchWalkwayRating.userId()))
                 .where(
@@ -78,16 +96,26 @@ public class WalkwayQueryDSLRepository {
                                 walkway.startLocation,
                                 searchWalkwayRating.distance()
                         ),
-                        hashtag.name.in(searchWalkwayRating.hashtags()),
-                        walkway.rating.eq(searchWalkwayRating.lastRating()).and(walkwayIdLt(searchWalkwayRating.lastId()))
-                                .or(walkway.rating.lt(searchWalkwayRating.lastRating()))
+                        walkway.in(
+                                JPAExpressions
+                                        .selectFrom(walkway)
+                                        .join(hashtagWalkway)
+                                        .on(hashtagWalkway.walkway.eq(walkway))
+                                        .join(hashtag)
+                                        .on(hashtagWalkway.hashtag.eq(hashtag))
+                                        .where(walkwayHashtagIn(searchWalkwayRating.hashtags()))
+                        ),
+                        walkway.rating.eq(searchWalkwayRating.lastRating())
+                                .or(createdAtLt(searchWalkwayRating.createdAt()))
+                                .or(walkway.rating.lt(searchWalkwayRating.lastRating())),
+                        walkway.exposeLevel.eq(ExposeLevel.PUBLIC)
                 )
+                .orderBy(walkway.rating.desc(), walkway.createdAt.desc())
                 .limit(searchWalkwayRating.size())
-                .orderBy(walkway.rating.desc(), walkway.id.desc())
                 .fetch();
     }
 
-    public List<Walkway> getUserWalkway(Long memberId, Integer size, LocalDateTime lastCreatedAt){
+    public List<Walkway> getUserWalkway(Long memberId, Integer size, LocalDateTime lastCreatedAt) {
         return queryFactory.selectFrom(walkway)
                 .where(walkway.member.id.eq(memberId), createdAtLt(lastCreatedAt))
                 .orderBy(walkway.createdAt.desc())
@@ -97,19 +125,21 @@ public class WalkwayQueryDSLRepository {
 
     /**
      * walkwayId보다 작은 Id를 가진 walkway를 조회하는 조건 (즉, createdAt이 더 작은 walkway를 조회)
+     *
      * @param walkwayId 마지막으로 가져온 walkwayId
      * @return 조건 만족 안하면 null 반환, where 절에서 null은 무시된다.
      */
-    private BooleanExpression walkwayIdLt(Long walkwayId){
+    private BooleanExpression walkwayIdLt(Long walkwayId) {
         return walkwayId != null ? walkway.id.lt(walkwayId) : null;
     }
 
     /**
      * lastCreatedAt 보다 작은 createdAt 를 가진 walkway를 조회하는 조건
+     *
      * @param createdAt 마지막으로 가져온 createdAt
      * @return 조건 만족 안하면 null 반환, where 절에서 null은 무시된다.
      */
-    private BooleanExpression createdAtLt(LocalDateTime createdAt){
+    private BooleanExpression createdAtLt(LocalDateTime createdAt) {
         return createdAt != null ? walkway.createdAt.lt(createdAt) : null;
     }
 
@@ -123,6 +153,10 @@ public class WalkwayQueryDSLRepository {
                 .fetchJoin()
                 .where(walkway.id.eq(walkwayId))
                 .fetchOne());
+    }
+
+    private BooleanExpression walkwayHashtagIn(List<String> hashtags) {
+        return hashtags.isEmpty() ? null : hashtag.name.in(hashtags);
     }
 
 }

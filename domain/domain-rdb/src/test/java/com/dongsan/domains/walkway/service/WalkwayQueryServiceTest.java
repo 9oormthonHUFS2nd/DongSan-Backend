@@ -8,6 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
+import com.dongsan.common.error.exception.CustomException;
 import com.dongsan.domains.bookmark.entity.Bookmark;
 import com.dongsan.domains.bookmark.entity.MarkedWalkway;
 import com.dongsan.domains.bookmark.repository.MarkedWalkwayQueryDSLRepository;
@@ -17,7 +18,6 @@ import com.dongsan.domains.walkway.dto.SearchWalkwayRating;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.repository.WalkwayQueryDSLRepository;
 import com.dongsan.domains.walkway.repository.WalkwayRepository;
-import com.dongsan.common.error.exception.CustomException;
 import fixture.MarkedWalkwayFixture;
 import fixture.MemberFixture;
 import fixture.WalkwayFixture;
@@ -186,12 +186,12 @@ class WalkwayQueryServiceTest {
             Double latitude = 2.0;
             int distance = 3;
             List<String> hashtags = new ArrayList<>();
-            Long lastId = 1L;
+            LocalDateTime createdAt = LocalDateTime.now();
             Integer lastLikes = 20;
             int size = 10;
 
             SearchWalkwayPopular searchWalkwayPopular
-                    = new SearchWalkwayPopular(userId, longitude, latitude, distance, hashtags, lastId, lastLikes,
+                    = new SearchWalkwayPopular(userId, longitude, latitude, distance, hashtags, createdAt, lastLikes,
                     size);
 
             List<Walkway> walkways = new ArrayList<>();
@@ -221,12 +221,12 @@ class WalkwayQueryServiceTest {
             Double latitude = 2.0;
             int distance = 3;
             List<String> hashtags = new ArrayList<>();
-            Long lastId = 1L;
+            LocalDateTime createdAt = LocalDateTime.now();
             Double lastRating = 5.0;
             int size = 10;
 
             SearchWalkwayRating searchWalkwayRating
-                    = new SearchWalkwayRating(userId, longitude, latitude, distance, hashtags, lastId, lastRating,
+                    = new SearchWalkwayRating(userId, longitude, latitude, distance, hashtags, createdAt, lastRating,
                     size);
 
             List<Walkway> walkways = new ArrayList<>();

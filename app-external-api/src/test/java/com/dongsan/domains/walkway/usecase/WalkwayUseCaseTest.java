@@ -22,6 +22,7 @@ import com.dongsan.domains.walkway.service.WalkwayCommandService;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
 import fixture.MemberFixture;
 import fixture.WalkwayFixture;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -147,6 +148,7 @@ class WalkwayUseCaseTest {
             Double distance = 10.0;
             String hashtags = "test0,test1";
             Long lastId = null;
+            LocalDateTime createdAt = null;
             Integer lastLikes = 2147483647;
             int size = 10;
 
@@ -156,7 +158,7 @@ class WalkwayUseCaseTest {
             int distanceInt = (int) (distance * 1000);
 
             SearchWalkwayPopular searchWalkwayPopular
-                    = new SearchWalkwayPopular(userId, longitude, latitude, distanceInt, hashtagsList, lastId, lastLikes, size);
+                    = new SearchWalkwayPopular(userId, longitude, latitude, distanceInt, hashtagsList, createdAt, lastLikes, size);
 
             when(walkwayQueryService.getWalkwaysPopular(searchWalkwayPopular))
                     .thenReturn(walkways);
@@ -181,6 +183,7 @@ class WalkwayUseCaseTest {
             Double distance = 10.0;
             String hashtags = "test0,test1";
             Long lastId = null;
+            LocalDateTime createdAt = null;
             Double lastRating = 5.0;
             int size = 10;
 
@@ -189,7 +192,7 @@ class WalkwayUseCaseTest {
 
             int distanceInt = (int) (distance * 1000);
 
-            SearchWalkwayRating searchWalkwayRating = new SearchWalkwayRating(userId, longitude, latitude, distanceInt, hashtagsList, lastId, lastRating, size);
+            SearchWalkwayRating searchWalkwayRating = new SearchWalkwayRating(userId, longitude, latitude, distanceInt, hashtagsList, createdAt, lastRating, size);
             when(walkwayQueryService.getWalkwaysRating(searchWalkwayRating))
                     .thenReturn(walkways);
 

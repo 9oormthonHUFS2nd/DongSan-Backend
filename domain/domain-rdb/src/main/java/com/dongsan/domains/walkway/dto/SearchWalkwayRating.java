@@ -1,5 +1,6 @@
 package com.dongsan.domains.walkway.dto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public record SearchWalkwayRating(
@@ -8,7 +9,7 @@ public record SearchWalkwayRating(
         Double latitude,
         int distance,
         List<String> hashtags,
-        Long lastId,
+        LocalDateTime createdAt,
         Double lastRating,
         int size
 ) {

@@ -17,6 +17,7 @@ import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.mapper.WalkwayMapper;
 import com.dongsan.domains.walkway.service.WalkwayCommandService;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -74,26 +75,31 @@ public class WalkwayUseCase {
             int size
     ) {
         List<String> hashtagsList = new ArrayList<>();
-        Arrays.stream(hashtags.split(",")).forEach(hashtag -> hashtagsList.add(hashtag.trim()));
+
+        if (!hashtags.isBlank()) {
+            Arrays.stream(hashtags.split(",")).forEach(hashtag -> hashtagsList.add(hashtag.trim()));
+        }
 
         int distanceInt = (int) (distance * 1000);
 
         int likeCount = 2147483647;
         double rating = 5;
+        LocalDateTime lastCreatedAt = null;
 
         if (lastId != null) {
             Walkway walkway = walkwayQueryService.getWalkway(lastId);
             likeCount = walkway.getLikeCount();
             rating = walkway.getRating();
+            lastCreatedAt = walkway.getCreatedAt();
         }
 
         List<Walkway> walkways = switch (type) {
             case "liked" -> walkwayQueryService.getWalkwaysPopular(
-                    new SearchWalkwayPopular(userId, longitude, latitude, distanceInt, hashtagsList, lastId, likeCount,
+                    new SearchWalkwayPopular(userId, longitude, latitude, distanceInt, hashtagsList, lastCreatedAt, likeCount,
                             size)
             );
             case "rating" -> walkwayQueryService.getWalkwaysRating(
-                    new SearchWalkwayRating(userId, longitude, latitude, distanceInt, hashtagsList, lastId, rating,
+                    new SearchWalkwayRating(userId, longitude, latitude, distanceInt, hashtagsList, lastCreatedAt, rating,
                             size)
             );
             default -> throw new CustomException(WalkwayErrorCode.INVALID_SEARCH_TYPE);

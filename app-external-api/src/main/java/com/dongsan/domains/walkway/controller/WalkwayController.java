@@ -60,13 +60,13 @@ public class WalkwayController {
     @Operation(summary = "산책로 검색")
     @GetMapping("")
     public ResponseEntity<SuccessResponse<GetWalkwaySearchResponse>> getWalkwaysSearch(
-            @RequestParam String type,
-            @RequestParam(defaultValue = "") String hashtags,
-            @RequestParam Double latitude,
-            @RequestParam Double longitude,
-            @RequestParam Double distance,
-            @RequestParam(required = false) Long lastId,
-            @RequestParam(defaultValue = "10") Integer size,
+            @RequestParam(name = "type") String type,
+            @RequestParam(name = "hashtags", defaultValue = "") String hashtags,
+            @RequestParam(name = "latitude") Double latitude,
+            @RequestParam(name = "longitude") Double longitude,
+            @RequestParam(name = "distance") Double distance,
+            @RequestParam(name = "lastId", required = false) Long lastId,
+            @RequestParam(name = "size", defaultValue = "10") Integer size,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {
         List<Walkway> walkways = walkwayUseCase.getWalkwaysSearch(customOAuth2User.getMemberId(), type, latitude, longitude, distance, hashtags, lastId, size);

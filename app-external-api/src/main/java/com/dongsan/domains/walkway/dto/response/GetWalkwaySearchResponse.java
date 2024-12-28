@@ -9,14 +9,16 @@ import lombok.Builder;
 @Builder
 public record GetWalkwaySearchResponse(
         List<WalkwayResponse> walkways,
-        Long nextCursor
+        Long nextCursor,
+        int size
 ) {
     public GetWalkwaySearchResponse(List<Walkway> walkways, Integer size) {
         this(
                 walkways.stream()
                         .map(WalkwayResponse::new)
                         .collect(Collectors.toList()),
-                walkways.size() > size ? walkways.get(walkways.size()-1).getId() : -1
+                walkways.size() == size ? walkways.get(walkways.size()-1).getId() : -1,
+                walkways.size()
         );
     }
 
