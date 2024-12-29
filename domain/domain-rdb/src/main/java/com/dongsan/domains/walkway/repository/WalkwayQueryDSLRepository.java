@@ -66,9 +66,7 @@ public class WalkwayQueryDSLRepository {
                                         .on(hashtagWalkway.hashtag.eq(hashtag))
                                         .where(walkwayHashtagIn(searchWalkwayPopular.hashtags()))
                         ),
-                        walkway.likeCount.eq(searchWalkwayPopular.lastLikes())
-                                .or(createdAtLt(searchWalkwayPopular.createdAt()))
-                                .or(walkway.likeCount.lt(searchWalkwayPopular.lastLikes())),
+                        walkwaySearchLikeEqLt(searchWalkwayPopular.walkway()),
                         walkway.exposeLevel.eq(ExposeLevel.PUBLIC)
                 )
                 .orderBy(walkway.likeCount.desc(), walkway.createdAt.desc())
@@ -105,9 +103,7 @@ public class WalkwayQueryDSLRepository {
                                         .on(hashtagWalkway.hashtag.eq(hashtag))
                                         .where(walkwayHashtagIn(searchWalkwayRating.hashtags()))
                         ),
-                        walkway.rating.eq(searchWalkwayRating.lastRating())
-                                .or(createdAtLt(searchWalkwayRating.createdAt()))
-                                .or(walkway.rating.lt(searchWalkwayRating.lastRating())),
+                        walkwaySearchRatingEqLt(searchWalkwayRating.walkway()),
                         walkway.exposeLevel.eq(ExposeLevel.PUBLIC)
                 )
                 .orderBy(walkway.rating.desc(), walkway.createdAt.desc())
@@ -157,6 +153,24 @@ public class WalkwayQueryDSLRepository {
 
     private BooleanExpression walkwayHashtagIn(List<String> hashtags) {
         return hashtags.isEmpty() ? null : hashtag.name.in(hashtags);
+    }
+
+    private BooleanExpression walkwaySearchRatingEqLt(Walkway lastWalkway) {
+        if (lastWalkway == null) {
+            return null;
+        }
+        return walkway.createdAt.lt(lastWalkway.getCreatedAt())
+                .or(walkway.rating.eq(lastWalkway.getRating()))
+                .or(walkway.rating.lt(lastWalkway.getRating()));
+    }
+
+    private BooleanExpression walkwaySearchLikeEqLt(Walkway lastWalkway) {
+        if (lastWalkway == null) {
+            return null;
+        }
+        return walkway.createdAt.lt(lastWalkway.getCreatedAt())
+                .or(walkway.likeCount.eq(lastWalkway.getLikeCount()))
+                .or(walkway.likeCount.lt(lastWalkway.getLikeCount()));
     }
 
 }

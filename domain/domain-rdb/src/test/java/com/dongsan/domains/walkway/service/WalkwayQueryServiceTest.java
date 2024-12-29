@@ -186,13 +186,11 @@ class WalkwayQueryServiceTest {
             Double latitude = 2.0;
             int distance = 3;
             List<String> hashtags = new ArrayList<>();
-            LocalDateTime createdAt = LocalDateTime.now();
-            Integer lastLikes = 20;
+            Walkway walkway = WalkwayFixture.createWalkway(null);
             int size = 10;
 
             SearchWalkwayPopular searchWalkwayPopular
-                    = new SearchWalkwayPopular(userId, longitude, latitude, distance, hashtags, createdAt, lastLikes,
-                    size);
+                    = new SearchWalkwayPopular(userId, longitude, latitude, distance, hashtags, walkway, size);
 
             List<Walkway> walkways = new ArrayList<>();
             for(int i = 0; i < 10; i++) {
@@ -221,13 +219,11 @@ class WalkwayQueryServiceTest {
             Double latitude = 2.0;
             int distance = 3;
             List<String> hashtags = new ArrayList<>();
-            LocalDateTime createdAt = LocalDateTime.now();
-            Double lastRating = 5.0;
+            Walkway walkway = WalkwayFixture.createWalkway(null);
             int size = 10;
 
             SearchWalkwayRating searchWalkwayRating
-                    = new SearchWalkwayRating(userId, longitude, latitude, distance, hashtags, createdAt, lastRating,
-                    size);
+                    = new SearchWalkwayRating(userId, longitude, latitude, distance, hashtags, walkway, size);
 
             List<Walkway> walkways = new ArrayList<>();
             for(int i = 0; i < 10; i++) {

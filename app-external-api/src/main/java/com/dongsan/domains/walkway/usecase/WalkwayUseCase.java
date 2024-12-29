@@ -17,7 +17,6 @@ import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.mapper.WalkwayMapper;
 import com.dongsan.domains.walkway.service.WalkwayCommandService;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -82,25 +81,18 @@ public class WalkwayUseCase {
 
         int distanceInt = (int) (distance * 1000);
 
-        int likeCount = 2147483647;
-        double rating = 5;
-        LocalDateTime lastCreatedAt = null;
+        Walkway lastWalkway = null;
 
         if (lastId != null) {
-            Walkway walkway = walkwayQueryService.getWalkway(lastId);
-            likeCount = walkway.getLikeCount();
-            rating = walkway.getRating();
-            lastCreatedAt = walkway.getCreatedAt();
+            lastWalkway = walkwayQueryService.getWalkway(lastId);
         }
 
         List<Walkway> walkways = switch (type) {
             case "liked" -> walkwayQueryService.getWalkwaysPopular(
-                    new SearchWalkwayPopular(userId, longitude, latitude, distanceInt, hashtagsList, lastCreatedAt, likeCount,
-                            size)
+                    new SearchWalkwayPopular(userId, longitude, latitude, distanceInt, hashtagsList, lastWalkway, size)
             );
             case "rating" -> walkwayQueryService.getWalkwaysRating(
-                    new SearchWalkwayRating(userId, longitude, latitude, distanceInt, hashtagsList, lastCreatedAt, rating,
-                            size)
+                    new SearchWalkwayRating(userId, longitude, latitude, distanceInt, hashtagsList, lastWalkway, size)
             );
             default -> throw new CustomException(WalkwayErrorCode.INVALID_SEARCH_TYPE);
         };
