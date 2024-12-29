@@ -3,8 +3,6 @@ package com.dongsan.domains.walkway.usecase;
 import com.dongsan.common.annotation.UseCase;
 import com.dongsan.common.error.code.WalkwayErrorCode;
 import com.dongsan.common.error.exception.CustomException;
-import com.dongsan.domains.hashtag.service.HashtagCommandService;
-import com.dongsan.domains.hashtag.service.HashtagQueryService;
 import com.dongsan.domains.hashtag.service.HashtagWalkwayCommandService;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.member.service.MemberQueryService;
@@ -31,8 +29,6 @@ public class WalkwayUseCase {
     private final WalkwayQueryService walkwayQueryService;
     private final MemberQueryService memberQueryService;
     private final HashtagWalkwayCommandService hashtagWalkwayCommandService;
-    private final HashtagQueryService hashtagQueryService;
-    private final HashtagCommandService hashtagCommandService;
     private final HashtagUseCase hashtagUseCase;
 
     @Transactional

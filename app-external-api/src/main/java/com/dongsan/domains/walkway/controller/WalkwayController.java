@@ -11,6 +11,7 @@ import com.dongsan.domains.walkway.dto.response.CreateWalkwayResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwaySearchResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayWithLikedResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
+import com.dongsan.domains.walkway.usecase.LikedWalkwayUseCase;
 import com.dongsan.domains.walkway.usecase.WalkwayUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,6 +38,7 @@ public class WalkwayController {
 
     private final WalkwayUseCase walkwayUseCase;
     private final BookmarkUseCase bookmarkUseCase;
+    private final LikedWalkwayUseCase likedWalkwayUseCase;
 
     @Operation(summary = "산책로 등록")
     @PostMapping("")
@@ -70,7 +72,8 @@ public class WalkwayController {
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {
         List<Walkway> walkways = walkwayUseCase.getWalkwaysSearch(customOAuth2User.getMemberId(), type, latitude, longitude, distance, hashtags, lastId, size);
-        return ResponseFactory.ok(new GetWalkwaySearchResponse(walkways, size));
+        List<Boolean> likedWalkways = likedWalkwayUseCase.existsLikedWalkways(customOAuth2User.getMemberId(), walkways);
+        return ResponseFactory.ok(new GetWalkwaySearchResponse(walkways, likedWalkways, size));
     }
 
     @Operation(summary = "북마크 목록 보기(산책로 마크 여부 포함)")

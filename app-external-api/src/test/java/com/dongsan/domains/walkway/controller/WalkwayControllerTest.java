@@ -22,6 +22,7 @@ import com.dongsan.domains.walkway.dto.response.GetWalkwaySearchResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayWithLikedResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
+import com.dongsan.domains.walkway.usecase.LikedWalkwayUseCase;
 import com.dongsan.domains.walkway.usecase.WalkwayUseCase;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fixture.WalkwayFixture;
@@ -65,6 +66,9 @@ class WalkwayControllerTest {
 
     @MockBean
     WalkwayQueryService walkwayQueryService;
+
+    @MockBean
+    LikedWalkwayUseCase likedWalkwayUseCase;
 
     final Member member = createMemberWithId(1L);
     final CustomOAuth2User customOAuth2User = new CustomOAuth2User(member);
@@ -164,12 +168,15 @@ class WalkwayControllerTest {
     class Describe_getWalkwaysSearch {
 
         List<Walkway> walkways;
+        List<Boolean> likedWalkways;
 
         @BeforeEach
         void setUp() {
             walkways = new ArrayList<>();
+            likedWalkways = new ArrayList<>();
             for (long i = 0; i < 10; i++) {
                 walkways.add(WalkwayFixture.createWalkwayWithId(i, member));
+                likedWalkways.add(true);
             }
         }
 
@@ -189,6 +196,9 @@ class WalkwayControllerTest {
                     hashtags, lastId, size))
                     .thenReturn(walkways);
 
+            when(likedWalkwayUseCase.existsLikedWalkways(customOAuth2User.getMemberId(), walkways))
+                    .thenReturn(likedWalkways);
+
             // When
             ResultActions response = mockMvc.perform(get("/walkways")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -198,7 +208,7 @@ class WalkwayControllerTest {
                     .param("longitude", longitude.toString())
                     .param("distance", distance.toString())
                     .param("size", size.toString())
-                    .content(objectMapper.writeValueAsString(new GetWalkwaySearchResponse(walkways, size))));
+                    .content(objectMapper.writeValueAsString(new GetWalkwaySearchResponse(walkways, likedWalkways, size))));
             // Then
             response.andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.walkways").isArray())
@@ -222,6 +232,9 @@ class WalkwayControllerTest {
                     hashtags, lastId, size))
                     .thenReturn(walkways);
 
+            when(likedWalkwayUseCase.existsLikedWalkways(customOAuth2User.getMemberId(), walkways))
+                    .thenReturn(likedWalkways);
+
             // When
             ResultActions response = mockMvc.perform(get("/walkways")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -231,7 +244,7 @@ class WalkwayControllerTest {
                     .param("longitude", longitude.toString())
                     .param("distance", distance.toString())
                     .param("size", size.toString())
-                    .content(objectMapper.writeValueAsString(new GetWalkwaySearchResponse(walkways, size))));
+                    .content(objectMapper.writeValueAsString(new GetWalkwaySearchResponse(walkways, likedWalkways, size))));
             // Then
             response.andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.walkways").isArray())

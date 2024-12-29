@@ -4,6 +4,7 @@ import com.dongsan.domains.walkway.entity.Walkway;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import lombok.Builder;
 
 @Builder
@@ -11,11 +12,11 @@ public record GetWalkwaySearchResponse(
         List<WalkwayResponse> walkways,
         Long nextCursor
 ) {
-    public GetWalkwaySearchResponse(List<Walkway> walkways, Integer size) {
+    public GetWalkwaySearchResponse(List<Walkway> walkways, List<Boolean> likedWalkways, Integer size) {
         this(
-                walkways.stream()
-                        .map(WalkwayResponse::new)
-                        .collect(Collectors.toList()),
+                IntStream.range(0, walkways.size())
+                        .mapToObj(i -> new WalkwayResponse(walkways.get(i), likedWalkways.get(i)))
+                        .toList(),
                 walkways.size() == size ? walkways.get(walkways.size()-1).getId() : -1
         );
     }
@@ -33,7 +34,7 @@ public record GetWalkwaySearchResponse(
             List<Double> location,
             String registerDate
     ) {
-        public WalkwayResponse(Walkway walkway) {
+        public WalkwayResponse(Walkway walkway, Boolean isLike) {
             this(
                     walkway.getId(),
                     walkway.getName(),
@@ -41,7 +42,7 @@ public record GetWalkwaySearchResponse(
                     walkway.getHashtagWalkways().stream()
                             .map(hashtagWalkway -> "#" + hashtagWalkway.getHashtag().getName())
                             .collect(Collectors.toList()),
-                    !walkway.getLikedWalkways().isEmpty(),
+                    isLike,
                     walkway.getLikeCount(),
                     walkway.getReviewCount(),
                     walkway.getRating(),

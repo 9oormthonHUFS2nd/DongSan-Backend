@@ -49,8 +49,6 @@ public class WalkwayQueryDSLRepository {
                 .fetchJoin()
                 .join(hashtagWalkway.hashtag, hashtag)
                 .fetchJoin()
-                .leftJoin(walkway.likedWalkways, likedWalkway)
-                .on(likedWalkway.member.id.eq(searchWalkwayPopular.userId()))
                 .where(
                         Expressions.booleanTemplate(
                                 "ST_Distance_Sphere({0}," + point + ") <= {1}",
@@ -86,8 +84,6 @@ public class WalkwayQueryDSLRepository {
                 .fetchJoin()
                 .join(hashtagWalkway.hashtag, hashtag)
                 .fetchJoin()
-                .leftJoin(walkway.likedWalkways, likedWalkway)
-                .on(likedWalkway.member.id.eq(searchWalkwayRating.userId()))
                 .where(
                         Expressions.booleanTemplate(
                                 "ST_Distance_Sphere({0}," + point + ") <= {1}",

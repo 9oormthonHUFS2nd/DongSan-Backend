@@ -49,4 +49,8 @@ public class ReviewQueryService {
             throw new CustomException(ReviewErrorCode.NOT_REVIEW_OWNER);
         }
     }
+
+    public Integer getWalkwayReviewCount(Long walkwayId) {
+        return reviewRepository.countByWalkwayId(walkwayId);
+    }
 }

@@ -69,6 +69,7 @@ class WalkwayReviewUseCaseTest {
             when(memberQueryService.getMember(member.getId())).thenReturn(member);
             when(walkwayQueryService.getWalkway(walkway.getId())).thenReturn(walkway);
             when(reviewCommandService.createReview(any())).thenReturn(review);
+            when(reviewQueryService.getWalkwayReviewCount(walkwayId)).thenReturn(1);
 
             // When
             CreateReviewResponse result = walkwayReviewUseCase.createReview(memberId, walkwayId, createReviewRequest);

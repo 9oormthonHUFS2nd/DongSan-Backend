@@ -20,6 +20,7 @@ import com.dongsan.common.error.code.ReviewErrorCode;
 import com.dongsan.common.error.exception.CustomException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 @UseCase
 @RequiredArgsConstructor
@@ -31,6 +32,7 @@ public class WalkwayReviewUseCase {
     private final ReviewQueryService reviewQueryService;
     private final WalkwayCommandService walkwayCommandService;
 
+    @Transactional
     public CreateReviewResponse createReview(Long memberId, Long walkwayId, CreateReviewRequest createReviewRequest) {
         Member member = memberQueryService.getMember(memberId);
 
@@ -40,7 +42,8 @@ public class WalkwayReviewUseCase {
 
         review = reviewCommandService.createReview(review);
 
-        walkway.updateRatingAndReviewCount(review.getRating());
+        Integer count = reviewQueryService.getWalkwayReviewCount(walkwayId);
+        walkway.updateRatingAndReviewCount(review.getRating(), count);
         walkwayCommandService.createWalkway(walkway);
 
         return ReviewMapper.toCreateReviewResponse(review);
