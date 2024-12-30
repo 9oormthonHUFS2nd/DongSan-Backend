@@ -2,7 +2,6 @@ package com.dongsan.domains.walkway.controller;
 
 import com.dongsan.common.apiResponse.ResponseFactory;
 import com.dongsan.common.apiResponse.SuccessResponse;
-import com.dongsan.common.validation.annotation.ExistWalkway;
 import com.dongsan.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.domains.bookmark.dto.response.BookmarksWithMarkedWalkwayResponse;
 import com.dongsan.domains.bookmark.usecase.BookmarkUseCase;
@@ -11,9 +10,12 @@ import com.dongsan.domains.walkway.dto.request.UpdateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.response.CreateWalkwayResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwaySearchResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayWithLikedResponse;
+import com.dongsan.domains.walkway.entity.Walkway;
+import com.dongsan.domains.walkway.usecase.LikedWalkwayUseCase;
 import com.dongsan.domains.walkway.usecase.WalkwayUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -36,6 +38,7 @@ public class WalkwayController {
 
     private final WalkwayUseCase walkwayUseCase;
     private final BookmarkUseCase bookmarkUseCase;
+    private final LikedWalkwayUseCase likedWalkwayUseCase;
 
     @Operation(summary = "산책로 등록")
     @PostMapping("")
@@ -52,30 +55,31 @@ public class WalkwayController {
             @PathVariable Long walkwayId,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {
-        return ResponseFactory.ok(walkwayUseCase.getWalkwayWithLiked(walkwayId, customOAuth2User.getMemberId()));
+        Walkway walkway = walkwayUseCase.getWalkwayWithLiked(walkwayId, customOAuth2User.getMemberId());
+        return ResponseFactory.ok(new GetWalkwayWithLikedResponse(walkway));
     }
 
     @Operation(summary = "산책로 검색")
     @GetMapping("")
     public ResponseEntity<SuccessResponse<GetWalkwaySearchResponse>> getWalkwaysSearch(
-            @RequestParam String type,
-            @RequestParam(defaultValue = "") String hashtags,
-            @RequestParam Double latitude,
-            @RequestParam Double longitude,
-            @RequestParam Double distance,
-            @RequestParam(required = false) Long lastId,
-            @RequestParam(defaultValue = "0") Double rating,
-            @RequestParam(defaultValue = "0") Integer likes,
-            @RequestParam(defaultValue = "10") Integer size,
+            @RequestParam(name = "type") String type,
+            @RequestParam(name = "hashtags", defaultValue = "") String hashtags,
+            @RequestParam(name = "latitude") Double latitude,
+            @RequestParam(name = "longitude") Double longitude,
+            @RequestParam(name = "distance") Double distance,
+            @RequestParam(name = "lastId", required = false) Long lastId,
+            @RequestParam(name = "size", defaultValue = "10") Integer size,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {
-        return ResponseFactory.ok(walkwayUseCase.getWalkwaysSearch(customOAuth2User.getMemberId(), type, latitude, longitude, distance, hashtags, lastId, rating, likes, size));
+        List<Walkway> walkways = walkwayUseCase.getWalkwaysSearch(customOAuth2User.getMemberId(), type, latitude, longitude, distance, hashtags, lastId, size);
+        List<Boolean> likedWalkways = likedWalkwayUseCase.existsLikedWalkways(customOAuth2User.getMemberId(), walkways);
+        return ResponseFactory.ok(new GetWalkwaySearchResponse(walkways, likedWalkways, size));
     }
 
     @Operation(summary = "북마크 목록 보기(산책로 마크 여부 포함)")
     @GetMapping("/{walkwayId}/bookmarks")
     public ResponseEntity<SuccessResponse<BookmarksWithMarkedWalkwayResponse>> getBookmarksWithMarkedWalkway(
-            @ExistWalkway @PathVariable Long walkwayId,
+            @PathVariable Long walkwayId,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {
         return ResponseFactory.ok(bookmarkUseCase.getBookmarksWithMarkedWalkway(customOAuth2User.getMemberId(), walkwayId));
@@ -84,7 +88,7 @@ public class WalkwayController {
     @Operation(summary = "산책로 수정")
     @PutMapping("/{walkwayId}")
     public ResponseEntity<Void> updateWalkway(
-            @ExistWalkway @PathVariable Long walkwayId,
+            @PathVariable Long walkwayId,
             @RequestBody UpdateWalkwayRequest updateWalkwayRequest,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {

@@ -91,8 +91,8 @@ public class Walkway extends BaseEntity {
         this.rating = 0.0;
     }
 
-    public void updateRatingAndReviewCount(Byte inputRating) {
-        this.rating = (this.rating + inputRating) / 2;
+    public void updateRatingAndReviewCount(Byte inputRating, Integer count) {
+        this.rating = ((this.rating * count) + inputRating) / (count + 1);
         this.reviewCount++;
     }
 
@@ -104,7 +104,7 @@ public class Walkway extends BaseEntity {
         this.likeCount++;
     }
     public void removeLikedWalkway() {
-        this.likeCount++;
+        this.likeCount--;
     }
     public void removeAllHashtagWalkway() {
         this.hashtagWalkways = new ArrayList<>();

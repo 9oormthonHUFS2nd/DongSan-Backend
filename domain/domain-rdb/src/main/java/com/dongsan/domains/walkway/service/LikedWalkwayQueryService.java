@@ -33,4 +33,8 @@ public class LikedWalkwayQueryService {
                         () -> new CustomException(LikedWalkwayErrorCode.LIKED_WALKWAY_NOT_FOUND));
     }
 
+    public Boolean existByMemberIdAndWalkwayId(Long memberId, Long walkwayId) {
+        return likedWalkwayRepository.existsByMemberIdAndWalkwayId(memberId, walkwayId);
+    }
+
 }

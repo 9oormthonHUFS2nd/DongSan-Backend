@@ -1,5 +1,6 @@
 package com.dongsan.domains.walkway.dto;
 
+import com.dongsan.domains.walkway.entity.Walkway;
 import java.util.List;
 
 public record SearchWalkwayPopular(
@@ -8,8 +9,7 @@ public record SearchWalkwayPopular(
         Double latitude,
         int distance,
         List<String> hashtags,
-        Long lastId,
-        Integer lastLikes,
+        Walkway walkway,
         int size
 ) {
 }

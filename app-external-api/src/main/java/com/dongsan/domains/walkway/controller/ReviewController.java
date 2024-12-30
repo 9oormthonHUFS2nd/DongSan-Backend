@@ -2,7 +2,6 @@ package com.dongsan.domains.walkway.controller;
 
 import com.dongsan.common.apiResponse.ResponseFactory;
 import com.dongsan.common.apiResponse.SuccessResponse;
-import com.dongsan.common.validation.annotation.ExistWalkway;
 import com.dongsan.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.domains.walkway.dto.request.CreateReviewRequest;
 import com.dongsan.domains.walkway.dto.response.CreateReviewResponse;
@@ -35,7 +34,7 @@ public class ReviewController {
     @Operation(summary = "리뷰 작성")
     @PostMapping("/{walkwayId}/review")
     public ResponseEntity<SuccessResponse<CreateReviewResponse>> createReview(
-            @ExistWalkway @PathVariable Long walkwayId,
+            @PathVariable Long walkwayId,
             @Validated @RequestBody CreateReviewRequest createReviewRequest,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {
@@ -45,7 +44,7 @@ public class ReviewController {
     @Operation(summary = "리뷰 내용 보기")
     @GetMapping("/{walkwayId}/review/content")
     public ResponseEntity<SuccessResponse<GetWalkwayReviewsResponse>> getWalkwayReviews(
-            @ExistWalkway @PathVariable Long walkwayId,
+            @PathVariable Long walkwayId,
             @RequestParam String type,
             @RequestParam(required = false) Long lastId,
             @RequestParam(required = false, defaultValue = "5") Byte rating,
@@ -57,7 +56,7 @@ public class ReviewController {
     @Operation(summary = "리뷰 별점 보기")
     @GetMapping("/{walkwayId}/review/rating")
     public ResponseEntity<SuccessResponse<GetWalkwayRatingResponse>> getWalkwaysRating(
-            @ExistWalkway @PathVariable Long walkwayId
+            @PathVariable Long walkwayId
     ) {
         return ResponseFactory.ok(walkwayReviewUseCase.getWalkwayRating(walkwayId));
     }

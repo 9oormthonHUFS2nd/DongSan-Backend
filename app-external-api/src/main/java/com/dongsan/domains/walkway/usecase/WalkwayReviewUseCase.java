@@ -1,6 +1,7 @@
 package com.dongsan.domains.walkway.usecase;
 
 import com.dongsan.common.annotation.UseCase;
+import com.dongsan.common.error.code.WalkwayErrorCode;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.member.service.MemberQueryService;
 import com.dongsan.domains.review.dto.RatingCount;
@@ -19,6 +20,7 @@ import com.dongsan.common.error.code.ReviewErrorCode;
 import com.dongsan.common.error.exception.CustomException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 @UseCase
 @RequiredArgsConstructor
@@ -30,6 +32,7 @@ public class WalkwayReviewUseCase {
     private final ReviewQueryService reviewQueryService;
     private final WalkwayCommandService walkwayCommandService;
 
+    @Transactional
     public CreateReviewResponse createReview(Long memberId, Long walkwayId, CreateReviewRequest createReviewRequest) {
         Member member = memberQueryService.getMember(memberId);
 
@@ -39,13 +42,18 @@ public class WalkwayReviewUseCase {
 
         review = reviewCommandService.createReview(review);
 
-        walkway.updateRatingAndReviewCount(review.getRating());
+        Integer count = reviewQueryService.getWalkwayReviewCount(walkwayId);
+        walkway.updateRatingAndReviewCount(review.getRating(), count);
         walkwayCommandService.createWalkway(walkway);
 
         return ReviewMapper.toCreateReviewResponse(review);
     }
 
     public GetWalkwayReviewsResponse getWalkwayReviews(String type, Long lastId, Long walkwayId, Byte rating, Integer size) {
+        if (!walkwayQueryService.existsByWalkwayId(walkwayId)) {
+            throw new CustomException(WalkwayErrorCode.WALKWAY_NOT_FOUND);
+        }
+
         List<Review> reviews;
 
         switch (type) {

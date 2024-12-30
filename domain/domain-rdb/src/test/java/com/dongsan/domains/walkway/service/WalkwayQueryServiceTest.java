@@ -8,6 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
+import com.dongsan.common.error.exception.CustomException;
 import com.dongsan.domains.bookmark.entity.Bookmark;
 import com.dongsan.domains.bookmark.entity.MarkedWalkway;
 import com.dongsan.domains.bookmark.repository.MarkedWalkwayQueryDSLRepository;
@@ -17,7 +18,6 @@ import com.dongsan.domains.walkway.dto.SearchWalkwayRating;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.repository.WalkwayQueryDSLRepository;
 import com.dongsan.domains.walkway.repository.WalkwayRepository;
-import com.dongsan.common.error.exception.CustomException;
 import fixture.MarkedWalkwayFixture;
 import fixture.MemberFixture;
 import fixture.WalkwayFixture;
@@ -186,13 +186,11 @@ class WalkwayQueryServiceTest {
             Double latitude = 2.0;
             int distance = 3;
             List<String> hashtags = new ArrayList<>();
-            Long lastId = 1L;
-            Integer lastLikes = 20;
+            Walkway walkway = WalkwayFixture.createWalkway(null);
             int size = 10;
 
             SearchWalkwayPopular searchWalkwayPopular
-                    = new SearchWalkwayPopular(userId, longitude, latitude, distance, hashtags, lastId, lastLikes,
-                    size);
+                    = new SearchWalkwayPopular(userId, longitude, latitude, distance, hashtags, walkway, size);
 
             List<Walkway> walkways = new ArrayList<>();
             for(int i = 0; i < 10; i++) {
@@ -221,13 +219,11 @@ class WalkwayQueryServiceTest {
             Double latitude = 2.0;
             int distance = 3;
             List<String> hashtags = new ArrayList<>();
-            Long lastId = 1L;
-            Double lastRating = 5.0;
+            Walkway walkway = WalkwayFixture.createWalkway(null);
             int size = 10;
 
             SearchWalkwayRating searchWalkwayRating
-                    = new SearchWalkwayRating(userId, longitude, latitude, distance, hashtags, lastId, lastRating,
-                    size);
+                    = new SearchWalkwayRating(userId, longitude, latitude, distance, hashtags, walkway, size);
 
             List<Walkway> walkways = new ArrayList<>();
             for(int i = 0; i < 10; i++) {
@@ -252,7 +248,7 @@ class WalkwayQueryServiceTest {
         void it_returns_walkway() {
             // Given
             Walkway walkway = WalkwayFixture.createWalkway(null);
-            when(walkwayQueryDSLRepository.getWalkwayWithHashtag(walkway.getId())).thenReturn(walkway);
+            when(walkwayQueryDSLRepository.getWalkwayWithHashtag(walkway.getId())).thenReturn(Optional.of(walkway));
 
             // When
             Walkway result = walkwayQueryService.getWalkwayWithHashtag(walkway.getId());

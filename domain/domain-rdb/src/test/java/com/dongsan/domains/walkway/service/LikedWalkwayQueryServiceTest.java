@@ -8,11 +8,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
+import com.dongsan.common.error.code.LikedWalkwayErrorCode;
+import com.dongsan.common.error.exception.CustomException;
 import com.dongsan.domains.walkway.entity.LikedWalkway;
 import com.dongsan.domains.walkway.repository.LikedWalkwayQueryDSLRepository;
 import com.dongsan.domains.walkway.repository.LikedWalkwayRepository;
-import com.dongsan.common.error.code.LikedWalkwayErrorCode;
-import com.dongsan.common.error.exception.CustomException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -118,6 +118,26 @@ class LikedWalkwayQueryServiceTest {
                 likedWalkwayQueryService.findByMemberIdAndWalkwayId(memberId, walkwayId);
             });
             assertEquals(LikedWalkwayErrorCode.LIKED_WALKWAY_NOT_FOUND, thrown.getErrorCode());
+        }
+    }
+
+    @Nested
+    @DisplayName("existByMemberIdAndWalkwayId 메서드는")
+    class Describe_existByMemberIdAndWalkwayId {
+        @Test
+        @DisplayName("MemberId와 WalkwayId로 LikedWalkway의 유무를 반환한다.")
+        void it_returns_exists() {
+            // Given
+            Long memberId = 1L;
+            Long walkwayId = 1L;
+
+            when(likedWalkwayRepository.existsByMemberIdAndWalkwayId(memberId, walkwayId)).thenReturn(true);
+
+            // When
+            Boolean result = likedWalkwayQueryService.existByMemberIdAndWalkwayId(memberId, walkwayId);
+
+            // Then
+            assertThat(result).isTrue();
         }
     }
 }

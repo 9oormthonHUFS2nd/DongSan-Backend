@@ -227,6 +227,7 @@ class BookmarkUseCaseTest {
                 bookmarks.add(bookmark);
             }
 
+            when(walkwayQueryService.existsByWalkwayId(walkwayId)).thenReturn(true);
             when(bookmarkQueryService.getBookmarksWithMarkedWalkway(walkwayId, memberId)).thenReturn(bookmarks);
 
             // When
