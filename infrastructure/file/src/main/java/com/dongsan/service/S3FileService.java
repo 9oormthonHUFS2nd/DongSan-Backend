@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -27,32 +26,45 @@ public class S3FileService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
+    // 파일 Null 확인
+    private void checkFileIsNull(MultipartFile file){
+        if(file == null){
+            throw new RuntimeException("file is Empty");
+        }
+    }
 
-    // 단일 파일 저장w
+
+    // 단일 파일 저장
     public String saveFile(MultipartFile file) {
-        String randomFilename = generateRandomFilename(file);
+        checkFileIsNull(file);
+
+        // 파일 확장자를 기반으로 ContentType 설정
+        String randomFilename;
+        if (file.getOriginalFilename() != null) {
+            randomFilename = generateRandomFilename(file.getOriginalFilename());
+        } else {
+            // 파일 또는 파일 이름이 null인 경우의 처리
+            throw new RuntimeException("file is null");
+        }
 
         log.info("File upload started: " + randomFilename);
 
         ObjectMetadata metadata = new ObjectMetadata();
         metadata.setContentLength(file.getSize());
-
-        // 파일 확장자를 기반으로 ContentType 설정
-        String fileExtension = getFileExtension(file.getOriginalFilename());
-        String contentType = getContentType(fileExtension);
+        String contentType = getContentType(getFileExtension(randomFilename));
         metadata.setContentType(contentType);
 
         try {
             amazonS3.putObject(bucket, randomFilename, file.getInputStream(), metadata);
         } catch (AmazonS3Exception e) {
             log.error("Amazon S3 error while uploading file: " + e.getMessage());
-            throw new RuntimeException("fail upload");
+            throw new RuntimeException("Amazon S3 error while uploading file");
         } catch (SdkClientException e) {
             log.error("AWS SDK client error while uploading file: " + e.getMessage());
-            throw new RuntimeException("fail upload");
+            throw new RuntimeException("AWS SDK client error while uploading file");
         } catch (IOException e) {
             log.error("IO error while uploading file: " + e.getMessage());
-            throw new RuntimeException("fail upload");
+            throw new RuntimeException("IO error while uploading file");
         }
 
         log.info("File upload completed: " + randomFilename);
@@ -61,11 +73,9 @@ public class S3FileService {
     }
 
     // 랜덤파일명 생성 (파일명 중복 방지)
-    private String generateRandomFilename(MultipartFile multipartFile) {
-        String originalFilename = multipartFile.getOriginalFilename();
+    private String generateRandomFilename(String originalFilename) {
         String fileExtension = validateFileExtension(originalFilename);
-        String randomFilename = UUID.randomUUID() + "." + fileExtension;
-        return randomFilename;
+        return UUID.randomUUID() + "." + fileExtension;
     }
 
     // 파일 확장자 체크
