@@ -21,8 +21,11 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private final JwtService jwtService;
     private final CookieService cookieService;
 
-    @Value("${frontend.auth-redirect-url}")
-    private String authRedirectUrl;
+    @Value("${frontend.dev-redirect-url}")
+    private String devRedirectUrl;
+
+    @Value("${frontend.prod-redirect-url}")
+    private String prodRedirectUrl;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -33,8 +36,22 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String accessToken = jwtService.createAccessToken(memberId);
         String refreshToken = jwtService.createRefreshToken(memberId);
 
-        response.addCookie(cookieService.createAccessTokenCookie(accessToken));
-        response.addCookie(cookieService.createRefreshTokenCookie(refreshToken));
-        response.sendRedirect(authRedirectUrl);
+        response.addCookie(cookieService.createAccessTokenCookie(accessToken, request));
+        response.addCookie(cookieService.createRefreshTokenCookie(refreshToken, request));
+
+        // 주소 분기
+        String requestUrl = request.getRequestURL().toString();
+        String redirectUrl;
+
+        // 로컬호스트와 배포 주소 분기
+        if (requestUrl.contains("localhost")) {
+            redirectUrl = devRedirectUrl;
+        } else {
+            redirectUrl = prodRedirectUrl;
+        }
+        log.info("[Cookie] requestUrl : " + requestUrl);
+        log.info("[Cookie] redirectUrl : " + redirectUrl);
+
+        response.sendRedirect(redirectUrl);
     }
 }
