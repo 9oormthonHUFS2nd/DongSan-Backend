@@ -9,8 +9,10 @@ import com.dongsan.domains.dev.usecase.DevUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotBlank;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +20,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/dev")
@@ -26,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Validated
 @Slf4j
-public class DevTokenController {
+public class DevController {
     private final DevUseCase devUseCase;
 
     @Operation(summary = "개발용 토큰 발급")
@@ -45,6 +49,15 @@ public class DevTokenController {
     ){
         GetMemberInfoResponse response = devUseCase.getMemberInfo(accessToken);
         return ResponseFactory.ok(response);
+    }
+
+    @Operation(summary = "이미지 s3 저장 확인하기")
+    @PostMapping(value = "/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<SuccessResponse<String>> uploadImage(
+            @RequestPart("file") MultipartFile image
+    )throws IOException {
+        String url = devUseCase.uploadImage(image);
+        return ResponseFactory.ok(url);
     }
 
 }

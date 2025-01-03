@@ -37,13 +37,13 @@ out/
 .vscode/
 
 ### .env
-/infrastructure/database/.env
+/container/database/.env
 
 ### yml
 /*/**/resources/*.yml
 
 ### volumns
-infrastructure/database/*_data
+container/database/*_data
 
 ### spy
 *.log
