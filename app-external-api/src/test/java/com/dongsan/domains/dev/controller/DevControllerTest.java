@@ -22,11 +22,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-@WebMvcTest(DevTokenController.class)
+@WebMvcTest(DevController.class)
 @AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(MockitoExtension.class)
 @DisplayName("DevTokenController Unit Test")
-class DevTokenControllerTest {
+class DevControllerTest {
     @Autowired
     MockMvc mockMvc;
     @Autowired

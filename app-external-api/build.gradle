@@ -1,6 +1,7 @@
 dependencies {
     implementation project(":domain:domain-rdb")
     testImplementation(testFixtures(project(":domain:domain-rdb")))
+    implementation project(':infrastructure:file')
 
     // spring boot web
     implementation 'org.springframework.boot:spring-boot-starter-web'

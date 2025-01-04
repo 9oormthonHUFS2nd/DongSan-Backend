@@ -7,14 +7,18 @@ import com.dongsan.domains.dev.dto.response.GetMemberInfoResponse;
 import com.dongsan.domains.dev.mapper.DevMapper;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.member.service.MemberQueryService;
+import com.dongsan.service.S3FileService;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @UseCase
 @RequiredArgsConstructor
 public class DevUseCase {
     private final MemberQueryService memberQueryService;
     private final JwtService jwtService;
+    private final S3FileService s3FileService;
 
     @Transactional
     public GenerateTokenResponse generateToken(Long memberId){
@@ -31,4 +35,8 @@ public class DevUseCase {
         return DevMapper.toGetMemberInfoResponse(member);
     }
 
+    @Transactional
+    public String uploadImage(MultipartFile image) throws IOException {
+        return s3FileService.saveFile(image);
+    }
 }

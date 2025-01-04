@@ -1,0 +1,17 @@
+dependencies {
+    // aws s3
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+    // Multipart
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+}
+
+// application.yml 설정 파일 복사
+tasks.register('copyConfig', Copy){
+    from '../../Config/infrastructure/file'
+    include "application*.yml"
+    into 'src/main/resources'
+}
+
+processResources.dependsOn('copyConfig')
