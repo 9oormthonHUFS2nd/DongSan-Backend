@@ -10,8 +10,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.dongsan.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.domains.member.entity.Member;
-import com.dongsan.domains.review.service.ReviewQueryService;
-import com.dongsan.domains.user.dto.response.GetReviewResponse;
+import com.dongsan.domains.walkway.service.ReviewQueryService;
+import com.dongsan.domains.user.response.GetReviewResponse;
 import com.dongsan.domains.user.usecase.UserReviewUseCase;
 import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;

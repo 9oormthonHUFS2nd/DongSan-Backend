@@ -3,7 +3,7 @@ package com.dongsan.domains.user.controller;
 import com.dongsan.common.apiResponse.ResponseFactory;
 import com.dongsan.common.apiResponse.SuccessResponse;
 import com.dongsan.domains.auth.security.oauth2.dto.CustomOAuth2User;
-import com.dongsan.domains.user.dto.response.WalkwayListResponse;
+import com.dongsan.domains.user.response.WalkwayListResponse;
 import com.dongsan.domains.user.usecase.UserWalkwayUseCase;
 import com.dongsan.domains.walkway.entity.Walkway;
 import io.swagger.v3.oas.annotations.Operation;

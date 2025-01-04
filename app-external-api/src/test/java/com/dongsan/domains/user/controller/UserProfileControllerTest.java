@@ -8,9 +8,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.dongsan.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.domains.member.entity.Member;
-import com.dongsan.domains.user.dto.response.GetBookmarksResponse;
-import com.dongsan.domains.user.dto.response.GetBookmarksResponse.BookmarkInfo;
-import com.dongsan.domains.user.dto.response.GetProfileResponse;
+import com.dongsan.domains.user.response.GetBookmarksResponse;
+import com.dongsan.domains.user.response.GetBookmarksResponse.BookmarkInfo;
+import com.dongsan.domains.user.response.GetProfileResponse;
 import com.dongsan.domains.user.usecase.UserProfileUseCase;
 import java.util.ArrayList;
 import java.util.List;
