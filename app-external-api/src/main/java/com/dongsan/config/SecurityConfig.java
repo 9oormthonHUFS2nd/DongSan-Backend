@@ -83,8 +83,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
-                .oauth2Login((oauth2) -> oauth2
-                        .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
+                .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
                                 .userService(customOAuth2UserService))
                         .successHandler(customSuccessHandler))
                 .sessionManagement(session -> session
@@ -114,7 +114,7 @@ public class SecurityConfig {
                  */
                 .addFilterBefore(new AuthFilter(jwtService),
                         UsernamePasswordAuthenticationFilter.class)
-                .authorizeHttpRequests((auth) -> auth
+                .authorizeHttpRequests(auth -> auth
                         // Admin 경로에 있어야 하는 role
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         // 인증 없이 접근 가능
@@ -141,7 +141,7 @@ public class SecurityConfig {
                                  */
                                 .accessDeniedHandler(customAccessDeniedHandler)
                 )
-                .sessionManagement((session) -> session
+                .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         return http.build();
     }
