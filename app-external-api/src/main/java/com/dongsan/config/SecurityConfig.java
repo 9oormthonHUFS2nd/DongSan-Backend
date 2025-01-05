@@ -56,6 +56,7 @@ public class SecurityConfig {
                         "http://dongsanwalk.site",
                         "http://api.dongsanwalk.site:8080",
                         "https://dongsanwalk.site",
+                        "https://www.dongsanwalk.site",
                         "https://api.dongsanwalk.site"
                 )
         );
