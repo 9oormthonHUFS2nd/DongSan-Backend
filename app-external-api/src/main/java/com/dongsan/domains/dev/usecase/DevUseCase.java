@@ -6,7 +6,7 @@ import com.dongsan.domains.dev.dto.response.GenerateTokenResponse;
 import com.dongsan.domains.dev.dto.response.GetMemberInfoResponse;
 import com.dongsan.domains.dev.mapper.DevMapper;
 import com.dongsan.domains.member.entity.Member;
-import com.dongsan.domains.member.service.MemberQueryService;
+import com.dongsan.domains.user.service.MemberQueryService;
 import com.dongsan.service.S3FileService;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
