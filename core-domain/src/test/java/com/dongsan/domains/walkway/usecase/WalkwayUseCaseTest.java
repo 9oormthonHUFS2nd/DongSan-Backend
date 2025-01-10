@@ -119,23 +119,65 @@ class WalkwayUseCaseTest {
             assertThat(result.getCourse().getNumPoints()).isEqualTo(course.size());
         }
 
-//        @Test
-//        @DisplayName("잘못된 산책로 코스가 입력되면 산책로를 삭제하고 예외를 발생시킨다.")
-//        void it_returns_exception() {
-//            // Given
-//            CreateWalkwayCourseRequest createWalkwayCourseRequest = new CreateWalkwayCourseRequest(null);
-//
-//            Long memberId = 1L;
-//            Long walkwayId = 1L;
-//
-//            Walkway walkway = WalkwayFixture.createWalkway(null);
-//
-//            when(walkwayQueryService.getWalkway(walkwayId)).thenReturn(walkway);
-//
-//            // When & Then
-//            assertThatThrownBy(() -> walkwayUseCase.createWalkwayCourse(createWalkwayCourseRequest,memberId, walkwayId))
-//                    .isInstanceOf(CustomException.class);
-//        }
+        @Test
+        @DisplayName("잘못된 산책로 코스가 입력되면 산책로를 삭제하고 예외를 발생시킨다.")
+        void it_returns_exception() {
+            // Given
+            CreateWalkwayCourseRequest createWalkwayCourseRequest = new CreateWalkwayCourseRequest(null);
+
+            Long memberId = 1L;
+            Long walkwayId = 1L;
+
+            Walkway walkway = WalkwayFixture.createWalkway(null);
+
+            when(walkwayQueryService.getWalkway(walkwayId)).thenReturn(walkway);
+
+            // When & Then
+            assertThatThrownBy(() -> walkwayUseCase.createWalkwayCourse(createWalkwayCourseRequest,memberId, walkwayId))
+                    .isInstanceOf(CustomException.class);
+        }
+    }
+
+    @Nested
+    @DisplayName("createWalkwayCourseImageUrl 메서드는")
+    class Describe_createWalkwayCourseImageUrl {
+        @Test
+        @DisplayName("이미지 url를 산책로에 저장한다.")
+        void it_returns_walkway() {
+            // Given
+            String courseImageUrl = "https://test.com/";
+            Long memberId = 1L;
+            Long walkwayId = 1L;
+
+            Walkway walkway = WalkwayFixture.createWalkway(null);
+
+            when(walkwayQueryService.getWalkway(walkwayId)).thenReturn(walkway);
+            when(walkwayCommandService.createWalkway(walkway)).thenReturn(walkway);
+
+            // When
+            Walkway result = walkwayUseCase.createWalkwayCourseImageUrl(courseImageUrl, memberId, walkwayId);
+
+            // Then
+            assertThat(result).isNotNull();
+            assertThat(result.getCourseImageUrl()).isEqualTo(courseImageUrl);
+        }
+
+        @Test
+        @DisplayName("이미지 url이 비어있거나 null이면 산책로를 삭제한다.")
+        void it_returns_exception() {
+            // Given
+            String courseImageUrl = "";
+            Long memberId = 1L;
+            Long walkwayId = 1L;
+
+            Walkway walkway = WalkwayFixture.createWalkway(null);
+
+            when(walkwayQueryService.getWalkway(walkwayId)).thenReturn(walkway);
+
+            // When & Then
+            assertThatThrownBy(() -> walkwayUseCase.createWalkwayCourseImageUrl(courseImageUrl, memberId, walkwayId))
+                    .isInstanceOf(CustomException.class);
+        }
     }
 
     @Nested

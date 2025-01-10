@@ -115,6 +115,12 @@ public class Walkway extends BaseEntity {
         this.exposeLevel = ExposeLevel.getExposeLevelByDescription(exposeLeven);
     }
     public void registerCourse(LineString course) {
+        this.startLocation = course.getStartPoint();
+        this.endLocation = course.getEndPoint();
         this.course = course;
+    }
+
+    public void registerCourseImageUrl(String courseImageUrl) {
+        this.courseImageUrl = courseImageUrl;
     }
 }

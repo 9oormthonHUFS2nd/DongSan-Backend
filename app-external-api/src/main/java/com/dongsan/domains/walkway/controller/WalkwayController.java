@@ -5,6 +5,7 @@ import com.dongsan.common.apiResponse.SuccessResponse;
 import com.dongsan.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.domains.bookmark.dto.response.BookmarksWithMarkedWalkwayResponse;
 import com.dongsan.domains.bookmark.usecase.BookmarkUseCase;
+import com.dongsan.domains.dev.usecase.DevUseCase;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayCourseRequest;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.request.UpdateWalkwayRequest;
@@ -19,6 +20,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -29,7 +31,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/walkways")
@@ -42,6 +46,7 @@ public class WalkwayController {
     private final BookmarkUseCase bookmarkUseCase;
     private final LikedWalkwayUseCase likedWalkwayUseCase;
     private final HashtagUseCase hashtagUseCase;
+    private final DevUseCase devUseCase;
 
     @Operation(summary = "산책로 등록")
     @PostMapping("")
@@ -62,6 +67,23 @@ public class WalkwayController {
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {
         Walkway walkway = walkwayUseCase.createWalkwayCourse(createWalkwayCourseRequest, customOAuth2User.getMemberId(), walkwayId);
+        return ResponseFactory.created(new CreateWalkwayResponse(walkway));
+    }
+
+    @Operation(summary = "산책로 코스 이미지 등록")
+    @PostMapping(value ="/{walkwayId}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<SuccessResponse<CreateWalkwayResponse>> createWalkwayCourseImage(
+            @PathVariable Long walkwayId,
+            @RequestPart("courseImage") MultipartFile courseImage,
+            @AuthenticationPrincipal CustomOAuth2User customOAuth2User
+    ) {
+        String imageUrl;
+        try {
+            imageUrl = devUseCase.uploadImage(courseImage);
+        } catch (Exception e) {
+            imageUrl = null;
+        }
+        Walkway walkway = walkwayUseCase.createWalkwayCourseImageUrl(imageUrl, customOAuth2User.getMemberId(), walkwayId);
         return ResponseFactory.created(new CreateWalkwayResponse(walkway));
     }
 

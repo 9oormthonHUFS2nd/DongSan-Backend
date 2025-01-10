@@ -55,6 +55,18 @@ public class WalkwayUseCase {
         }
     }
 
+    public Walkway createWalkwayCourseImageUrl(String courseImageUrl, Long memberId, Long walkwayId) {
+        walkwayQueryService.isOwnerOfWalkway(walkwayId, memberId);
+        Walkway walkway = walkwayQueryService.getWalkway(walkwayId);
+        if (courseImageUrl.isBlank()) {
+            hashtagWalkwayCommandService.deleteAllHashtagWalkways(walkway);
+            walkwayCommandService.deleteWalkway(walkway);
+            throw new CustomException(WalkwayErrorCode.INVALID_COURSE_IMAGE);
+        }
+        walkway.registerCourseImageUrl(courseImageUrl);
+        return walkwayCommandService.createWalkway(walkway);
+    }
+
     @Transactional(readOnly = true)
     public Walkway getWalkwayWithLiked(Long walkwayId, Long memberId) {
         Walkway walkway = walkwayQueryService.getWalkwayWithHashtagAndLike(memberId, walkwayId);
