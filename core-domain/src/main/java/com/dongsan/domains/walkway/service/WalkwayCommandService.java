@@ -16,4 +16,7 @@ public class WalkwayCommandService {
     public Walkway createWalkway(Walkway walkway) {
         return walkwayRepository.save(walkway);
     }
+    public void deleteWalkway(Walkway walkway) {
+        walkwayRepository.delete(walkway);
+    }
 }

@@ -5,6 +5,7 @@ import com.dongsan.common.apiResponse.SuccessResponse;
 import com.dongsan.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.domains.bookmark.dto.response.BookmarksWithMarkedWalkwayResponse;
 import com.dongsan.domains.bookmark.usecase.BookmarkUseCase;
+import com.dongsan.domains.walkway.dto.request.CreateWalkwayCourseRequest;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.request.UpdateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.response.CreateWalkwayResponse;
@@ -50,6 +51,17 @@ public class WalkwayController {
     ) {
         Walkway walkway = walkwayUseCase.createWalkway(createWalkwayRequest, customOAuth2User.getMemberId());
         hashtagUseCase.createHashtagWalkways(walkway, createWalkwayRequest.hashtags());
+        return ResponseFactory.created(new CreateWalkwayResponse(walkway));
+    }
+
+    @Operation(summary = "산책로 코스 등록")
+    @PostMapping("/{walkwayId}/course")
+    public ResponseEntity<SuccessResponse<CreateWalkwayResponse>> createWalkwayCourse(
+            @PathVariable Long walkwayId,
+            @RequestBody CreateWalkwayCourseRequest createWalkwayCourseRequest,
+            @AuthenticationPrincipal CustomOAuth2User customOAuth2User
+    ) {
+        Walkway walkway = walkwayUseCase.createWalkwayCourse(createWalkwayCourseRequest, customOAuth2User.getMemberId(), walkwayId);
         return ResponseFactory.created(new CreateWalkwayResponse(walkway));
     }
 

@@ -15,6 +15,7 @@ import com.dongsan.domains.bookmark.dto.response.BookmarksWithMarkedWalkwayRespo
 import com.dongsan.domains.bookmark.mapper.BookmarksWithMarkedWalkwayMapper;
 import com.dongsan.domains.bookmark.usecase.BookmarkUseCase;
 import com.dongsan.domains.member.entity.Member;
+import com.dongsan.domains.walkway.dto.request.CreateWalkwayCourseRequest;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.request.UpdateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.response.GetWalkwaySearchResponse;
@@ -22,6 +23,7 @@ import com.dongsan.domains.walkway.dto.response.GetWalkwayWithLikedResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.enums.ExposeLevel;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
+import com.dongsan.domains.walkway.usecase.HashtagUseCase;
 import com.dongsan.domains.walkway.usecase.LikedWalkwayUseCase;
 import com.dongsan.domains.walkway.usecase.WalkwayUseCase;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -69,6 +71,9 @@ class WalkwayControllerTest {
 
     @MockBean
     LikedWalkwayUseCase likedWalkwayUseCase;
+
+    @MockBean
+    HashtagUseCase hashtagUseCase;
 
     final Member member = createMemberWithId(1L);
     final CustomOAuth2User customOAuth2User = new CustomOAuth2User(member);
@@ -132,6 +137,37 @@ class WalkwayControllerTest {
             // Then
             response.andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.code").value(SystemErrorCode.INVALID_ARGUMENT_ERROR.getCode()));
+        }
+    }
+
+    @Nested
+    @DisplayName("createWalkwayCourse 메서드는")
+    class Describe_createWalkwayCourse {
+
+        @Test
+        @DisplayName("산책로에 코스를 등록하고 등록한 산책로의 walkwayId를 반환한다.")
+        void it_returns_walkwayId() throws Exception {
+            // Given
+            List<List<Double>> course = new ArrayList<>();
+            for (int i = 0; i < 5; i++) {
+                course.add(List.of(0.0, 0.0));
+            }
+
+            CreateWalkwayCourseRequest createWalkwayCourseRequest = new CreateWalkwayCourseRequest(course);
+
+            Walkway walkway = WalkwayFixture.createWalkwayWithId(1L, null);
+
+            when(walkwayUseCase.createWalkwayCourse(createWalkwayCourseRequest, customOAuth2User.getMemberId(), 1L))
+                    .thenReturn(walkway);
+
+            // When
+            ResultActions response = mockMvc.perform(post("/walkways/1/course")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(createWalkwayCourseRequest)));
+
+            // Then
+            response.andExpect(status().isCreated())
+                    .andExpect(jsonPath("$.data.walkwayId").value(1L));
         }
     }
 

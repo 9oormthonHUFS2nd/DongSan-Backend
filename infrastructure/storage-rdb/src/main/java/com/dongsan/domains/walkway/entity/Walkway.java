@@ -114,4 +114,7 @@ public class Walkway extends BaseEntity {
         this.memo = memo;
         this.exposeLevel = ExposeLevel.getExposeLevelByDescription(exposeLeven);
     }
+    public void registerCourse(LineString course) {
+        this.course = course;
+    }
 }
