@@ -1,8 +1,8 @@
 package com.dongsan.domains.walkway.dto.request;
 
-import com.dongsan.common.validation.annotation.NotEmptyWalkwayCourse;
+import com.dongsan.domains.walkway.enums.ExposeLevel;
 import jakarta.validation.constraints.NotBlank;
-
+import jakarta.validation.constraints.NotEmpty;
 import java.util.List;
 
 public record CreateWalkwayRequest(
@@ -11,12 +11,8 @@ public record CreateWalkwayRequest(
         String memo,
         Double distance,
         Integer time,
+        @NotEmpty(message = "해쉬태그를 입력해주세요.")
         List<String> hashtags,
-        String exposeLevel,
-//      나중에 추가
-//        MultipartFile courseImage,
-
-        @NotEmptyWalkwayCourse
-        List<List<Double>> course
+        ExposeLevel exposeLevel
 ) {
 }

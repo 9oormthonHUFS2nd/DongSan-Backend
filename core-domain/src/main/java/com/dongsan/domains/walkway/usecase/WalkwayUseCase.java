@@ -3,16 +3,15 @@ package com.dongsan.domains.walkway.usecase;
 import com.dongsan.common.annotation.UseCase;
 import com.dongsan.common.error.code.WalkwayErrorCode;
 import com.dongsan.common.error.exception.CustomException;
-import com.dongsan.domains.walkway.service.HashtagWalkwayCommandService;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.user.service.MemberQueryService;
 import com.dongsan.domains.walkway.dto.SearchWalkwayPopular;
 import com.dongsan.domains.walkway.dto.SearchWalkwayRating;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.request.UpdateWalkwayRequest;
-import com.dongsan.domains.walkway.dto.response.CreateWalkwayResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.mapper.WalkwayMapper;
+import com.dongsan.domains.walkway.service.HashtagWalkwayCommandService;
 import com.dongsan.domains.walkway.service.WalkwayCommandService;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
 import java.util.ArrayList;
@@ -32,20 +31,13 @@ public class WalkwayUseCase {
     private final HashtagUseCase hashtagUseCase;
 
     @Transactional
-    public CreateWalkwayResponse createWalkway(CreateWalkwayRequest createWalkwayRequest, Long memberId) {
+    public Walkway createWalkway(CreateWalkwayRequest createWalkwayRequest, Long memberId) {
 
         Member member = memberQueryService.getMember(memberId);
 
         Walkway walkway = walkwayCommandService.createWalkway(WalkwayMapper.toWalkway(createWalkwayRequest, member));
 
-        // 해쉬태그 추가
-        if (!createWalkwayRequest.hashtags().isEmpty()) {
-            hashtagUseCase.createHashtagWalkways(walkway, createWalkwayRequest.hashtags());
-        }
-
-        // TODO: 경로 이미지 파일 저장
-
-        return WalkwayMapper.toCreateWalkwayResponse(walkway);
+        return walkway;
     }
 
     @Transactional(readOnly = true)

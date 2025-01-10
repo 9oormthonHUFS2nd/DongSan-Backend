@@ -17,7 +17,6 @@ import com.dongsan.domains.bookmark.usecase.BookmarkUseCase;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.request.UpdateWalkwayRequest;
-import com.dongsan.domains.walkway.dto.response.CreateWalkwayResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwaySearchResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayWithLikedResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
@@ -94,12 +93,12 @@ class WalkwayControllerTest {
                     4.2,
                     20,
                     List.of("하나", "둘"),
-                    "공개",
-                    List.of(List.of(127.001, 37.001), List.of(127.002, 37.002))
+                    "공개"
             );
 
-            when(walkwayUseCase.createWalkway(createWalkwayRequest, customOAuth2User.getMemberId())).thenReturn(
-                    new CreateWalkwayResponse(1L));
+            Walkway walkway = WalkwayFixture.createWalkwayWithId(1L , null);
+
+            when(walkwayUseCase.createWalkway(createWalkwayRequest, customOAuth2User.getMemberId())).thenReturn(walkway);
 
             // When
             ResultActions response = mockMvc.perform(post("/walkways")
@@ -121,8 +120,7 @@ class WalkwayControllerTest {
                     4.2,
                     20,
                     List.of("하나", "둘"),
-                    "공개",
-                    List.of(List.of())
+                    "공개"
             );
 
             // When

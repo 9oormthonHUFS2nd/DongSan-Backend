@@ -7,17 +7,16 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.dongsan.common.error.exception.CustomException;
-import com.dongsan.domains.walkway.service.HashtagQueryService;
-import com.dongsan.domains.walkway.service.HashtagWalkwayCommandService;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.user.service.MemberQueryService;
 import com.dongsan.domains.walkway.dto.SearchWalkwayPopular;
 import com.dongsan.domains.walkway.dto.SearchWalkwayRating;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.request.UpdateWalkwayRequest;
-import com.dongsan.domains.walkway.dto.response.CreateWalkwayResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.enums.ExposeLevel;
+import com.dongsan.domains.walkway.service.HashtagQueryService;
+import com.dongsan.domains.walkway.service.HashtagWalkwayCommandService;
 import com.dongsan.domains.walkway.service.WalkwayCommandService;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
 import fixture.MemberFixture;
@@ -72,8 +71,7 @@ class WalkwayUseCaseTest {
                     4.2,
                     20,
                     List.of("하나", "둘"),
-                    "공개",
-                    List.of(List.of(127.001, 37.001), List.of(127.002, 37.002))
+                    ExposeLevel.PUBLIC
             );
 
             Walkway walkway = WalkwayFixture.createWalkwayWithId(1L, member);
@@ -83,11 +81,11 @@ class WalkwayUseCaseTest {
                     .thenReturn(walkway);
 
             // When
-            CreateWalkwayResponse result =
+            Walkway result =
                     walkwayUseCase.createWalkway(createWalkwayRequest, memberId);
 
             // Then
-            assertThat(result.walkwayId()).isEqualTo(1L);
+            assertThat(result.getId()).isEqualTo(1L);
         }
     }
 
