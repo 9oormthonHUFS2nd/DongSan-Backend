@@ -20,6 +20,7 @@ import com.dongsan.domains.walkway.dto.request.UpdateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.response.GetWalkwaySearchResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayWithLikedResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
+import com.dongsan.domains.walkway.enums.ExposeLevel;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
 import com.dongsan.domains.walkway.usecase.LikedWalkwayUseCase;
 import com.dongsan.domains.walkway.usecase.WalkwayUseCase;
@@ -93,7 +94,7 @@ class WalkwayControllerTest {
                     4.2,
                     20,
                     List.of("하나", "둘"),
-                    "공개"
+                    ExposeLevel.PUBLIC
             );
 
             Walkway walkway = WalkwayFixture.createWalkwayWithId(1L , null);
@@ -120,7 +121,7 @@ class WalkwayControllerTest {
                     4.2,
                     20,
                     List.of("하나", "둘"),
-                    "공개"
+                    ExposeLevel.PUBLIC
             );
 
             // When
