@@ -81,7 +81,7 @@ public class WalkwayController {
         try {
             imageUrl = devUseCase.uploadImage(courseImage);
         } catch (Exception e) {
-            imageUrl = null;
+            imageUrl = "";
         }
         Walkway walkway = walkwayUseCase.createWalkwayCourseImageUrl(imageUrl, customOAuth2User.getMemberId(), walkwayId);
         return ResponseFactory.created(new CreateWalkwayResponse(walkway));
