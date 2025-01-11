@@ -1,5 +1,6 @@
 package com.dongsan.domains.walkway.dto.request;
 
+import com.dongsan.domains.walkway.enums.ExposeLevel;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
@@ -8,7 +9,8 @@ public record UpdateWalkwayRequest(
         String name,
         @NotNull
         String memo,
+        @NotNull
         List<String> hashtags,
-        String exposeLevel
+        ExposeLevel exposeLevel
 ) {
 }

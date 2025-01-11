@@ -109,15 +109,18 @@ public class Walkway extends BaseEntity {
     public void removeAllHashtagWalkway() {
         this.hashtagWalkways = new ArrayList<>();
     }
-    public void updateWalkway(String name, String memo, String exposeLeven) {
+    public void updateWalkway(String name, String memo, ExposeLevel exposeLevel) {
         this.name = name;
         this.memo = memo;
-        this.exposeLevel = ExposeLevel.getExposeLevelByDescription(exposeLeven);
+        this.exposeLevel = exposeLevel;
     }
     public void registerCourse(LineString course) {
         this.startLocation = course.getStartPoint();
         this.endLocation = course.getEndPoint();
         this.course = course;
+        this.startLocation.setSRID(4326);
+        this.endLocation.setSRID(4326);
+        this.course.setSRID(4326);
     }
 
     public void registerCourseImageUrl(String courseImageUrl) {

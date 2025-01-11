@@ -34,11 +34,8 @@ public class WalkwayUseCase {
 
     @Transactional
     public Walkway createWalkway(CreateWalkwayRequest createWalkwayRequest, Long memberId) {
-
         Member member = memberQueryService.getMember(memberId);
-
         Walkway walkway = walkwayCommandService.createWalkway(WalkwayMapper.toWalkway(createWalkwayRequest, member));
-
         return walkway;
     }
 
@@ -118,23 +115,18 @@ public class WalkwayUseCase {
     @Transactional
     public void updateWalkway(UpdateWalkwayRequest updateWalkwayRequest, Long memberId, Long walkwayId) {
         // 산책로 불러오기
-        Walkway walkway = walkwayQueryService.getWalkwayWithHashtag(walkwayId);
-
-        if (!walkway.getMember().getId().equals(memberId)) {
-            throw new CustomException(WalkwayErrorCode.NOT_WALKWAY_OWNER);
-        }
+        walkwayQueryService.isOwnerOfWalkway(walkwayId, memberId);
+        Walkway walkway = walkwayQueryService.getWalkway(walkwayId);
 
         // 해쉬 태그 추가 및 삭제
         hashtagWalkwayCommandService.deleteAllHashtagWalkways(walkway);
         walkway.removeAllHashtagWalkway();
-        if (!updateWalkwayRequest.hashtags().isEmpty()) {
+        if(updateWalkwayRequest.hashtags() != null) {
             hashtagUseCase.createHashtagWalkways(walkway, updateWalkwayRequest.hashtags());
         }
 
         // 산책로 수정
-        walkway.updateWalkway(updateWalkwayRequest.name(), updateWalkwayRequest.memo(),
-                updateWalkwayRequest.exposeLevel());
-
+        walkway.updateWalkway(updateWalkwayRequest.name(), updateWalkwayRequest.memo(), updateWalkwayRequest.exposeLevel());
         walkwayCommandService.createWalkway(walkway);
     }
 }

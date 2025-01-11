@@ -122,12 +122,11 @@ public class WalkwayController {
     ) {
         return ResponseFactory.ok(bookmarkUseCase.getBookmarksWithMarkedWalkway(customOAuth2User.getMemberId(), walkwayId));
     }
-
     @Operation(summary = "산책로 수정")
     @PutMapping("/{walkwayId}")
     public ResponseEntity<Void> updateWalkway(
             @PathVariable Long walkwayId,
-            @RequestBody UpdateWalkwayRequest updateWalkwayRequest,
+            @Validated @RequestBody UpdateWalkwayRequest updateWalkwayRequest,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {
         walkwayUseCase.updateWalkway(updateWalkwayRequest, customOAuth2User.getMemberId(), walkwayId);

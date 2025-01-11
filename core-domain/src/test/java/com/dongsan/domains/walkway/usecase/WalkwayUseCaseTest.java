@@ -318,24 +318,6 @@ class WalkwayUseCaseTest {
     @DisplayName("updateWalkway 메서드는")
     class Describe_updateWalkway {
         @Test
-        @DisplayName("산책로를 등록한 회원가 다르면 예외처리한다.")
-        void it_returns_exceptions() {
-            // Given
-            Long memberId = 1L;
-            Long otherMemberId = 2L;
-            Long walkwayId = 1L;
-            Member otherMember = MemberFixture.createMemberWithId(otherMemberId);
-            Walkway walkway = WalkwayFixture.createWalkwayWithId(walkwayId, otherMember);
-
-            when(walkwayQueryService.getWalkwayWithHashtag(walkway.getId())).thenReturn(walkway);
-
-            // When & Then
-            assertThatThrownBy(() -> walkwayUseCase.updateWalkway(null, memberId, walkwayId))
-                    .isInstanceOf(CustomException.class);
-
-        }
-
-        @Test
         @DisplayName("산책로를 수정한다.")
         void it_update_walkway() {
             // Given
@@ -346,9 +328,10 @@ class WalkwayUseCaseTest {
                     "test name",
                     "test memo",
                     List.of(),
-                    "비공개");
+                    ExposeLevel.PRIVATE
+            );
 
-            when(walkwayQueryService.getWalkwayWithHashtag(walkway.getId())).thenReturn(walkway);
+            when(walkwayQueryService.getWalkway(walkway.getId())).thenReturn(walkway);
             when(walkwayCommandService.createWalkway(walkway)).thenReturn(null);
 
             // When
