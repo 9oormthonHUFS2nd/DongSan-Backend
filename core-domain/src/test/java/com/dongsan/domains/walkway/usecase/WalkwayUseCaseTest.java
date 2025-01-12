@@ -70,7 +70,6 @@ class WalkwayUseCaseTest {
             Long memberId = 1L;
             Long imageId = 1L;
             Image image = ImageFixture.createImage();
-            String imageUrl = "test.com";
             Member member = MemberFixture.createMemberWithId(memberId);
             CreateWalkwayRequest createWalkwayRequest = new CreateWalkwayRequest(
                     imageId,

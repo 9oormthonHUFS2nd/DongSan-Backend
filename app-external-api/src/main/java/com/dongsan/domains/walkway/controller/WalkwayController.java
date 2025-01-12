@@ -21,7 +21,6 @@ import com.dongsan.domains.walkway.usecase.LikedWalkwayUseCase;
 import com.dongsan.domains.walkway.usecase.WalkwayUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -80,7 +79,7 @@ public class WalkwayController {
     public ResponseEntity<SuccessResponse<CreateWalkwayCourseImageRequest>> createWalkwayCourseImage(
             @RequestPart("courseImage") MultipartFile courseImage,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
-    ) throws IOException {
+    ) {
         String imageUrl = s3UseCase.uploadCourseImage(courseImage);
         Image image = imageUseCase.createImage(imageUrl);
         return ResponseFactory.created(new CreateWalkwayCourseImageRequest(image));
