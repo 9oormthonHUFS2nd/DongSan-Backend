@@ -16,7 +16,9 @@ import com.dongsan.domains.bookmark.dto.BookmarksWithMarkedWalkwayDTO;
 import com.dongsan.domains.bookmark.dto.response.BookmarksWithMarkedWalkwayResponse;
 import com.dongsan.domains.bookmark.mapper.BookmarksWithMarkedWalkwayMapper;
 import com.dongsan.domains.bookmark.usecase.BookmarkUseCase;
-import com.dongsan.domains.dev.usecase.DevUseCase;
+import com.dongsan.domains.image.entity.Image;
+import com.dongsan.domains.image.usecase.ImageUseCase;
+import com.dongsan.domains.image.usecase.S3UseCase;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayCourseRequest;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayRequest;
@@ -30,6 +32,7 @@ import com.dongsan.domains.walkway.usecase.HashtagUseCase;
 import com.dongsan.domains.walkway.usecase.LikedWalkwayUseCase;
 import com.dongsan.domains.walkway.usecase.WalkwayUseCase;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fixture.ImageFixture;
 import fixture.WalkwayFixture;
 import java.util.ArrayList;
 import java.util.List;
@@ -80,7 +83,10 @@ class WalkwayControllerTest {
     HashtagUseCase hashtagUseCase;
 
     @MockBean
-    DevUseCase devUseCase;
+    S3UseCase s3UseCase;
+
+    @MockBean
+    ImageUseCase imageUseCase;
 
     final Member member = createMemberWithId(1L);
     final CustomOAuth2User customOAuth2User = new CustomOAuth2User(member);
@@ -101,6 +107,7 @@ class WalkwayControllerTest {
         void it_returns_walkwayId() throws Exception {
             // Given
             CreateWalkwayRequest createWalkwayRequest = new CreateWalkwayRequest(
+                    1L,
                     "testName",
                     "testMemo",
                     4.2,
@@ -128,6 +135,7 @@ class WalkwayControllerTest {
         void it_returns_INVALID_ARGUMENT_ERROR() throws Exception {
             // Given
             CreateWalkwayRequest createWalkwayRequest = new CreateWalkwayRequest(
+                    1L,
                     "",
                     "testMemo",
                     4.2,
@@ -185,23 +193,22 @@ class WalkwayControllerTest {
         @DisplayName("산책로에 코스 이미지를 등록하고 등록한 산책로의 walkwayId를 반환한다.")
         void it_returns_walkwayId() throws Exception {
             // Given
-            Long memberId = 1L;
-            Long walkwayId = 1L;
             String imageUrl = "https://test.com/";
+            Long imageId = 1L;
             MockMultipartFile file = new MockMultipartFile(
                     "courseImage",
                     "test.jpg",
                     MediaType.IMAGE_JPEG_VALUE,
                     "image-content".getBytes()
             );
+            Image image = ImageFixture.createImageWithId(imageId, imageUrl);
 
-            Walkway walkway = WalkwayFixture.createWalkway(null);
-            when(devUseCase.uploadImage(any())).thenReturn(imageUrl);
-            when(walkwayUseCase.createWalkwayCourseImageUrl(imageUrl, memberId, walkwayId))
-                    .thenReturn(walkway);
+            when(s3UseCase.uploadCourseImage(any())).thenReturn(imageUrl);
+            when(imageUseCase.createImage(imageUrl))
+                    .thenReturn(image);
 
             // When
-            ResultActions response = mockMvc.perform(multipart("/walkways/1/image")
+            ResultActions response = mockMvc.perform(multipart("/walkways/image")
                     .file(file)
                     .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
                     .accept(MediaType.APPLICATION_JSON));

@@ -3,6 +3,7 @@ package com.dongsan.domains.walkway.usecase;
 import com.dongsan.common.annotation.UseCase;
 import com.dongsan.common.error.code.WalkwayErrorCode;
 import com.dongsan.common.error.exception.CustomException;
+import com.dongsan.domains.image.service.ImageQueryService;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.user.service.MemberQueryService;
 import com.dongsan.domains.walkway.dto.SearchWalkwayPopular;
@@ -31,11 +32,13 @@ public class WalkwayUseCase {
     private final MemberQueryService memberQueryService;
     private final HashtagWalkwayCommandService hashtagWalkwayCommandService;
     private final HashtagUseCase hashtagUseCase;
+    private final ImageQueryService imageQueryService;
 
     @Transactional
     public Walkway createWalkway(CreateWalkwayRequest createWalkwayRequest, Long memberId) {
         Member member = memberQueryService.getMember(memberId);
-        return walkwayCommandService.createWalkway(WalkwayMapper.toWalkway(createWalkwayRequest, member));
+        String courseImageUrl = imageQueryService.getImage(createWalkwayRequest.courseImageId()).getUrl();
+        return walkwayCommandService.createWalkway(WalkwayMapper.toWalkway(createWalkwayRequest, member, courseImageUrl));
     }
 
     public Walkway createWalkwayCourse(CreateWalkwayCourseRequest createWalkwayCourseRequest, Long memberId, Long walkwayId) {
@@ -49,18 +52,6 @@ public class WalkwayUseCase {
             walkwayCommandService.deleteWalkway(walkway);
             throw new CustomException(WalkwayErrorCode.INVALID_COURSE);
         }
-    }
-
-    public Walkway createWalkwayCourseImageUrl(String courseImageUrl, Long memberId, Long walkwayId) {
-        walkwayQueryService.isOwnerOfWalkway(walkwayId, memberId);
-        Walkway walkway = walkwayQueryService.getWalkway(walkwayId);
-        if (courseImageUrl.isBlank()) {
-            hashtagWalkwayCommandService.deleteAllHashtagWalkways(walkway);
-            walkwayCommandService.deleteWalkway(walkway);
-            throw new CustomException(WalkwayErrorCode.INVALID_COURSE_IMAGE);
-        }
-        walkway.registerCourseImageUrl(courseImageUrl);
-        return walkwayCommandService.createWalkway(walkway);
     }
 
     @Transactional(readOnly = true)

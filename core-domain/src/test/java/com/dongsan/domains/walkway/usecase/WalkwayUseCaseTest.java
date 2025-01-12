@@ -7,6 +7,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.dongsan.common.error.exception.CustomException;
+import com.dongsan.domains.image.entity.Image;
+import com.dongsan.domains.image.service.ImageQueryService;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.user.service.MemberQueryService;
 import com.dongsan.domains.walkway.dto.SearchWalkwayPopular;
@@ -20,6 +22,7 @@ import com.dongsan.domains.walkway.service.HashtagQueryService;
 import com.dongsan.domains.walkway.service.HashtagWalkwayCommandService;
 import com.dongsan.domains.walkway.service.WalkwayCommandService;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
+import fixture.ImageFixture;
 import fixture.MemberFixture;
 import fixture.WalkwayFixture;
 import java.util.ArrayList;
@@ -51,6 +54,8 @@ class WalkwayUseCaseTest {
     HashtagQueryService hashtagQueryService;
     @Mock
     HashtagUseCase hashtagUseCase;
+    @Mock
+    ImageQueryService imageQueryService;
     @InjectMocks
     WalkwayUseCase walkwayUseCase;
 
@@ -63,10 +68,12 @@ class WalkwayUseCaseTest {
         void it_returns_responseDTO() {
             // Given
             Long memberId = 1L;
-
+            Long imageId = 1L;
+            Image image = ImageFixture.createImage();
+            String imageUrl = "test.com";
             Member member = MemberFixture.createMemberWithId(memberId);
-
             CreateWalkwayRequest createWalkwayRequest = new CreateWalkwayRequest(
+                    imageId,
                     "testName",
                     "testMemo",
                     4.2,
@@ -78,6 +85,7 @@ class WalkwayUseCaseTest {
             Walkway walkway = WalkwayFixture.createWalkwayWithId(1L, member);
 
             when(memberQueryService.getMember(member.getId())).thenReturn(member);
+            when(imageQueryService.getImage(imageId)).thenReturn(image);
             when(walkwayCommandService.createWalkway(any()))
                     .thenReturn(walkway);
 
@@ -134,48 +142,6 @@ class WalkwayUseCaseTest {
 
             // When & Then
             assertThatThrownBy(() -> walkwayUseCase.createWalkwayCourse(createWalkwayCourseRequest,memberId, walkwayId))
-                    .isInstanceOf(CustomException.class);
-        }
-    }
-
-    @Nested
-    @DisplayName("createWalkwayCourseImageUrl 메서드는")
-    class Describe_createWalkwayCourseImageUrl {
-        @Test
-        @DisplayName("이미지 url를 산책로에 저장한다.")
-        void it_returns_walkway() {
-            // Given
-            String courseImageUrl = "https://test.com/";
-            Long memberId = 1L;
-            Long walkwayId = 1L;
-
-            Walkway walkway = WalkwayFixture.createWalkway(null);
-
-            when(walkwayQueryService.getWalkway(walkwayId)).thenReturn(walkway);
-            when(walkwayCommandService.createWalkway(walkway)).thenReturn(walkway);
-
-            // When
-            Walkway result = walkwayUseCase.createWalkwayCourseImageUrl(courseImageUrl, memberId, walkwayId);
-
-            // Then
-            assertThat(result).isNotNull();
-            assertThat(result.getCourseImageUrl()).isEqualTo(courseImageUrl);
-        }
-
-        @Test
-        @DisplayName("이미지 url이 비어있거나 null이면 산책로를 삭제한다.")
-        void it_returns_exception() {
-            // Given
-            String courseImageUrl = "";
-            Long memberId = 1L;
-            Long walkwayId = 1L;
-
-            Walkway walkway = WalkwayFixture.createWalkway(null);
-
-            when(walkwayQueryService.getWalkway(walkwayId)).thenReturn(walkway);
-
-            // When & Then
-            assertThatThrownBy(() -> walkwayUseCase.createWalkwayCourseImageUrl(courseImageUrl, memberId, walkwayId))
                     .isInstanceOf(CustomException.class);
         }
     }

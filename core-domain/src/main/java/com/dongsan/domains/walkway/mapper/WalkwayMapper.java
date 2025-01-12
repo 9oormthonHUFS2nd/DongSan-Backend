@@ -15,7 +15,7 @@ import org.locationtech.jts.geom.Point;
 public class WalkwayMapper {
     private WalkwayMapper(){}
 
-    public static Walkway toWalkway(CreateWalkwayRequest createWalkwayRequest, Member member) {
+    public static Walkway toWalkway(CreateWalkwayRequest createWalkwayRequest, Member member, String courseImageUrl) {
         GeometryFactory geometryFactory = new GeometryFactory();
 
         // 경로
@@ -38,6 +38,7 @@ public class WalkwayMapper {
                 .endLocation(location)
                 .memo(createWalkwayRequest.memo())
                 .course(tempCourse)
+                .courseImageUrl(courseImageUrl)
                 .build();
     }
 }
