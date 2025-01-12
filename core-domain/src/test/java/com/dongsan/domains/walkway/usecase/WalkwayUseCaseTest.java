@@ -256,8 +256,9 @@ class WalkwayUseCaseTest {
                     = walkwayUseCase.getWalkwaysSearch(userId, type, latitude, longitude, distance, hashtags, lastId, size);
 
             // then
-            Assertions.assertThat(result).isNotNull();
-            Assertions.assertThat(result).hasSize(size);
+            Assertions.assertThat(result)
+                    .isNotNull()
+                    .hasSize(size);
         }
 
         @Test
@@ -289,8 +290,9 @@ class WalkwayUseCaseTest {
                     size);
 
             // then
-            Assertions.assertThat(result).isNotNull();
-            Assertions.assertThat(result).hasSize(10);
+            Assertions.assertThat(result)
+                    .isNotNull()
+                    .hasSize(10);
         }
 
         @Test

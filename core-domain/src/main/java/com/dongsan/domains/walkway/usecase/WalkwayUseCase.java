@@ -35,8 +35,7 @@ public class WalkwayUseCase {
     @Transactional
     public Walkway createWalkway(CreateWalkwayRequest createWalkwayRequest, Long memberId) {
         Member member = memberQueryService.getMember(memberId);
-        Walkway walkway = walkwayCommandService.createWalkway(WalkwayMapper.toWalkway(createWalkwayRequest, member));
-        return walkway;
+        return walkwayCommandService.createWalkway(WalkwayMapper.toWalkway(createWalkwayRequest, member));
     }
 
     public Walkway createWalkwayCourse(CreateWalkwayCourseRequest createWalkwayCourseRequest, Long memberId, Long walkwayId) {
@@ -121,9 +120,7 @@ public class WalkwayUseCase {
         // 해쉬 태그 추가 및 삭제
         hashtagWalkwayCommandService.deleteAllHashtagWalkways(walkway);
         walkway.removeAllHashtagWalkway();
-        if(updateWalkwayRequest.hashtags() != null) {
-            hashtagUseCase.createHashtagWalkways(walkway, updateWalkwayRequest.hashtags());
-        }
+        hashtagUseCase.createHashtagWalkways(walkway, updateWalkwayRequest.hashtags());
 
         // 산책로 수정
         walkway.updateWalkway(updateWalkwayRequest.name(), updateWalkwayRequest.memo(), updateWalkwayRequest.exposeLevel());
