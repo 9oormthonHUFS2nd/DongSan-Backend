@@ -27,7 +27,8 @@ public class HashtagUseCase {
         List<HashtagWalkway> hashtagWalkways = new ArrayList<>();
 
         for (String hashtagName : hashtagNames) {
-            Hashtag hashtag = this.createNewHashtag(hashtagName);
+            Hashtag hashtag = hashtagQueryService.findByNameOptional(hashtagName)
+                    .orElseGet(() -> hashtagCommandService.createHashtag(HashtagMapper.toHashtag(hashtagName)));
 
             HashtagWalkway hashtagWalkway = HashtagWalkwayMapper.toHashtagWalkway(hashtag, walkway);
             hashtagWalkways.add(hashtagWalkway);
@@ -35,11 +36,5 @@ public class HashtagUseCase {
         }
 
         return hashtagWalkwayCommandService.createHashtagWalkways(hashtagWalkways);
-    }
-
-    @Transactional
-    public Hashtag createNewHashtag(String hashtagName) {
-        return hashtagQueryService.findByNameOptional(hashtagName)
-                .orElseGet(() -> hashtagCommandService.createHashtag(HashtagMapper.toHashtag(hashtagName)));
     }
 }

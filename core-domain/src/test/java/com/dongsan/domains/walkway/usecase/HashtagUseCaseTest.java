@@ -67,7 +67,8 @@ class HashtagUseCaseTest {
             }
 
             for (int i = 0; i < 3; i++) {
-                when(hashtagUseCase.createNewHashtag(hashtagNames.get(i))).thenReturn(hashtags.get(i));
+                when(hashtagQueryService.findByNameOptional(hashtagNames.get(i)))
+                        .thenReturn(Optional.ofNullable(hashtags.get(i)));
             }
             when(hashtagWalkwayCommandService.createHashtagWalkways(any())).thenReturn(hashtagWalkways);
 
@@ -80,44 +81,4 @@ class HashtagUseCaseTest {
                     .containsExactlyInAnyOrderElementsOf(hashtagWalkways);
         }
     }
-
-    @Nested
-    @DisplayName("createNewHashtag 메서드는")
-    class Describe_createNewHashtag {
-        @Test
-        @DisplayName("hashtaName에 해당하는 해쉬태그가 존재하면 hashtaName에 해당하는 해쉬태그를 반환한다.")
-        void it_returns_hashtag() {
-            // Given
-            String hashtagName = "tag";
-            Hashtag newHashtag = HashtagFixture.createHashtag(hashtagName);
-
-            when(hashtagQueryService.findByNameOptional(hashtagName)).thenReturn(Optional.of(newHashtag));
-
-            // When
-            Hashtag result = hashtagUseCase.createNewHashtag(hashtagName);
-
-            // Then
-            assertThat(result).isNotNull();
-            assertThat(result.getName()).isEqualTo(hashtagName);
-        }
-
-        @Test
-        @DisplayName("hashtaName에 해당하는 해쉬태그가 존재하지 않으면 hashtaName에 해당하는 해쉬태그를 생성한다.")
-        void it_returns_create_hashtag() {
-            // Given
-            String hashtagName = "tag";
-            Hashtag newHashtag = HashtagFixture.createHashtag(hashtagName);
-
-            when(hashtagQueryService.findByNameOptional(hashtagName)).thenReturn(Optional.empty());
-            when(hashtagCommandService.createHashtag(any())).thenReturn(newHashtag);
-
-            // When
-            Hashtag result = hashtagUseCase.createNewHashtag(hashtagName);
-
-            // Then
-            assertThat(result).isNotNull();
-            assertThat(result.getName()).isEqualTo(hashtagName);
-        }
-    }
-
 }
