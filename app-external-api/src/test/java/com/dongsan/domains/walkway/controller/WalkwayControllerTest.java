@@ -374,7 +374,7 @@ class WalkwayControllerTest {
                     "test name",
                     "test memo",
                     List.of(),
-                    "비공개");
+                    ExposeLevel.PRIVATE);
 
             when(walkwayQueryService.existsByWalkwayId(walkwayId)).thenReturn(true);
 
