@@ -40,8 +40,8 @@ public class WalkwayQueryDSLRepository {
             SearchWalkwayPopular searchWalkwayPopular
     ) {
         String point
-                = String.format("ST_GeomFromText('POINT(%f %f)', 4326)", searchWalkwayPopular.longitude(),
-                searchWalkwayPopular.latitude());
+                = String.format("ST_GeomFromText('POINT(%f %f)', 4326)", searchWalkwayPopular.latitude(),
+                searchWalkwayPopular.longitude());
 
         return queryFactory.selectFrom(walkway)
                 .join(walkway.hashtagWalkways, hashtagWalkway)
@@ -78,8 +78,8 @@ public class WalkwayQueryDSLRepository {
             SearchWalkwayRating searchWalkwayRating
     ) {
         String point
-                = String.format("ST_GeomFromText('POINT(%f %f)', 4326)", searchWalkwayRating.longitude(),
-                searchWalkwayRating.latitude());
+                = String.format("ST_GeomFromText('POINT(%f %f)', 4326)", searchWalkwayRating.latitude(),
+                searchWalkwayRating.longitude());
 
         return queryFactory.selectFrom(walkway)
                 .join(walkway.hashtagWalkways, hashtagWalkway)
