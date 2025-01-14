@@ -17,7 +17,7 @@ public record GetWalkwayWithLikedResponse(
         Double rating,
         Boolean isLiked,
         Integer reviewCount,
-        List<String> hashTags,
+        List<String> hashtags,
         ExposeLevel accessLevel,
         List<List<Double>> course
 ) {
