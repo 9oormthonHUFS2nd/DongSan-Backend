@@ -20,7 +20,6 @@ import com.dongsan.domains.image.entity.Image;
 import com.dongsan.domains.image.usecase.ImageUseCase;
 import com.dongsan.domains.image.usecase.S3UseCase;
 import com.dongsan.domains.member.entity.Member;
-import com.dongsan.domains.walkway.dto.request.CreateWalkwayCourseRequest;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.request.UpdateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.response.GetWalkwaySearchResponse;
@@ -106,6 +105,10 @@ class WalkwayControllerTest {
         @DisplayName("request body를 전달 받으면 생성한 walkwayId를 반환한다.")
         void it_returns_walkwayId() throws Exception {
             // Given
+            List<List<Double>> course = new ArrayList<>();
+            for (int i = 0; i < 5; i++) {
+                course.add(List.of(0.0, 0.0));
+            }
             CreateWalkwayRequest createWalkwayRequest = new CreateWalkwayRequest(
                     1L,
                     "testName",
@@ -113,7 +116,8 @@ class WalkwayControllerTest {
                     4.2,
                     20,
                     List.of("하나", "둘"),
-                    ExposeLevel.PUBLIC
+                    ExposeLevel.PUBLIC,
+                    course
             );
 
             Walkway walkway = WalkwayFixture.createWalkwayWithId(1L , null);
@@ -134,6 +138,10 @@ class WalkwayControllerTest {
         @DisplayName("request body의 name이나 course가 유효하지 않으면 INVALID_ARGUMENT_ERROR를 반환한다.")
         void it_returns_INVALID_ARGUMENT_ERROR() throws Exception {
             // Given
+            List<List<Double>> course = new ArrayList<>();
+            for (int i = 0; i < 5; i++) {
+                course.add(List.of(0.0, 0.0));
+            }
             CreateWalkwayRequest createWalkwayRequest = new CreateWalkwayRequest(
                     1L,
                     "",
@@ -141,7 +149,8 @@ class WalkwayControllerTest {
                     4.2,
                     20,
                     List.of("하나", "둘"),
-                    ExposeLevel.PUBLIC
+                    ExposeLevel.PUBLIC,
+                    course
             );
 
             // When
@@ -155,36 +164,7 @@ class WalkwayControllerTest {
         }
     }
 
-    @Nested
-    @DisplayName("createWalkwayCourse 메서드는")
-    class Describe_createWalkwayCourse {
 
-        @Test
-        @DisplayName("산책로에 코스를 등록하고 등록한 산책로의 walkwayId를 반환한다.")
-        void it_returns_walkwayId() throws Exception {
-            // Given
-            List<List<Double>> course = new ArrayList<>();
-            for (int i = 0; i < 5; i++) {
-                course.add(List.of(0.0, 0.0));
-            }
-
-            CreateWalkwayCourseRequest createWalkwayCourseRequest = new CreateWalkwayCourseRequest(course);
-
-            Walkway walkway = WalkwayFixture.createWalkwayWithId(1L, null);
-
-            when(walkwayUseCase.createWalkwayCourse(createWalkwayCourseRequest, customOAuth2User.getMemberId(), 1L))
-                    .thenReturn(walkway);
-
-            // When
-            ResultActions response = mockMvc.perform(post("/walkways/1/course")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(createWalkwayCourseRequest)));
-
-            // Then
-            response.andExpect(status().isCreated())
-                    .andExpect(jsonPath("$.data.walkwayId").value(1L));
-        }
-    }
 
     @Nested
     @DisplayName("createWalkwayCourseImage 메서드는")

@@ -1,6 +1,5 @@
 package com.dongsan.domains.walkway.service;
 
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.dongsan.domains.member.entity.Member;
@@ -46,23 +45,6 @@ class WalkwayCommandServiceTest {
 
             // Then
             Assertions.assertThat(result).isEqualTo(walkwayResult);
-        }
-    }
-
-    @Nested
-    @DisplayName("deleteWalkway 메서드는")
-    class Describe_deleteWalkway {
-        @Test
-        @DisplayName("입력받은 산책로를 삭제한다.")
-        void it_delete_walkway() {
-            // Given
-            Walkway walkway = WalkwayFixture.createWalkway(null);
-
-            // When
-            walkwayCommandService.deleteWalkway(walkway);
-
-            // Then
-            verify(walkwayRepository).delete(walkway);
         }
     }
 }

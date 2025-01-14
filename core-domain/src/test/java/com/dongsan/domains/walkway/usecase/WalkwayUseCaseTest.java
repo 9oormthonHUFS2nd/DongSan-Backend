@@ -13,7 +13,6 @@ import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.user.service.MemberQueryService;
 import com.dongsan.domains.walkway.dto.SearchWalkwayPopular;
 import com.dongsan.domains.walkway.dto.SearchWalkwayRating;
-import com.dongsan.domains.walkway.dto.request.CreateWalkwayCourseRequest;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.request.UpdateWalkwayRequest;
 import com.dongsan.domains.walkway.entity.Walkway;
@@ -71,6 +70,10 @@ class WalkwayUseCaseTest {
             Long imageId = 1L;
             Image image = ImageFixture.createImage();
             Member member = MemberFixture.createMemberWithId(memberId);
+            List<List<Double>> course = new ArrayList<>();
+            for (int i = 0; i < 5; i++) {
+                course.add(List.of(0.0, 0.0));
+            }
             CreateWalkwayRequest createWalkwayRequest = new CreateWalkwayRequest(
                     imageId,
                     "testName",
@@ -78,7 +81,8 @@ class WalkwayUseCaseTest {
                     4.2,
                     20,
                     List.of("하나", "둘"),
-                    ExposeLevel.PUBLIC
+                    ExposeLevel.PUBLIC,
+                    course
             );
 
             Walkway walkway = WalkwayFixture.createWalkwayWithId(1L, member);
@@ -94,54 +98,6 @@ class WalkwayUseCaseTest {
 
             // Then
             assertThat(result.getId()).isEqualTo(1L);
-        }
-    }
-
-    @Nested
-    @DisplayName("createWalkwayCourse 메서드는")
-    class Describe_createWalkwayCourse {
-        @Test
-        @DisplayName("산책로에 코스를 등록하고 저장한다.")
-        void it_returns_walkway() {
-            // Given
-            List<List<Double>> course = new ArrayList<>();
-            for (int i = 0; i < 5; i++) {
-                course.add(List.of(0.0, 0.0));
-            }
-            CreateWalkwayCourseRequest createWalkwayCourseRequest = new CreateWalkwayCourseRequest(course);
-
-            Long memberId = 1L;
-            Long walkwayId = 1L;
-
-            Walkway walkway = WalkwayFixture.createWalkway(null);
-
-            when(walkwayQueryService.getWalkway(walkwayId)).thenReturn(walkway);
-            when(walkwayCommandService.createWalkway(walkway)).thenReturn(walkway);
-
-            // When
-            Walkway result = walkwayUseCase.createWalkwayCourse(createWalkwayCourseRequest,memberId, walkwayId);
-
-            // Then
-            assertThat(result).isNotNull();
-            assertThat(result.getCourse().getNumPoints()).isEqualTo(course.size());
-        }
-
-        @Test
-        @DisplayName("잘못된 산책로 코스가 입력되면 산책로를 삭제하고 예외를 발생시킨다.")
-        void it_returns_exception() {
-            // Given
-            CreateWalkwayCourseRequest createWalkwayCourseRequest = new CreateWalkwayCourseRequest(null);
-
-            Long memberId = 1L;
-            Long walkwayId = 1L;
-
-            Walkway walkway = WalkwayFixture.createWalkway(null);
-
-            when(walkwayQueryService.getWalkway(walkwayId)).thenReturn(walkway);
-
-            // When & Then
-            assertThatThrownBy(() -> walkwayUseCase.createWalkwayCourse(createWalkwayCourseRequest,memberId, walkwayId))
-                    .isInstanceOf(CustomException.class);
         }
     }
 

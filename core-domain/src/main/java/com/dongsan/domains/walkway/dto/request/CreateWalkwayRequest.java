@@ -16,6 +16,7 @@ public record CreateWalkwayRequest(
         Integer time,
         @NotEmpty(message = "해쉬태그를 입력해주세요.")
         List<String> hashtags,
-        ExposeLevel exposeLevel
+        ExposeLevel exposeLevel,
+        List<List<Double>> course
 ) {
 }

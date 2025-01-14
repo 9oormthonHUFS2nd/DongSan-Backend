@@ -8,11 +8,9 @@ import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.user.service.MemberQueryService;
 import com.dongsan.domains.walkway.dto.SearchWalkwayPopular;
 import com.dongsan.domains.walkway.dto.SearchWalkwayRating;
-import com.dongsan.domains.walkway.dto.request.CreateWalkwayCourseRequest;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.request.UpdateWalkwayRequest;
 import com.dongsan.domains.walkway.entity.Walkway;
-import com.dongsan.domains.walkway.mapper.LineStringMapper;
 import com.dongsan.domains.walkway.mapper.WalkwayMapper;
 import com.dongsan.domains.walkway.service.HashtagWalkwayCommandService;
 import com.dongsan.domains.walkway.service.WalkwayCommandService;
@@ -39,19 +37,6 @@ public class WalkwayUseCase {
         Member member = memberQueryService.getMember(memberId);
         String courseImageUrl = imageQueryService.getImage(createWalkwayRequest.courseImageId()).getUrl();
         return walkwayCommandService.createWalkway(WalkwayMapper.toWalkway(createWalkwayRequest, member, courseImageUrl));
-    }
-
-    public Walkway createWalkwayCourse(CreateWalkwayCourseRequest createWalkwayCourseRequest, Long memberId, Long walkwayId) {
-        walkwayQueryService.isOwnerOfWalkway(walkwayId, memberId);
-        Walkway walkway = walkwayQueryService.getWalkway(walkwayId);
-        try {
-            walkway.registerCourse(LineStringMapper.toLineString(createWalkwayCourseRequest.course()));
-            return walkwayCommandService.createWalkway(walkway);
-        } catch (RuntimeException e) {
-            hashtagWalkwayCommandService.deleteAllHashtagWalkways(walkway);
-            walkwayCommandService.deleteWalkway(walkway);
-            throw new CustomException(WalkwayErrorCode.INVALID_COURSE);
-        }
     }
 
     @Transactional(readOnly = true)
