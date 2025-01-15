@@ -1,8 +1,10 @@
 package com.dongsan.domains.walkway.controller;
 
 import static fixture.MemberFixture.createMemberWithId;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -14,17 +16,22 @@ import com.dongsan.domains.bookmark.dto.BookmarksWithMarkedWalkwayDTO;
 import com.dongsan.domains.bookmark.dto.response.BookmarksWithMarkedWalkwayResponse;
 import com.dongsan.domains.bookmark.mapper.BookmarksWithMarkedWalkwayMapper;
 import com.dongsan.domains.bookmark.usecase.BookmarkUseCase;
+import com.dongsan.domains.image.entity.Image;
+import com.dongsan.domains.image.usecase.ImageUseCase;
+import com.dongsan.domains.image.usecase.S3UseCase;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.request.UpdateWalkwayRequest;
-import com.dongsan.domains.walkway.dto.response.CreateWalkwayResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwaySearchResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayWithLikedResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
+import com.dongsan.domains.walkway.enums.ExposeLevel;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
+import com.dongsan.domains.walkway.usecase.HashtagUseCase;
 import com.dongsan.domains.walkway.usecase.LikedWalkwayUseCase;
 import com.dongsan.domains.walkway.usecase.WalkwayUseCase;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import fixture.ImageFixture;
 import fixture.WalkwayFixture;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +46,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -70,6 +78,15 @@ class WalkwayControllerTest {
     @MockBean
     LikedWalkwayUseCase likedWalkwayUseCase;
 
+    @MockBean
+    HashtagUseCase hashtagUseCase;
+
+    @MockBean
+    S3UseCase s3UseCase;
+
+    @MockBean
+    ImageUseCase imageUseCase;
+
     final Member member = createMemberWithId(1L);
     final CustomOAuth2User customOAuth2User = new CustomOAuth2User(member);
 
@@ -88,18 +105,24 @@ class WalkwayControllerTest {
         @DisplayName("request body를 전달 받으면 생성한 walkwayId를 반환한다.")
         void it_returns_walkwayId() throws Exception {
             // Given
+            List<List<Double>> course = new ArrayList<>();
+            for (int i = 0; i < 5; i++) {
+                course.add(List.of(0.0, 0.0));
+            }
             CreateWalkwayRequest createWalkwayRequest = new CreateWalkwayRequest(
+                    1L,
                     "testName",
                     "testMemo",
                     4.2,
                     20,
                     List.of("하나", "둘"),
-                    "공개",
-                    List.of(List.of(127.001, 37.001), List.of(127.002, 37.002))
+                    ExposeLevel.PUBLIC,
+                    course
             );
 
-            when(walkwayUseCase.createWalkway(createWalkwayRequest, customOAuth2User.getMemberId())).thenReturn(
-                    new CreateWalkwayResponse(1L));
+            Walkway walkway = WalkwayFixture.createWalkwayWithId(1L , null);
+
+            when(walkwayUseCase.createWalkway(createWalkwayRequest, customOAuth2User.getMemberId())).thenReturn(walkway);
 
             // When
             ResultActions response = mockMvc.perform(post("/walkways")
@@ -115,14 +138,19 @@ class WalkwayControllerTest {
         @DisplayName("request body의 name이나 course가 유효하지 않으면 INVALID_ARGUMENT_ERROR를 반환한다.")
         void it_returns_INVALID_ARGUMENT_ERROR() throws Exception {
             // Given
+            List<List<Double>> course = new ArrayList<>();
+            for (int i = 0; i < 5; i++) {
+                course.add(List.of(0.0, 0.0));
+            }
             CreateWalkwayRequest createWalkwayRequest = new CreateWalkwayRequest(
+                    1L,
                     "",
                     "testMemo",
                     4.2,
                     20,
                     List.of("하나", "둘"),
-                    "공개",
-                    List.of(List.of())
+                    ExposeLevel.PUBLIC,
+                    course
             );
 
             // When
@@ -136,6 +164,40 @@ class WalkwayControllerTest {
         }
     }
 
+
+
+    @Nested
+    @DisplayName("createWalkwayCourseImage 메서드는")
+    class Describe_createWalkwayCourseImage {
+        @Test
+        @DisplayName("산책로에 코스 이미지를 등록하고 등록한 산책로의 walkwayId를 반환한다.")
+        void it_returns_walkwayId() throws Exception {
+            // Given
+            String imageUrl = "https://test.com/";
+            Long imageId = 1L;
+            MockMultipartFile file = new MockMultipartFile(
+                    "courseImage",
+                    "test.jpg",
+                    MediaType.IMAGE_JPEG_VALUE,
+                    "image-content".getBytes()
+            );
+            Image image = ImageFixture.createImageWithId(imageId, imageUrl);
+
+            when(s3UseCase.uploadCourseImage(any())).thenReturn(imageUrl);
+            when(imageUseCase.createImage(imageUrl))
+                    .thenReturn(image);
+
+            // When
+            ResultActions response = mockMvc.perform(multipart("/walkways/image")
+                    .file(file)
+                    .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+                    .accept(MediaType.APPLICATION_JSON));
+
+            // Then
+            response.andExpect(status().isCreated())
+                    .andExpect(jsonPath("$.data").exists());
+        }
+    }
 
     @Nested
     @DisplayName("getWalkway 메서드는")
@@ -299,7 +361,7 @@ class WalkwayControllerTest {
                     "test name",
                     "test memo",
                     List.of(),
-                    "비공개");
+                    ExposeLevel.PRIVATE);
 
             when(walkwayQueryService.existsByWalkwayId(walkwayId)).thenReturn(true);
 

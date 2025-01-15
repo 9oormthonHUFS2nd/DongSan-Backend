@@ -6,24 +6,25 @@ import static org.mockito.Mockito.when;
 
 import com.dongsan.domains.hashtag.entity.Hashtag;
 import com.dongsan.domains.hashtag.entity.HashtagWalkway;
+import com.dongsan.domains.member.entity.Member;
+import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.service.HashtagCommandService;
 import com.dongsan.domains.walkway.service.HashtagQueryService;
 import com.dongsan.domains.walkway.service.HashtagWalkwayCommandService;
-import com.dongsan.domains.member.entity.Member;
-import com.dongsan.domains.walkway.entity.Walkway;
 import fixture.HashtagFixture;
 import fixture.HashtagWalkwayFixture;
 import fixture.MemberFixture;
 import fixture.WalkwayFixture;
 import java.util.ArrayList;
 import java.util.List;
-import org.assertj.core.api.Assertions;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -35,6 +36,7 @@ class HashtagUseCaseTest {
     HashtagQueryService hashtagQueryService;
     @Mock
     HashtagCommandService hashtagCommandService;
+    @Spy
     @InjectMocks
     HashtagUseCase hashtagUseCase;
 
@@ -53,29 +55,30 @@ class HashtagUseCaseTest {
             List<Hashtag> hashtags = new ArrayList<>();
             List<HashtagWalkway> hashtagWalkways = new ArrayList<>();
 
-            for (int i = 1; i < 3; i++) {
+            for (int i = 0; i < 3; i++) {
                 hashtags.add(HashtagFixture.createHashtagWithId((long) i, hashtagNames.get(i)));
             }
-            for (int i = 0; i < 3; i++) {
+            for (long i = 0; i < 3; i++) {
                 hashtagWalkways.add(HashtagWalkwayFixture.createHashtagWalkwayWithId(
                         walkway,
                         hashtags.get(0),
-                        (long) i
+                        i
                 ));
             }
 
-            when(hashtagQueryService.getHashtagsByName(hashtagNames)).thenReturn(hashtags);
-            when(hashtagCommandService.createHashtag(any())).thenReturn(null);
+            for (int i = 0; i < 3; i++) {
+                when(hashtagQueryService.findByNameOptional(hashtagNames.get(i)))
+                        .thenReturn(Optional.ofNullable(hashtags.get(i)));
+            }
             when(hashtagWalkwayCommandService.createHashtagWalkways(any())).thenReturn(hashtagWalkways);
 
             // When
             List<HashtagWalkway> result = hashtagUseCase.createHashtagWalkways(walkway, hashtagNames);
 
             // Then
-            Assertions.assertThat(result).isNotNull()
+            assertThat(result).isNotNull()
                     .hasSize(hashtagWalkways.size())
                     .containsExactlyInAnyOrderElementsOf(hashtagWalkways);
         }
     }
-
 }

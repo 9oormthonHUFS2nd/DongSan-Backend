@@ -9,8 +9,6 @@ public record SearchWalkwayRating(
         Double latitude,
         int distance,
         List<String> hashtags,
-//        LocalDateTime createdAt,
-//        Double lastRating,
         Walkway walkway,
         int size
 ) {

@@ -15,7 +15,6 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -41,8 +40,8 @@ public class WalkwayQueryDSLRepository {
             SearchWalkwayPopular searchWalkwayPopular
     ) {
         String point
-                = String.format("ST_GeomFromText('POINT(%f %f)', 4326)", searchWalkwayPopular.longitude(),
-                searchWalkwayPopular.latitude());
+                = String.format("ST_GeomFromText('POINT(%f %f)', 4326)", searchWalkwayPopular.latitude(),
+                searchWalkwayPopular.longitude());
 
         return queryFactory.selectFrom(walkway)
                 .join(walkway.hashtagWalkways, hashtagWalkway)
@@ -79,8 +78,8 @@ public class WalkwayQueryDSLRepository {
             SearchWalkwayRating searchWalkwayRating
     ) {
         String point
-                = String.format("ST_GeomFromText('POINT(%f %f)', 4326)", searchWalkwayRating.longitude(),
-                searchWalkwayRating.latitude());
+                = String.format("ST_GeomFromText('POINT(%f %f)', 4326)", searchWalkwayRating.latitude(),
+                searchWalkwayRating.longitude());
 
         return queryFactory.selectFrom(walkway)
                 .join(walkway.hashtagWalkways, hashtagWalkway)
@@ -139,18 +138,6 @@ public class WalkwayQueryDSLRepository {
      */
     private BooleanExpression createdAtLt(LocalDateTime createdAt) {
         return createdAt != null ? walkway.createdAt.lt(createdAt) : null;
-    }
-
-    public Optional<Walkway> getWalkwayWithHashtag(Long walkwayId) {
-        return Optional.ofNullable(queryFactory.selectFrom(walkway)
-                .join(walkway.hashtagWalkways, hashtagWalkway)
-                .fetchJoin()
-                .join(hashtagWalkway.hashtag)
-                .fetchJoin()
-                .join(walkway.member)
-                .fetchJoin()
-                .where(walkway.id.eq(walkwayId))
-                .fetchOne());
     }
 
     private BooleanExpression walkwayHashtagIn(List<String> hashtags) {

@@ -54,11 +54,6 @@ public class WalkwayQueryService {
         return walkwayRepository.existsById(walkwayId);
     }
 
-    public Walkway getWalkwayWithHashtag(Long walkwayId) {
-        return walkwayQueryDSLRepository.getWalkwayWithHashtag(walkwayId)
-                .orElseThrow(() -> new CustomException(WalkwayErrorCode.WALKWAY_NOT_FOUND));
-    }
-
     public List<Walkway> getBookmarkWalkway(Bookmark bookmark, Integer size, LocalDateTime lastCreatedAt) {
         return markedWalkwayQueryDSLRepository.getBookmarkWalkway(bookmark.getId(), size, lastCreatedAt)
                 .stream().map(MarkedWalkway::getWalkway).toList();

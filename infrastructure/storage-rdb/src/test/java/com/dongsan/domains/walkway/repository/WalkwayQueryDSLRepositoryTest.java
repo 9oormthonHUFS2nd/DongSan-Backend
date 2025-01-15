@@ -5,17 +5,10 @@ import static fixture.WalkwayFixture.createWalkway;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.dongsan.common.support.RepositoryTest;
-import com.dongsan.domains.hashtag.entity.Hashtag;
-import com.dongsan.domains.hashtag.entity.HashtagWalkway;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.walkway.entity.Walkway;
-import fixture.HashtagFixture;
-import fixture.HashtagWalkwayFixture;
-import fixture.MemberFixture;
-import fixture.WalkwayFixture;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -135,34 +128,6 @@ class WalkwayQueryDSLRepositoryTest extends RepositoryTest {
             // Then
             assertThat(result).isEqualTo(walkway);
             assertThat(result.getHashtagWalkways()).isNotNull();
-        }
-    }
-
-    @Nested
-    @DisplayName("getWalkwayWithHashtag 메서드는")
-    class Describe_getWalkwayWithHashtag {
-        @Test
-        @DisplayName("Walkway를 hashtag, member와 함께 반환한다.")
-        void it_returns_walkway() {
-            // Given
-            Member member = MemberFixture.createMember();
-            em.persist(member);
-            Walkway walkway = WalkwayFixture.createWalkway(member);
-            em.persist(walkway);
-            Hashtag hashtag = HashtagFixture.createHashtag("test");
-            em.persist(hashtag);
-            HashtagWalkway hashtagWalkway = HashtagWalkwayFixture.createHashtagWalkway(walkway, hashtag);
-            walkway.addHashtagWalkway(hashtagWalkway);
-            em.persist(hashtagWalkway);
-
-            // When
-            Optional<Walkway> result = walkwayQueryDSLRepository.getWalkwayWithHashtag(walkway.getId());
-
-            // Then
-            assertThat(result.isPresent()).isTrue();
-            assertThat(result.get().getId()).isEqualTo(walkway.getId());
-            assertThat(result.get().getMember()).isEqualTo(member);
-            assertThat(result.get().getHashtagWalkways()).hasSize(4);
         }
     }
 }

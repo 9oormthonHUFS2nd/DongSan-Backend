@@ -7,19 +7,21 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.dongsan.common.error.exception.CustomException;
-import com.dongsan.domains.walkway.service.HashtagQueryService;
-import com.dongsan.domains.walkway.service.HashtagWalkwayCommandService;
+import com.dongsan.domains.image.entity.Image;
+import com.dongsan.domains.image.service.ImageQueryService;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.user.service.MemberQueryService;
 import com.dongsan.domains.walkway.dto.SearchWalkwayPopular;
 import com.dongsan.domains.walkway.dto.SearchWalkwayRating;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.request.UpdateWalkwayRequest;
-import com.dongsan.domains.walkway.dto.response.CreateWalkwayResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.enums.ExposeLevel;
+import com.dongsan.domains.walkway.service.HashtagQueryService;
+import com.dongsan.domains.walkway.service.HashtagWalkwayCommandService;
 import com.dongsan.domains.walkway.service.WalkwayCommandService;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
+import fixture.ImageFixture;
 import fixture.MemberFixture;
 import fixture.WalkwayFixture;
 import java.util.ArrayList;
@@ -51,6 +53,8 @@ class WalkwayUseCaseTest {
     HashtagQueryService hashtagQueryService;
     @Mock
     HashtagUseCase hashtagUseCase;
+    @Mock
+    ImageQueryService imageQueryService;
     @InjectMocks
     WalkwayUseCase walkwayUseCase;
 
@@ -63,31 +67,37 @@ class WalkwayUseCaseTest {
         void it_returns_responseDTO() {
             // Given
             Long memberId = 1L;
-
+            Long imageId = 1L;
+            Image image = ImageFixture.createImage();
             Member member = MemberFixture.createMemberWithId(memberId);
-
+            List<List<Double>> course = new ArrayList<>();
+            for (int i = 0; i < 5; i++) {
+                course.add(List.of(0.0, 0.0));
+            }
             CreateWalkwayRequest createWalkwayRequest = new CreateWalkwayRequest(
+                    imageId,
                     "testName",
                     "testMemo",
                     4.2,
                     20,
                     List.of("하나", "둘"),
-                    "공개",
-                    List.of(List.of(127.001, 37.001), List.of(127.002, 37.002))
+                    ExposeLevel.PUBLIC,
+                    course
             );
 
             Walkway walkway = WalkwayFixture.createWalkwayWithId(1L, member);
 
             when(memberQueryService.getMember(member.getId())).thenReturn(member);
+            when(imageQueryService.getImage(imageId)).thenReturn(image);
             when(walkwayCommandService.createWalkway(any()))
                     .thenReturn(walkway);
 
             // When
-            CreateWalkwayResponse result =
+            Walkway result =
                     walkwayUseCase.createWalkway(createWalkwayRequest, memberId);
 
             // Then
-            assertThat(result.walkwayId()).isEqualTo(1L);
+            assertThat(result.getId()).isEqualTo(1L);
         }
     }
 
@@ -167,8 +177,9 @@ class WalkwayUseCaseTest {
                     = walkwayUseCase.getWalkwaysSearch(userId, type, latitude, longitude, distance, hashtags, lastId, size);
 
             // then
-            Assertions.assertThat(result).isNotNull();
-            Assertions.assertThat(result).hasSize(size);
+            Assertions.assertThat(result)
+                    .isNotNull()
+                    .hasSize(size);
         }
 
         @Test
@@ -200,8 +211,9 @@ class WalkwayUseCaseTest {
                     size);
 
             // then
-            Assertions.assertThat(result).isNotNull();
-            Assertions.assertThat(result).hasSize(10);
+            Assertions.assertThat(result)
+                    .isNotNull()
+                    .hasSize(10);
         }
 
         @Test
@@ -229,24 +241,6 @@ class WalkwayUseCaseTest {
     @DisplayName("updateWalkway 메서드는")
     class Describe_updateWalkway {
         @Test
-        @DisplayName("산책로를 등록한 회원가 다르면 예외처리한다.")
-        void it_returns_exceptions() {
-            // Given
-            Long memberId = 1L;
-            Long otherMemberId = 2L;
-            Long walkwayId = 1L;
-            Member otherMember = MemberFixture.createMemberWithId(otherMemberId);
-            Walkway walkway = WalkwayFixture.createWalkwayWithId(walkwayId, otherMember);
-
-            when(walkwayQueryService.getWalkwayWithHashtag(walkway.getId())).thenReturn(walkway);
-
-            // When & Then
-            assertThatThrownBy(() -> walkwayUseCase.updateWalkway(null, memberId, walkwayId))
-                    .isInstanceOf(CustomException.class);
-
-        }
-
-        @Test
         @DisplayName("산책로를 수정한다.")
         void it_update_walkway() {
             // Given
@@ -257,9 +251,10 @@ class WalkwayUseCaseTest {
                     "test name",
                     "test memo",
                     List.of(),
-                    "비공개");
+                    ExposeLevel.PRIVATE
+            );
 
-            when(walkwayQueryService.getWalkwayWithHashtag(walkway.getId())).thenReturn(walkway);
+            when(walkwayQueryService.getWalkway(walkway.getId())).thenReturn(walkway);
             when(walkwayCommandService.createWalkway(walkway)).thenReturn(null);
 
             // When

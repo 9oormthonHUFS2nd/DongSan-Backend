@@ -5,18 +5,24 @@ import com.dongsan.common.apiResponse.SuccessResponse;
 import com.dongsan.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.domains.bookmark.dto.response.BookmarksWithMarkedWalkwayResponse;
 import com.dongsan.domains.bookmark.usecase.BookmarkUseCase;
+import com.dongsan.domains.image.entity.Image;
+import com.dongsan.domains.image.usecase.ImageUseCase;
+import com.dongsan.domains.image.usecase.S3UseCase;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.request.UpdateWalkwayRequest;
+import com.dongsan.domains.walkway.dto.response.CreateWalkwayCourseImageRequest;
 import com.dongsan.domains.walkway.dto.response.CreateWalkwayResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwaySearchResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayWithLikedResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
+import com.dongsan.domains.walkway.usecase.HashtagUseCase;
 import com.dongsan.domains.walkway.usecase.LikedWalkwayUseCase;
 import com.dongsan.domains.walkway.usecase.WalkwayUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -27,7 +33,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/walkways")
@@ -39,6 +47,9 @@ public class WalkwayController {
     private final WalkwayUseCase walkwayUseCase;
     private final BookmarkUseCase bookmarkUseCase;
     private final LikedWalkwayUseCase likedWalkwayUseCase;
+    private final HashtagUseCase hashtagUseCase;
+    private final S3UseCase s3UseCase;
+    private final ImageUseCase imageUseCase;
 
     @Operation(summary = "산책로 등록")
     @PostMapping("")
@@ -46,7 +57,20 @@ public class WalkwayController {
             @Validated @RequestBody CreateWalkwayRequest createWalkwayRequest,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {
-        return ResponseFactory.created(walkwayUseCase.createWalkway(createWalkwayRequest, customOAuth2User.getMemberId()));
+        Walkway walkway = walkwayUseCase.createWalkway(createWalkwayRequest, customOAuth2User.getMemberId());
+        hashtagUseCase.createHashtagWalkways(walkway, createWalkwayRequest.hashtags());
+        return ResponseFactory.created(new CreateWalkwayResponse(walkway));
+    }
+
+    @Operation(summary = "산책로 코스 이미지 등록")
+    @PostMapping(value ="/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<SuccessResponse<CreateWalkwayCourseImageRequest>> createWalkwayCourseImage(
+            @RequestPart("courseImage") MultipartFile courseImage,
+            @AuthenticationPrincipal CustomOAuth2User customOAuth2User
+    ) {
+        String imageUrl = s3UseCase.uploadCourseImage(courseImage);
+        Image image = imageUseCase.createImage(imageUrl);
+        return ResponseFactory.created(new CreateWalkwayCourseImageRequest(image));
     }
 
     @Operation(summary = "산책로 단건 조회")
@@ -84,12 +108,11 @@ public class WalkwayController {
     ) {
         return ResponseFactory.ok(bookmarkUseCase.getBookmarksWithMarkedWalkway(customOAuth2User.getMemberId(), walkwayId));
     }
-
     @Operation(summary = "산책로 수정")
     @PutMapping("/{walkwayId}")
     public ResponseEntity<Void> updateWalkway(
             @PathVariable Long walkwayId,
-            @RequestBody UpdateWalkwayRequest updateWalkwayRequest,
+            @Validated @RequestBody UpdateWalkwayRequest updateWalkwayRequest,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {
         walkwayUseCase.updateWalkway(updateWalkwayRequest, customOAuth2User.getMemberId(), walkwayId);

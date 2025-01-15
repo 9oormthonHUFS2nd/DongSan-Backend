@@ -1,10 +1,14 @@
 package com.dongsan.domains.walkway.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
 import com.dongsan.domains.hashtag.entity.Hashtag;
 import com.dongsan.domains.hashtag.repository.HashtagRepository;
-import com.dongsan.domains.walkway.service.HashtagQueryService;
 import fixture.HashtagFixture;
-import org.assertj.core.api.Assertions;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -12,11 +16,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("HashtagQueryService Unit Test")
@@ -30,7 +29,7 @@ class HashtagQueryServiceTest {
 
     @Nested
     @DisplayName("getHashtagsByName 메서드는")
-    class getHashtagsByName {
+    class Describe_getHashtagsByName {
 
         @Test
         @DisplayName("hashtag 이름 목록을 받으면 같은 이름의 hashtag 리스트를 반환한다.")
@@ -50,7 +49,26 @@ class HashtagQueryServiceTest {
             List<Hashtag> result = hashtagQueryService.getHashtagsByName(names);
 
             // Then
-            Assertions.assertThat(result).containsExactlyElementsOf(hashtags);
+            assertThat(result).containsExactlyElementsOf(hashtags);
+        }
+    }
+
+    @Nested
+    @DisplayName("findByNameOptional 메서드는")
+    class Describe_findByNameOptional {
+        @Test
+        @DisplayName("해쉬태그가 입력 되면 해당 해쉬태그 엔티티를 반환한다.")
+        void it_returns_entity() {
+            // Given
+            String hashtagName = "testTag";
+            Hashtag hashtag = HashtagFixture.createHashtag(hashtagName);
+            when(hashtagRepository.findByName(hashtagName)).thenReturn(Optional.of(hashtag));
+
+            // When
+            Optional<Hashtag> result = hashtagQueryService.findByNameOptional(hashtagName);
+
+            // Then
+            assertThat(result).isNotNull();
         }
     }
 }

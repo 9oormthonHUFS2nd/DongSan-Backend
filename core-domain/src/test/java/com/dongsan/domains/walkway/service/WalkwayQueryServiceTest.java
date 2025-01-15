@@ -241,24 +241,6 @@ class WalkwayQueryServiceTest {
     }
 
     @Nested
-    @DisplayName("getWalkwayWithHashtag 메서드는")
-    class Describe_getWalkwayWithHashtag {
-        @Test
-        @DisplayName("산책로를 반환한다.")
-        void it_returns_walkway() {
-            // Given
-            Walkway walkway = WalkwayFixture.createWalkway(null);
-            when(walkwayQueryDSLRepository.getWalkwayWithHashtag(walkway.getId())).thenReturn(Optional.of(walkway));
-
-            // When
-            Walkway result = walkwayQueryService.getWalkwayWithHashtag(walkway.getId());
-
-            // Then
-            assertThat(result).isEqualTo(walkway);
-        }
-    }
-
-    @Nested
     @DisplayName("getBookmarkWalkway 메서드는")
     class Describe_getBookmarkWalkway{
         @Test

@@ -42,8 +42,7 @@ public class WalkwayReviewUseCase {
 
         review = reviewCommandService.createReview(review);
 
-        Integer count = reviewQueryService.getWalkwayReviewCount(walkwayId);
-        walkway.updateRatingAndReviewCount(review.getRating(), count);
+        walkway.updateRatingAndReviewCount(review.getRating());
         walkwayCommandService.createWalkway(walkway);
 
         return ReviewMapper.toCreateReviewResponse(review);

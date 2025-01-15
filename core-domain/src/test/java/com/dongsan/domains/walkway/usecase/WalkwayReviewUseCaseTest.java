@@ -1,25 +1,24 @@
 package com.dongsan.domains.walkway.usecase;
 
-import static fixture.ReviewFixture.createReviewWithId;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import com.dongsan.common.error.exception.CustomException;
 import com.dongsan.domains.member.entity.Member;
-import com.dongsan.domains.user.service.MemberQueryService;
 import com.dongsan.domains.review.dto.RatingCount;
 import com.dongsan.domains.review.entity.Review;
-import com.dongsan.domains.walkway.service.ReviewCommandService;
-import com.dongsan.domains.walkway.service.ReviewQueryService;
+import com.dongsan.domains.user.service.MemberQueryService;
 import com.dongsan.domains.walkway.dto.request.CreateReviewRequest;
 import com.dongsan.domains.walkway.dto.response.CreateReviewResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayRatingResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayReviewsResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
+import com.dongsan.domains.walkway.service.ReviewCommandService;
+import com.dongsan.domains.walkway.service.ReviewQueryService;
 import com.dongsan.domains.walkway.service.WalkwayCommandService;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
-import com.dongsan.common.error.exception.CustomException;
 import fixture.MemberFixture;
 import fixture.ReviewFixture;
 import fixture.WalkwayFixture;
@@ -69,7 +68,6 @@ class WalkwayReviewUseCaseTest {
             when(memberQueryService.getMember(member.getId())).thenReturn(member);
             when(walkwayQueryService.getWalkway(walkway.getId())).thenReturn(walkway);
             when(reviewCommandService.createReview(any())).thenReturn(review);
-            when(reviewQueryService.getWalkwayReviewCount(walkwayId)).thenReturn(1);
 
             // When
             CreateReviewResponse result = walkwayReviewUseCase.createReview(memberId, walkwayId, createReviewRequest);
