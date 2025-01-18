@@ -3,15 +3,17 @@ package com.dongsan.domains.walkway.repository;
 import static com.dongsan.domains.hashtag.entity.QHashtag.hashtag;
 import static com.dongsan.domains.hashtag.entity.QHashtagWalkway.hashtagWalkway;
 import static com.dongsan.domains.walkway.entity.QLikedWalkway.likedWalkway;
+import static com.querydsl.core.group.GroupBy.groupBy;
 
-import com.dongsan.domains.walkway.dto.SearchWalkwayPopular;
-import com.dongsan.domains.walkway.dto.SearchWalkwayRating;
+import com.dongsan.domains.walkway.dto.request.SearchWalkwayQuery;
+import com.dongsan.domains.walkway.dto.response.SearchWalkwayResult;
 import com.dongsan.domains.walkway.entity.QWalkway;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.enums.ExposeLevel;
+import com.querydsl.core.group.GroupBy;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -36,81 +38,81 @@ public class WalkwayQueryDSLRepository {
                 .fetchOne();
     }
 
-    public List<Walkway> getWalkwaysPopular(
-            SearchWalkwayPopular searchWalkwayPopular
-    ) {
-        String point
-                = String.format("ST_GeomFromText('POINT(%f %f)', 4326)", searchWalkwayPopular.latitude(),
-                searchWalkwayPopular.longitude());
-
-        return queryFactory.selectFrom(walkway)
-                .join(walkway.hashtagWalkways, hashtagWalkway)
-                .fetchJoin()
-                .join(hashtagWalkway.hashtag, hashtag)
-                .fetchJoin()
-                .where(
-                        Expressions.booleanTemplate(
-                                "ST_Distance_Sphere({0}," + point + ") <= {1}",
-                                walkway.startLocation,
-                                searchWalkwayPopular.distance()
-                        ),
-                        walkway.in(
-                                JPAExpressions
-                                        .selectFrom(walkway)
-                                        .join(hashtagWalkway)
-                                        .on(hashtagWalkway.walkway.eq(walkway))
-                                        .join(hashtag)
-                                        .on(hashtagWalkway.hashtag.eq(hashtag))
-                                        .where(walkwayHashtagIn(searchWalkwayPopular.hashtags()))
-                        ),
-                        searchWalkwayPopular.walkway() == null
-                                ? null
-                                : likeCountEqLt(searchWalkwayPopular.walkway().getLikeCount())
-                                        .or(createdAtLt(searchWalkwayPopular.walkway().getCreatedAt())),
-                        walkway.exposeLevel.eq(ExposeLevel.PUBLIC)
-                )
-                .orderBy(walkway.likeCount.desc(), walkway.createdAt.desc())
-                .limit(searchWalkwayPopular.size())
-                .fetch();
-    }
-
-    public List<Walkway> getWalkwaysRating(
-            SearchWalkwayRating searchWalkwayRating
-    ) {
-        String point
-                = String.format("ST_GeomFromText('POINT(%f %f)', 4326)", searchWalkwayRating.latitude(),
-                searchWalkwayRating.longitude());
-
-        return queryFactory.selectFrom(walkway)
-                .join(walkway.hashtagWalkways, hashtagWalkway)
-                .fetchJoin()
-                .join(hashtagWalkway.hashtag, hashtag)
-                .fetchJoin()
-                .where(
-                        Expressions.booleanTemplate(
-                                "ST_Distance_Sphere({0}," + point + ") <= {1}",
-                                walkway.startLocation,
-                                searchWalkwayRating.distance()
-                        ),
-                        walkway.in(
-                                JPAExpressions
-                                        .selectFrom(walkway)
-                                        .join(hashtagWalkway)
-                                        .on(hashtagWalkway.walkway.eq(walkway))
-                                        .join(hashtag)
-                                        .on(hashtagWalkway.hashtag.eq(hashtag))
-                                        .where(walkwayHashtagIn(searchWalkwayRating.hashtags()))
-                        ),
-                        searchWalkwayRating.walkway() == null
-                                ? null
-                                : ratingEqLt(searchWalkwayRating.walkway().getRating())
-                                        .or(createdAtLt(searchWalkwayRating.walkway().getCreatedAt())),
-                        walkway.exposeLevel.eq(ExposeLevel.PUBLIC)
-                )
-                .orderBy(walkway.rating.desc(), walkway.createdAt.desc())
-                .limit(searchWalkwayRating.size())
-                .fetch();
-    }
+//    public List<Walkway> getWalkwaysPopular(
+//            SearchWalkwayPopular searchWalkwayPopular
+//    ) {
+//        String point
+//                = String.format("ST_GeomFromText('POINT(%f %f)', 4326)", searchWalkwayPopular.latitude(),
+//                searchWalkwayPopular.longitude());
+//
+//        return queryFactory.selectFrom(walkway)
+//                .join(walkway.hashtagWalkways, hashtagWalkway)
+//                .fetchJoin()
+//                .join(hashtagWalkway.hashtag, hashtag)
+//                .fetchJoin()
+//                .where(
+//                        Expressions.booleanTemplate(
+//                                "ST_Distance_Sphere({0}," + point + ") <= {1}",
+//                                walkway.startLocation,
+//                                searchWalkwayPopular.distance()
+//                        ),
+//                        walkway.in(
+//                                JPAExpressions
+//                                        .selectFrom(walkway)
+//                                        .join(hashtagWalkway)
+//                                        .on(hashtagWalkway.walkway.eq(walkway))
+//                                        .join(hashtag)
+//                                        .on(hashtagWalkway.hashtag.eq(hashtag))
+//                                        .where(walkwayHashtagIn(searchWalkwayPopular.hashtags()))
+//                        ),
+//                        searchWalkwayPopular.walkway() == null
+//                                ? null
+//                                : likeCountEqLt(searchWalkwayPopular.walkway().getLikeCount())
+//                                        .or(createdAtLt(searchWalkwayPopular.walkway().getCreatedAt())),
+//                        walkway.exposeLevel.eq(ExposeLevel.PUBLIC)
+//                )
+//                .orderBy(walkway.likeCount.desc(), walkway.createdAt.desc())
+//                .limit(searchWalkwayPopular.size())
+//                .fetch();
+//    }
+//
+//    public List<Walkway> getWalkwaysRating(
+//            SearchWalkwayRating searchWalkwayRating
+//    ) {
+//        String point
+//                = String.format("ST_GeomFromText('POINT(%f %f)', 4326)", searchWalkwayRating.latitude(),
+//                searchWalkwayRating.longitude());
+//
+//        return queryFactory.selectFrom(walkway)
+//                .join(walkway.hashtagWalkways, hashtagWalkway)
+//                .fetchJoin()
+//                .join(hashtagWalkway.hashtag, hashtag)
+//                .fetchJoin()
+//                .where(
+//                        Expressions.booleanTemplate(
+//                                "ST_Distance_Sphere({0}," + point + ") <= {1}",
+//                                walkway.startLocation,
+//                                searchWalkwayRating.distance()
+//                        ),
+//                        walkway.in(
+//                                JPAExpressions
+//                                        .selectFrom(walkway)
+//                                        .join(hashtagWalkway)
+//                                        .on(hashtagWalkway.walkway.eq(walkway))
+//                                        .join(hashtag)
+//                                        .on(hashtagWalkway.hashtag.eq(hashtag))
+//                                        .where(walkwayHashtagIn(searchWalkwayRating.hashtags()))
+//                        ),
+//                        searchWalkwayRating.walkway() == null
+//                                ? null
+//                                : ratingEqLt(searchWalkwayRating.walkway().getRating())
+//                                        .or(createdAtLt(searchWalkwayRating.walkway().getCreatedAt())),
+//                        walkway.exposeLevel.eq(ExposeLevel.PUBLIC)
+//                )
+//                .orderBy(walkway.rating.desc(), walkway.createdAt.desc())
+//                .limit(searchWalkwayRating.size())
+//                .fetch();
+//    }
 
     public List<Walkway> getUserWalkway(Long memberId, Integer size, LocalDateTime lastCreatedAt) {
         return queryFactory.selectFrom(walkway)
@@ -150,6 +152,96 @@ public class WalkwayQueryDSLRepository {
 
     private BooleanExpression likeCountEqLt(Integer likeCount) {
         return likeCount == null ? null : walkway.likeCount.loe(likeCount);
+    }
+
+    public List<SearchWalkwayResult> searchWalkwaysLiked(
+            SearchWalkwayQuery searchWalkwayRequest
+    ) {
+        return queryFactory
+                .from(walkway)
+                .leftJoin(hashtagWalkway)
+                .on(hashtagWalkway.walkway.eq(walkway))
+                .leftJoin(hashtagWalkway.hashtag, hashtag)
+                .leftJoin(likedWalkway)
+                .on(likedWalkway.member.id.eq(searchWalkwayRequest.userId()), likedWalkway.walkway.eq(walkway))
+                .where(
+                        Expressions.booleanTemplate(
+                                "ST_Distance_Sphere({0}, ST_GeomFromText(concat('POINT(', {1}, ' ', {2}, ')'), 4326)) <= {3}",
+                                walkway.startLocation,
+                                searchWalkwayRequest.latitude(),
+                                searchWalkwayRequest.longitude(),
+                                searchWalkwayRequest.distance() * 1000
+                        ),
+                        searchWalkwayRequest.walkway() == null
+                                ? null
+                                : likeCountEqLt(searchWalkwayRequest.walkway().getLikeCount())
+                                        .and(createdAtLt(searchWalkwayRequest.walkway().getCreatedAt())),
+                        walkway.exposeLevel.eq(ExposeLevel.PUBLIC)
+                )
+                .orderBy(walkway.likeCount.desc(), walkway.createdAt.desc())
+                .limit(searchWalkwayRequest.size())
+                .transform(groupBy(walkway.id).list(
+                                Projections.constructor(
+                                        SearchWalkwayResult.class,
+                                        walkway.id,
+                                        walkway.name,
+                                        walkway.distance,
+                                        GroupBy.list(hashtag.name),
+                                        likedWalkway.isNotNull(),
+                                        walkway.likeCount,
+                                        walkway.reviewCount,
+                                        walkway.rating,
+                                        walkway.courseImageUrl,
+                                        walkway.startLocation,
+                                        walkway.createdAt
+                                )
+                        )
+                );
+    }
+
+    public List<SearchWalkwayResult> searchWalkwaysRating(
+            SearchWalkwayQuery searchWalkwayRequest
+    ) {
+        return queryFactory
+                .from(walkway)
+                .leftJoin(hashtagWalkway)
+                .on(hashtagWalkway.walkway.eq(walkway))
+                .leftJoin(hashtagWalkway.hashtag, hashtag)
+                .leftJoin(likedWalkway)
+                .on(likedWalkway.member.id.eq(searchWalkwayRequest.userId()), likedWalkway.walkway.eq(walkway))
+                .where(
+                        Expressions.booleanTemplate(
+                                "ST_Distance_Sphere({0}, ST_GeomFromText(concat('POINT(', {1}, ' ', {2}, ')'), 4326)) <= {3}",
+                                walkway.startLocation,
+                                searchWalkwayRequest.latitude(),
+                                searchWalkwayRequest.longitude(),
+                                searchWalkwayRequest.distance() * 1000
+                        ),
+                        searchWalkwayRequest.walkway() == null
+                                ? null
+                                : ratingEqLt(searchWalkwayRequest.walkway().getRating())
+                                        .and(createdAtLt(searchWalkwayRequest.walkway().getCreatedAt())),
+                        walkway.exposeLevel.eq(ExposeLevel.PUBLIC)
+                )
+                .orderBy(walkway.rating.desc(), walkway.createdAt.desc())
+                .limit(searchWalkwayRequest.size())
+                .transform(groupBy(walkway.id).list(
+                                Projections.constructor(
+                                        SearchWalkwayResult.class,
+                                        walkway.id,
+                                        walkway.name,
+                                        walkway.distance,
+                                        GroupBy.list(hashtag.name),
+                                        likedWalkway.isNotNull(),
+                                        walkway.likeCount,
+                                        walkway.reviewCount,
+                                        walkway.rating,
+                                        walkway.courseImageUrl,
+                                        walkway.startLocation,
+                                        walkway.createdAt
+                                )
+                        )
+                );
     }
 
 }

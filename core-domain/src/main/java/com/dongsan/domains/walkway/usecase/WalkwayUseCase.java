@@ -6,17 +6,16 @@ import com.dongsan.common.error.exception.CustomException;
 import com.dongsan.domains.image.service.ImageQueryService;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.user.service.MemberQueryService;
-import com.dongsan.domains.walkway.dto.SearchWalkwayPopular;
-import com.dongsan.domains.walkway.dto.SearchWalkwayRating;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayRequest;
+import com.dongsan.domains.walkway.dto.request.SearchWalkwayQuery;
 import com.dongsan.domains.walkway.dto.request.UpdateWalkwayRequest;
+import com.dongsan.domains.walkway.dto.response.SearchWalkwayResult;
 import com.dongsan.domains.walkway.entity.Walkway;
+import com.dongsan.domains.walkway.enums.Sort;
 import com.dongsan.domains.walkway.mapper.WalkwayMapper;
 import com.dongsan.domains.walkway.service.HashtagWalkwayCommandService;
 import com.dongsan.domains.walkway.service.WalkwayCommandService;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,43 +48,43 @@ public class WalkwayUseCase {
         return walkway;
     }
 
-    @Transactional(readOnly = true)
-    public List<Walkway> getWalkwaysSearch(
-            Long userId,
-            String type,
-            Double latitude,
-            Double longitude,
-            Double distance,
-            String hashtags,
-            Long lastId,
-            int size
-    ) {
-        List<String> hashtagsList = new ArrayList<>();
-
-        if (!hashtags.isBlank()) {
-            Arrays.stream(hashtags.split(",")).forEach(hashtag -> hashtagsList.add(hashtag.trim()));
-        }
-
-        int distanceInt = (int) (distance * 1000);
-
-        Walkway lastWalkway = null;
-
-        if (lastId != null) {
-            lastWalkway = walkwayQueryService.getWalkway(lastId);
-        }
-
-        List<Walkway> walkways = switch (type) {
-            case "liked" -> walkwayQueryService.getWalkwaysPopular(
-                    new SearchWalkwayPopular(userId, longitude, latitude, distanceInt, hashtagsList, lastWalkway, size)
-            );
-            case "rating" -> walkwayQueryService.getWalkwaysRating(
-                    new SearchWalkwayRating(userId, longitude, latitude, distanceInt, hashtagsList, lastWalkway, size)
-            );
-            default -> throw new CustomException(WalkwayErrorCode.INVALID_SEARCH_TYPE);
-        };
-
-        return walkways;
-    }
+//    @Transactional(readOnly = true)
+//    public List<Walkway> getWalkwaysSearch(
+//            Long userId,
+//            String type,
+//            Double latitude,
+//            Double longitude,
+//            Double distance,
+//            String hashtags,
+//            Long lastId,
+//            int size
+//    ) {
+//        List<String> hashtagsList = new ArrayList<>();
+//
+//        if (!hashtags.isBlank()) {
+//            Arrays.stream(hashtags.split(",")).forEach(hashtag -> hashtagsList.add(hashtag.trim()));
+//        }
+//
+//        int distanceInt = (int) (distance * 1000);
+//
+//        Walkway lastWalkway = null;
+//
+//        if (lastId != null) {
+//            lastWalkway = walkwayQueryService.getWalkway(lastId);
+//        }
+//
+//        List<Walkway> walkways = switch (type) {
+//            case "liked" -> walkwayQueryService.getWalkwaysPopular(
+//                    new SearchWalkwayPopular(userId, longitude, latitude, distanceInt, hashtagsList, lastWalkway, size)
+//            );
+//            case "rating" -> walkwayQueryService.getWalkwaysRating(
+//                    new SearchWalkwayRating(userId, longitude, latitude, distanceInt, hashtagsList, lastWalkway, size)
+//            );
+//            default -> throw new CustomException(WalkwayErrorCode.INVALID_SEARCH_TYPE);
+//        };
+//
+//        return walkways;
+//    }
 
     @Transactional
     public void updateWalkway(UpdateWalkwayRequest updateWalkwayRequest, Long memberId, Long walkwayId) {
@@ -101,5 +100,29 @@ public class WalkwayUseCase {
         // 산책로 수정
         walkway.updateWalkway(updateWalkwayRequest.name(), updateWalkwayRequest.memo(), updateWalkwayRequest.exposeLevel());
         walkwayCommandService.createWalkway(walkway);
+    }
+
+    @Transactional(readOnly = true)
+    public List<SearchWalkwayResult> searchWalkway(
+            Long userId,
+            String sortType,
+            Double latitude,
+            Double longitude,
+            Double distance,
+            Long lastId,
+            int size
+    ) {
+        Walkway lastWalkway = null;
+
+        if (lastId != null) {
+            lastWalkway = walkwayQueryService.getWalkway(lastId);
+        }
+
+        Sort sort = Sort.typeOf(sortType);
+
+        SearchWalkwayQuery searchWalkwayRequest
+                = new SearchWalkwayQuery(userId, longitude, latitude, distance, lastWalkway, size);
+
+        return walkwayQueryService.searchWalkway(searchWalkwayRequest, sort);
     }
 }

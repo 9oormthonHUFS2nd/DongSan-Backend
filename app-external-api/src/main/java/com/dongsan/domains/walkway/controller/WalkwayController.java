@@ -12,8 +12,9 @@ import com.dongsan.domains.walkway.dto.request.CreateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.request.UpdateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.response.CreateWalkwayCourseImageRequest;
 import com.dongsan.domains.walkway.dto.response.CreateWalkwayResponse;
-import com.dongsan.domains.walkway.dto.response.GetWalkwaySearchResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayWithLikedResponse;
+import com.dongsan.domains.walkway.dto.response.SearchWalkwayResponse;
+import com.dongsan.domains.walkway.dto.response.SearchWalkwayResult;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.usecase.HashtagUseCase;
 import com.dongsan.domains.walkway.usecase.LikedWalkwayUseCase;
@@ -83,22 +84,22 @@ public class WalkwayController {
         return ResponseFactory.ok(new GetWalkwayWithLikedResponse(walkway));
     }
 
-    @Operation(summary = "산책로 검색")
-    @GetMapping("")
-    public ResponseEntity<SuccessResponse<GetWalkwaySearchResponse>> getWalkwaysSearch(
-            @RequestParam(name = "type") String type,
-            @RequestParam(name = "hashtags", defaultValue = "") String hashtags,
-            @RequestParam(name = "latitude") Double latitude,
-            @RequestParam(name = "longitude") Double longitude,
-            @RequestParam(name = "distance") Double distance,
-            @RequestParam(name = "lastId", required = false) Long lastId,
-            @RequestParam(name = "size", defaultValue = "10") Integer size,
-            @AuthenticationPrincipal CustomOAuth2User customOAuth2User
-    ) {
-        List<Walkway> walkways = walkwayUseCase.getWalkwaysSearch(customOAuth2User.getMemberId(), type, latitude, longitude, distance, hashtags, lastId, size);
-        List<Boolean> likedWalkways = likedWalkwayUseCase.existsLikedWalkways(customOAuth2User.getMemberId(), walkways);
-        return ResponseFactory.ok(new GetWalkwaySearchResponse(walkways, likedWalkways, size));
-    }
+//    @Operation(summary = "산책로 검색")
+//    @GetMapping("/oldSearch")
+//    public ResponseEntity<SuccessResponse<GetWalkwaySearchResponse>> getWalkwaysSearch(
+//            @RequestParam(name = "sort") String sort,
+//            @RequestParam(name = "hashtags", defaultValue = "") String hashtags,
+//            @RequestParam(name = "latitude") Double latitude,
+//            @RequestParam(name = "longitude") Double longitude,
+//            @RequestParam(name = "distance") Double distance,
+//            @RequestParam(name = "lastId", required = false) Long lastId,
+//            @RequestParam(name = "size", defaultValue = "10") Integer size,
+//            @AuthenticationPrincipal CustomOAuth2User customOAuth2User
+//    ) {
+//        List<Walkway> walkways = walkwayUseCase.getWalkwaysSearch(customOAuth2User.getMemberId(), sort, latitude, longitude, distance, hashtags, lastId, size);
+//        List<Boolean> likedWalkways = likedWalkwayUseCase.existsLikedWalkways(customOAuth2User.getMemberId(), walkways);
+//        return ResponseFactory.ok(new GetWalkwaySearchResponse(walkways, likedWalkways, size));
+//    }
 
     @Operation(summary = "북마크 목록 보기(산책로 마크 여부 포함)")
     @GetMapping("/{walkwayId}/bookmarks")
@@ -117,5 +118,21 @@ public class WalkwayController {
     ) {
         walkwayUseCase.updateWalkway(updateWalkwayRequest, customOAuth2User.getMemberId(), walkwayId);
         return ResponseFactory.noContent();
+    }
+
+    @Operation(summary = "산책로 검색")
+    @GetMapping("")
+    public ResponseEntity<SuccessResponse<SearchWalkwayResponse>> searchWalkway(
+            @RequestParam(name = "sort") String sort,
+            @RequestParam(name = "latitude") Double latitude,
+            @RequestParam(name = "longitude") Double longitude,
+            @RequestParam(name = "distance") Double distance,
+            @RequestParam(name = "lastId", required = false) Long lastId,
+            @RequestParam(name = "size", defaultValue = "10") Integer size,
+            @AuthenticationPrincipal CustomOAuth2User customOAuth2User
+    ) {
+        List<SearchWalkwayResult> searchWalkwayResults
+                = walkwayUseCase.searchWalkway(customOAuth2User.getMemberId(), sort, latitude, longitude, distance, lastId, size);
+        return ResponseFactory.ok(new SearchWalkwayResponse(searchWalkwayResults, size));
     }
 }
