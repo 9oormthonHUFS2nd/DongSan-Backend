@@ -142,10 +142,6 @@ public class WalkwayQueryDSLRepository {
         return createdAt != null ? walkway.createdAt.lt(createdAt) : null;
     }
 
-    private BooleanExpression walkwayHashtagIn(List<String> hashtags) {
-        return hashtags.isEmpty() ? null : hashtag.name.in(hashtags);
-    }
-
     private BooleanExpression ratingEqLt(Double rating) {
         return rating == null ? null : walkway.rating.loe(rating);
     }

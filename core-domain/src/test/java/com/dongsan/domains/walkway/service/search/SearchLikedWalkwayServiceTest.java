@@ -57,11 +57,9 @@ class SearchLikedWalkwayServiceTest {
         void it_returns_liked_result() {
             // Given
             Long userId = 1L;
-            String type = "liked";
             Double latitude = 2.0;
             Double longitude = 2.0;
             Double distance = 10.0;
-            Long lastId = null;
             Walkway lastWalkway = null;
             int size = 10;
 

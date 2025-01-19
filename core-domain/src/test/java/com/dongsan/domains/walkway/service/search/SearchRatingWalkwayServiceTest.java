@@ -1,7 +1,6 @@
 package com.dongsan.domains.walkway.service.search;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 import com.dongsan.domains.walkway.dto.request.SearchWalkwayQuery;
@@ -59,11 +58,9 @@ class SearchRatingWalkwayServiceTest {
         void it_returns_rating_result() {
             // Given
             Long userId = 1L;
-            String type = "rating";
             Double latitude = 2.0;
             Double longitude = 2.0;
             Double distance = 10.0;
-            Long lastId = null;
             Walkway lastWalkway = null;
             int size = 10;
 

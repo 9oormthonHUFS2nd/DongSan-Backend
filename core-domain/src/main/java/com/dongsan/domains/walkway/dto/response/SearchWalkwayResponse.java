@@ -2,7 +2,6 @@ package com.dongsan.domains.walkway.dto.response;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public record SearchWalkwayResponse(
         List<Walkway> walkways,
@@ -37,7 +36,7 @@ public record SearchWalkwayResponse(
                     walkway.distance(),
                     walkway.hashtags().stream()
                             .map(hashtag -> "#" + hashtag)
-                            .collect(Collectors.toList()),
+                            .toList(),
                     walkway.isLike(),
                     walkway.likeCount(),
                     walkway.reviewCount(),
