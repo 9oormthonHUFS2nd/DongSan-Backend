@@ -48,44 +48,6 @@ public class WalkwayUseCase {
         return walkway;
     }
 
-//    @Transactional(readOnly = true)
-//    public List<Walkway> getWalkwaysSearch(
-//            Long userId,
-//            String type,
-//            Double latitude,
-//            Double longitude,
-//            Double distance,
-//            String hashtags,
-//            Long lastId,
-//            int size
-//    ) {
-//        List<String> hashtagsList = new ArrayList<>();
-//
-//        if (!hashtags.isBlank()) {
-//            Arrays.stream(hashtags.split(",")).forEach(hashtag -> hashtagsList.add(hashtag.trim()));
-//        }
-//
-//        int distanceInt = (int) (distance * 1000);
-//
-//        Walkway lastWalkway = null;
-//
-//        if (lastId != null) {
-//            lastWalkway = walkwayQueryService.getWalkway(lastId);
-//        }
-//
-//        List<Walkway> walkways = switch (type) {
-//            case "liked" -> walkwayQueryService.getWalkwaysPopular(
-//                    new SearchWalkwayPopular(userId, longitude, latitude, distanceInt, hashtagsList, lastWalkway, size)
-//            );
-//            case "rating" -> walkwayQueryService.getWalkwaysRating(
-//                    new SearchWalkwayRating(userId, longitude, latitude, distanceInt, hashtagsList, lastWalkway, size)
-//            );
-//            default -> throw new CustomException(WalkwayErrorCode.INVALID_SEARCH_TYPE);
-//        };
-//
-//        return walkways;
-//    }
-
     @Transactional
     public void updateWalkway(UpdateWalkwayRequest updateWalkwayRequest, Long memberId, Long walkwayId) {
         // 산책로 불러오기

@@ -37,18 +37,6 @@ public class WalkwayQueryService {
                 .orElseThrow(() -> new CustomException(WalkwayErrorCode.WALKWAY_NOT_FOUND));
     }
 
-//    public List<Walkway> getWalkwaysPopular (
-//            SearchWalkwayPopular searchWalkwayPopular
-//    ) {
-//        return walkwayQueryDSLRepository.getWalkwaysPopular(searchWalkwayPopular);
-//    }
-//
-//    public List<Walkway> getWalkwaysRating (
-//            SearchWalkwayRating searchWalkwayRating
-//    ) {
-//        return walkwayQueryDSLRepository.getWalkwaysRating(searchWalkwayRating);
-//    }
-
     public List<Walkway> getUserWalkWay(Long memberId, Integer size, LocalDateTime lastCreatedAt){
         return walkwayQueryDSLRepository.getUserWalkway(memberId, size, lastCreatedAt);
     }

@@ -84,23 +84,6 @@ public class WalkwayController {
         return ResponseFactory.ok(new GetWalkwayWithLikedResponse(walkway));
     }
 
-//    @Operation(summary = "산책로 검색")
-//    @GetMapping("/oldSearch")
-//    public ResponseEntity<SuccessResponse<GetWalkwaySearchResponse>> getWalkwaysSearch(
-//            @RequestParam(name = "sort") String sort,
-//            @RequestParam(name = "hashtags", defaultValue = "") String hashtags,
-//            @RequestParam(name = "latitude") Double latitude,
-//            @RequestParam(name = "longitude") Double longitude,
-//            @RequestParam(name = "distance") Double distance,
-//            @RequestParam(name = "lastId", required = false) Long lastId,
-//            @RequestParam(name = "size", defaultValue = "10") Integer size,
-//            @AuthenticationPrincipal CustomOAuth2User customOAuth2User
-//    ) {
-//        List<Walkway> walkways = walkwayUseCase.getWalkwaysSearch(customOAuth2User.getMemberId(), sort, latitude, longitude, distance, hashtags, lastId, size);
-//        List<Boolean> likedWalkways = likedWalkwayUseCase.existsLikedWalkways(customOAuth2User.getMemberId(), walkways);
-//        return ResponseFactory.ok(new GetWalkwaySearchResponse(walkways, likedWalkways, size));
-//    }
-
     @Operation(summary = "북마크 목록 보기(산책로 마크 여부 포함)")
     @GetMapping("/{walkwayId}/bookmarks")
     public ResponseEntity<SuccessResponse<BookmarksWithMarkedWalkwayResponse>> getBookmarksWithMarkedWalkway(
