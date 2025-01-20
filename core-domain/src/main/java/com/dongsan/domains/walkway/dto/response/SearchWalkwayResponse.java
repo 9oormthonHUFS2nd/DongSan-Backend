@@ -5,14 +5,14 @@ import java.util.List;
 
 public record SearchWalkwayResponse(
         List<Walkway> walkways,
-        Long nextCursor
+        Boolean hasNext
 ) {
     public SearchWalkwayResponse(List<SearchWalkwayResult> searchWalkwayResults, Integer size) {
         this(
                 searchWalkwayResults.stream()
                         .map(Walkway::new)
                         .toList(),
-                searchWalkwayResults.size() == size ? searchWalkwayResults.get(size-1).id() : -1
+                searchWalkwayResults.size() == size
         );
     }
 
