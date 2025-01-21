@@ -6,6 +6,7 @@ import static fixture.WalkwayFixture.createWalkway;
 import static fixture.WalkwayFixture.createWalkwayWithId;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.dongsan.common.error.exception.CustomException;
@@ -13,16 +14,17 @@ import com.dongsan.domains.bookmark.entity.Bookmark;
 import com.dongsan.domains.bookmark.entity.MarkedWalkway;
 import com.dongsan.domains.bookmark.repository.MarkedWalkwayQueryDSLRepository;
 import com.dongsan.domains.member.entity.Member;
-import com.dongsan.domains.walkway.dto.SearchWalkwayPopular;
-import com.dongsan.domains.walkway.dto.SearchWalkwayRating;
+import com.dongsan.domains.walkway.dto.response.SearchWalkwayResult;
 import com.dongsan.domains.walkway.entity.Walkway;
+import com.dongsan.domains.walkway.enums.Sort;
 import com.dongsan.domains.walkway.repository.WalkwayQueryDSLRepository;
 import com.dongsan.domains.walkway.repository.WalkwayRepository;
+import com.dongsan.domains.walkway.service.factory.SearchWalkwayServiceFactory;
+import com.dongsan.domains.walkway.service.search.SearchWalkwayService;
 import fixture.MarkedWalkwayFixture;
 import fixture.MemberFixture;
 import fixture.WalkwayFixture;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +35,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,6 +49,10 @@ class WalkwayQueryServiceTest {
     WalkwayQueryDSLRepository walkwayQueryDSLRepository;
     @Mock
     MarkedWalkwayQueryDSLRepository markedWalkwayQueryDSLRepository;
+    @Mock
+    SearchWalkwayServiceFactory serviceFactory;
+    @Mock
+    SearchWalkwayService searchWalkwayService;
 
 
     @Nested
@@ -175,72 +182,6 @@ class WalkwayQueryServiceTest {
     }
 
     @Nested
-    @DisplayName("getWalkwaysPopular 메서드는")
-    class Describe_getWalkwaysPopular {
-        @Test
-        @DisplayName("좋아요 순으로 산책로 리스트를 반환한다.")
-        void it_returns_walkway_list_liked() {
-            // Given
-            Long userId = 1L;
-            Double longitude = 1.0;
-            Double latitude = 2.0;
-            int distance = 3;
-            List<String> hashtags = new ArrayList<>();
-            Walkway walkway = WalkwayFixture.createWalkway(null);
-            int size = 10;
-
-            SearchWalkwayPopular searchWalkwayPopular
-                    = new SearchWalkwayPopular(userId, longitude, latitude, distance, hashtags, walkway, size);
-
-            List<Walkway> walkways = new ArrayList<>();
-            for(int i = 0; i < 10; i++) {
-                walkways.add(WalkwayFixture.createWalkway(null));
-            }
-
-            when(walkwayQueryDSLRepository.getWalkwaysPopular(searchWalkwayPopular)).thenReturn(walkways);
-
-            // When
-            List<Walkway> result = walkwayQueryService.getWalkwaysPopular(searchWalkwayPopular);
-
-            // Then
-            assertThat(result).hasSize(10);
-        }
-    }
-
-    @Nested
-    @DisplayName("getWalkwaysRating 메서드는")
-    class Describe_getWalkwaysRating {
-        @Test
-        @DisplayName("별점 순으로 산책로 리스트를 반환한다.")
-        void it_returns_walkway_list_rating() {
-            // Given
-            Long userId = 1L;
-            Double longitude = 1.0;
-            Double latitude = 2.0;
-            int distance = 3;
-            List<String> hashtags = new ArrayList<>();
-            Walkway walkway = WalkwayFixture.createWalkway(null);
-            int size = 10;
-
-            SearchWalkwayRating searchWalkwayRating
-                    = new SearchWalkwayRating(userId, longitude, latitude, distance, hashtags, walkway, size);
-
-            List<Walkway> walkways = new ArrayList<>();
-            for(int i = 0; i < 10; i++) {
-                walkways.add(WalkwayFixture.createWalkway(null));
-            }
-
-            when(walkwayQueryDSLRepository.getWalkwaysRating(searchWalkwayRating)).thenReturn(walkways);
-
-            // When
-            List<Walkway> result = walkwayQueryService.getWalkwaysRating(searchWalkwayRating);
-
-            // Then
-            assertThat(result).hasSize(10);
-        }
-    }
-
-    @Nested
     @DisplayName("getBookmarkWalkway 메서드는")
     class Describe_getBookmarkWalkway{
         @Test
@@ -282,6 +223,28 @@ class WalkwayQueryServiceTest {
 
             // then
             assertThat(result).isEmpty();
+        }
+    }
+
+    @Nested
+    @DisplayName("searchWalkway 메서드는")
+    class Describe_searchWalkway {
+        @Test
+        @DisplayName("검색 결과를 반환한다.")
+        void it_returns_list() {
+            Sort sort = Sort.LIKED; // 테스트 대상 Sort
+            List<SearchWalkwayResult> searchWalkwayResults = List.of(); // 예상 결과 생성
+
+            when(serviceFactory.getService(sort)).thenReturn(searchWalkwayService);
+            when(searchWalkwayService.search(any())).thenReturn(searchWalkwayResults);
+
+            // When
+            List<SearchWalkwayResult> result = walkwayQueryService.searchWalkway(null, sort);
+
+            // Then
+            Mockito.verify(serviceFactory).getService(sort);
+            Mockito.verify(searchWalkwayService).search(null);
+            assertThat(result).isEqualTo(searchWalkwayResults);
         }
     }
 }

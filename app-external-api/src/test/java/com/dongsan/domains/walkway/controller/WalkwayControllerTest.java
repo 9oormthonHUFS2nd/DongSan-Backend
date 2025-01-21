@@ -22,8 +22,9 @@ import com.dongsan.domains.image.usecase.S3UseCase;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.request.UpdateWalkwayRequest;
-import com.dongsan.domains.walkway.dto.response.GetWalkwaySearchResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayWithLikedResponse;
+import com.dongsan.domains.walkway.dto.response.SearchWalkwayResponse;
+import com.dongsan.domains.walkway.dto.response.SearchWalkwayResult;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.enums.ExposeLevel;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
@@ -226,96 +227,6 @@ class WalkwayControllerTest {
     }
 
     @Nested
-    @DisplayName("getWalkwaysSearch 메서드는")
-    class Describe_getWalkwaysSearch {
-
-        List<Walkway> walkways;
-        List<Boolean> likedWalkways;
-
-        @BeforeEach
-        void setUp() {
-            walkways = new ArrayList<>();
-            likedWalkways = new ArrayList<>();
-            for (long i = 0; i < 10; i++) {
-                walkways.add(WalkwayFixture.createWalkwayWithId(i, member));
-                likedWalkways.add(true);
-            }
-        }
-
-        @Test
-        @DisplayName("type이 liked이면 좋아요 순으로 DTO를 반환한다.")
-        void it_returns_DTO_liked() throws Exception {
-            // given
-            String type = "liked";
-            Double latitude = 1.0;
-            Double longitude = 1.0;
-            Double distance = 1.3;
-            String hashtags = "test";
-            Long lastId = null;
-            Integer size = 10;
-
-            when(walkwayUseCase.getWalkwaysSearch(customOAuth2User.getMemberId(), type, latitude, longitude, distance,
-                    hashtags, lastId, size))
-                    .thenReturn(walkways);
-
-            when(likedWalkwayUseCase.existsLikedWalkways(customOAuth2User.getMemberId(), walkways))
-                    .thenReturn(likedWalkways);
-
-            // When
-            ResultActions response = mockMvc.perform(get("/walkways")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .param("type", type)
-                    .param("hashtags", hashtags)
-                    .param("latitude", latitude.toString())
-                    .param("longitude", longitude.toString())
-                    .param("distance", distance.toString())
-                    .param("size", size.toString())
-                    .content(objectMapper.writeValueAsString(new GetWalkwaySearchResponse(walkways, likedWalkways, size))));
-            // Then
-            response.andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.walkways").isArray())
-                    .andExpect(jsonPath("$.data.walkways").isNotEmpty())
-                    .andExpect(jsonPath("$.data.walkways.size()").value(size));
-        }
-
-        @Test
-        @DisplayName("type이 rating이면 좋아요 순으로 DTO를 반환한다.")
-        void it_returns_DTO_rating() throws Exception {
-            // given
-            String type = "rating";
-            Double latitude = 1.0;
-            Double longitude = 1.0;
-            Double distance = 1.3;
-            String hashtags = "test";
-            Long lastId = null;
-            Integer size = 10;
-
-            when(walkwayUseCase.getWalkwaysSearch(customOAuth2User.getMemberId(), type, latitude, longitude, distance,
-                    hashtags, lastId, size))
-                    .thenReturn(walkways);
-
-            when(likedWalkwayUseCase.existsLikedWalkways(customOAuth2User.getMemberId(), walkways))
-                    .thenReturn(likedWalkways);
-
-            // When
-            ResultActions response = mockMvc.perform(get("/walkways")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .param("type", type)
-                    .param("hashtags", hashtags)
-                    .param("latitude", latitude.toString())
-                    .param("longitude", longitude.toString())
-                    .param("distance", distance.toString())
-                    .param("size", size.toString())
-                    .content(objectMapper.writeValueAsString(new GetWalkwaySearchResponse(walkways, likedWalkways, size))));
-            // Then
-            response.andExpect(status().isOk())
-                    .andExpect(jsonPath("$.data.walkways").isArray())
-                    .andExpect(jsonPath("$.data.walkways").isNotEmpty())
-                    .andExpect(jsonPath("$.data.walkways.size()").value(size));
-        }
-    }
-
-    @Nested
     @DisplayName("getBookmarksWithMarkedWalkway 메서드는")
     class Describe_getBookmarksWithMarkedWalkway {
         @Test
@@ -372,6 +283,83 @@ class WalkwayControllerTest {
 
             // Then
             response.andExpect(status().isNoContent());
+        }
+    }
+
+    @Nested
+    @DisplayName("getWalkwaysSearch 메서드는")
+    class Describe_getWalkwaysSearch {
+        List<SearchWalkwayResult> searchWalkwayResults = new ArrayList<>();
+
+        @BeforeEach
+        void setUp() {
+            Walkway walkway = WalkwayFixture.createWalkwayWithId(null, null);
+            for (long i = 1; i <= 10; i++) {
+                SearchWalkwayResult searchWalkwayResult
+                        = new SearchWalkwayResult(i, null, null, List.of(), null, null, null, null, null, walkway.getStartLocation(), walkway.getCreatedAt());
+                searchWalkwayResults.add(searchWalkwayResult);
+            }
+        }
+
+        @Test
+        @DisplayName("type이 liked이면 좋아요 순으로 DTO를 반환한다.")
+        void it_returns_DTO_liked() throws Exception {
+            // given
+            String sort = "liked";
+            Double latitude = 1.0;
+            Double longitude = 1.0;
+            Double distance = 1.3;
+            Long lastId = null;
+            Integer size = 10;
+
+            when(walkwayUseCase.searchWalkway(customOAuth2User.getMemberId(), sort, latitude, longitude, distance, lastId, size))
+                    .thenReturn(searchWalkwayResults);
+
+            // When
+            ResultActions response = mockMvc.perform(get("/walkways")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .param("sort", sort)
+                    .param("latitude", latitude.toString())
+                    .param("longitude", longitude.toString())
+                    .param("distance", distance.toString())
+                    .param("size", size.toString())
+                    .content(objectMapper.writeValueAsString(new SearchWalkwayResponse(searchWalkwayResults, size))));
+
+            // Then
+            response.andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data.walkways").isArray())
+                    .andExpect(jsonPath("$.data.walkways").isNotEmpty())
+                    .andExpect(jsonPath("$.data.walkways.size()").value(size));
+        }
+
+        @Test
+        @DisplayName("type이 rating이면 좋아요 순으로 DTO를 반환한다.")
+        void it_returns_DTO_rating() throws Exception {
+            // given
+            String sort = "rating";
+            Double latitude = 1.0;
+            Double longitude = 1.0;
+            Double distance = 1.3;
+            Long lastId = null;
+            Integer size = 10;
+
+            when(walkwayUseCase.searchWalkway(customOAuth2User.getMemberId(), sort, latitude, longitude, distance, lastId, size))
+                    .thenReturn(searchWalkwayResults);
+
+            // When
+            ResultActions response = mockMvc.perform(get("/walkways")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .param("sort", sort)
+                    .param("latitude", latitude.toString())
+                    .param("longitude", longitude.toString())
+                    .param("distance", distance.toString())
+                    .param("size", size.toString())
+                    .content(objectMapper.writeValueAsString(new SearchWalkwayResponse(searchWalkwayResults, size))));
+            // Then
+            response.andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data.walkways").isArray())
+                    .andExpect(jsonPath("$.data.walkways").isNotEmpty())
+                    .andExpect(jsonPath("$.data.walkways.size()").value(size));
         }
     }
 }

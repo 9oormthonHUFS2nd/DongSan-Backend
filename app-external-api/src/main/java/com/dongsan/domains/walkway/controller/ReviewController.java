@@ -9,6 +9,7 @@ import com.dongsan.domains.walkway.dto.response.GetWalkwayRatingResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayReviewsResponse;
 import com.dongsan.domains.walkway.usecase.WalkwayReviewUseCase;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -47,7 +48,7 @@ public class ReviewController {
             @PathVariable Long walkwayId,
             @RequestParam String type,
             @RequestParam(required = false) Long lastId,
-            @RequestParam(required = false, defaultValue = "5") Byte rating,
+            @Parameter(example = "5") @RequestParam(required = false, defaultValue = "5") Byte rating,
             @RequestParam(required = false, defaultValue = "10") Integer size
     ) {
         return ResponseFactory.ok(walkwayReviewUseCase.getWalkwayReviews(type, lastId, walkwayId, rating, size));
