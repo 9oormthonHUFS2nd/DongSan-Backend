@@ -1,7 +1,9 @@
 package com.dongsan.domains.bookmark.usecase;
 
 import com.dongsan.common.annotation.UseCase;
+import com.dongsan.common.error.code.BookmarkErrorCode;
 import com.dongsan.common.error.code.WalkwayErrorCode;
+import com.dongsan.common.error.exception.CustomException;
 import com.dongsan.domains.bookmark.dto.BookmarksWithMarkedWalkwayDTO;
 import com.dongsan.domains.bookmark.dto.param.GetBookmarkDetailParam;
 import com.dongsan.domains.bookmark.dto.request.BookmarkNameRequest;
@@ -19,8 +21,6 @@ import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.user.service.MemberQueryService;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
-import com.dongsan.common.error.code.BookmarkErrorCode;
-import com.dongsan.common.error.exception.CustomException;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -109,13 +109,18 @@ public class BookmarkUseCase {
     public GetBookmarkDetailResponse getBookmarkDetails(GetBookmarkDetailParam param) {
         Member member = memberQueryService.getMember(param.memberId());
         Bookmark bookmark = bookmarkQueryService.getBookmark(param.bookmarkId());
-        // walkwayId가 null이면 첫 페이지를 조회하는 것이다.
-        Walkway walkway = param.walkwayId() == null ? null : walkwayQueryService.getWalkway(param.walkwayId());
         // 내 소유의 북마크인지 확인
         bookmarkQueryService.isOwnerOfBookmark(member, bookmark);
+        // walkwayId가 null이면 첫 페이지를 조회하는 것이다.
+        Walkway walkway = param.lastId() == null ? null : walkwayQueryService.getWalkway(param.lastId());
         // 마지막 markedBookmark의 생성시간 조회
         LocalDateTime lastCreatedAt = markedWalkwayQueryService.getCreatedAt(bookmark, walkway);
-        List<Walkway> walkways = walkwayQueryService.getBookmarkWalkway(bookmark, param.size(), lastCreatedAt);
-        return BookmarkMapper.toGetBookmarkDetailResponse(bookmark, walkways);
+        List<Walkway> walkways = walkwayQueryService.getBookmarkWalkway(bookmark, param.size()+1, lastCreatedAt, param.memberId());
+        // hasNext 계산
+        boolean hasNext = walkways.size() > param.size();
+        if(hasNext){
+            walkways.remove(walkways.size()-1);
+        }
+        return new GetBookmarkDetailResponse(bookmark, walkways, hasNext);
     }
 }

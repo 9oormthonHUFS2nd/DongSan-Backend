@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/users/reviews")
-@Tag(name = "💬 리뷰", description = "Review")
+@Tag(name = "마이페이지")
 @RequiredArgsConstructor
 @Validated
 public class UserReviewController {
@@ -30,11 +30,11 @@ public class UserReviewController {
     @Operation(summary = "내가 작성한 리뷰 보기")
     @GetMapping()
     public ResponseEntity<SuccessResponse<GetReviewResponse>> getReviews(
-            @RequestParam(defaultValue = "5") Integer limit,
-            @RequestParam(required = false) Long reviewId,
+            @RequestParam(defaultValue = "5") Integer size,
+            @RequestParam(required = false) Long lastId,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ){
-        GetReviewResponse response = userReviewUsecase.getReviews(limit, reviewId, customOAuth2User.getMemberId());
+        GetReviewResponse response = userReviewUsecase.getReviews(size, lastId, customOAuth2User.getMemberId());
         return ResponseFactory.ok(response);
     }
 

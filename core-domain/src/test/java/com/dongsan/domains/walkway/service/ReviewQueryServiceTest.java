@@ -48,14 +48,14 @@ class ReviewQueryServiceTest {
                 reviews.add(createReview(null, null));
             }
 
-            when(reviewQueryDSLRepository.getReviews(limit, lastCreatedAt, memberId)).thenReturn(reviews);
+            when(reviewQueryDSLRepository.getUserReviews(limit, lastCreatedAt, memberId)).thenReturn(reviews);
 
             // when
             List<Review> result = reviewQueryService.getReviews(limit, lastCreatedAt, memberId);
 
             // then
             assertThat(result.size()).isEqualTo(5);
-            verify(reviewQueryDSLRepository).getReviews(limit, lastCreatedAt, memberId);
+            verify(reviewQueryDSLRepository).getUserReviews(limit, lastCreatedAt, memberId);
         }
 
         @Test
@@ -66,14 +66,14 @@ class ReviewQueryServiceTest {
             LocalDateTime lastCreatedAt = null;
             Long memberId = 1L;
 
-            when(reviewQueryDSLRepository.getReviews(limit, lastCreatedAt, memberId)).thenReturn(Collections.emptyList());
+            when(reviewQueryDSLRepository.getUserReviews(limit, lastCreatedAt, memberId)).thenReturn(Collections.emptyList());
 
             // when
             List<Review> result = reviewQueryService.getReviews(limit, lastCreatedAt, memberId);
 
             // then
             assertThat(result).isEmpty();
-            verify(reviewQueryDSLRepository).getReviews(limit, lastCreatedAt, memberId);
+            verify(reviewQueryDSLRepository).getUserReviews(limit, lastCreatedAt, memberId);
         }
     }
 

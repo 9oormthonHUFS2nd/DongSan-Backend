@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@Tag(name = "✅ 헬스체크", description = "Health Check")
+@Tag(name = "개발용 API")
 @Slf4j
 public class HealthController {
 

@@ -4,6 +4,6 @@ public record GetBookmarkDetailParam(
         Long memberId,
         Long bookmarkId,
         Integer size,
-        Long walkwayId
+        Long lastId
 ) {
 }

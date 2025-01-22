@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/bookmarks")
-@Tag(name = "북마크 API", description = "Bookmark API")
+@Tag(name = "북마크")
 @Validated
 public class BookmarkController {
     private final BookmarkUseCase bookmarkUseCase;
@@ -97,11 +97,11 @@ public class BookmarkController {
     public ResponseEntity<SuccessResponse<GetBookmarkDetailResponse>> getBookmarkDetail(
             @ExistBookmark @PathVariable Long bookmarkId,
             @RequestParam(defaultValue = "10") Integer size,
-            @RequestParam(required = false) Long walkwayId,
+            @RequestParam(required = false) Long lastId,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ){
         GetBookmarkDetailResponse response = bookmarkUseCase.getBookmarkDetails(new GetBookmarkDetailParam(
-                customOAuth2User.getMemberId(), bookmarkId, size, walkwayId));
+                customOAuth2User.getMemberId(), bookmarkId, size, lastId));
         return ResponseFactory.ok(response);
     }
 }

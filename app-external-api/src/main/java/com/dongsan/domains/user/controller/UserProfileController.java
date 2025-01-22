@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "🤳🏻 사용자 프로필 & 북마크", description = "User Profile & Bookmark")
+@Tag(name = "마이페이지")
 public class UserProfileController {
 
     private final UserProfileUseCase userProfileUsecase;

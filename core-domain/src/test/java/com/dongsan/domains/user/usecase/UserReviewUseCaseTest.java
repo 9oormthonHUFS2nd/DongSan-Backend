@@ -41,13 +41,13 @@ class UserReviewUseCaseTest {
         @DisplayName("리뷰가 존재하면 리뷰를 DTO로 변환한다.")
         void it_returns_responseDTO(){
             // given
-            Integer limit = 5;
-            Long reviewId = 2L;
+            Integer size = 5;
+            Long lastId = 2L;
             Long memberId = 1L;
 
             Review review = createReview(null, null);
             LocalDateTime lastCreatedAt = LocalDateTime.of(2024, 12, 23, 11, 11);
-            reflectField(review, "id", reviewId);
+            reflectField(review, "id", lastId);
             reflectCreatedAt(review, lastCreatedAt);
 
             Member member = createMemberWithId(memberId);
@@ -57,11 +57,11 @@ class UserReviewUseCaseTest {
                             ReviewFixture.createReviewWithId((long) (index+1), member, walkway)
                     ).toList();
 
-            when(reviewQueryService.getReview(reviewId)).thenReturn(review);
-            when(reviewQueryService.getReviews(limit, lastCreatedAt, memberId)).thenReturn(reviews);
+            when(reviewQueryService.getReview(lastId)).thenReturn(review);
+            when(reviewQueryService.getReviews(size+1, lastCreatedAt, memberId)).thenReturn(reviews);
 
             // when
-            GetReviewResponse result = userReviewUseCase.getReviews(limit, reviewId, memberId);
+            GetReviewResponse result = userReviewUseCase.getReviews(size, lastId, memberId);
 
             // then
             assertThat(result.reviews()).hasSameSizeAs(reviews);

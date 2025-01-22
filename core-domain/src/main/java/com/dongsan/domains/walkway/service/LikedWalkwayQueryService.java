@@ -1,6 +1,7 @@
 package com.dongsan.domains.walkway.service;
 
 import com.dongsan.domains.walkway.entity.LikedWalkway;
+import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.repository.LikedWalkwayQueryDSLRepository;
 import com.dongsan.domains.walkway.repository.LikedWalkwayRepository;
 import com.dongsan.common.error.code.LikedWalkwayErrorCode;
@@ -18,13 +19,16 @@ public class LikedWalkwayQueryService {
     private final LikedWalkwayRepository likedWalkwayRepository;
     private final LikedWalkwayQueryDSLRepository likedWalkwayQueryDSLRepository;
 
-    public List<LikedWalkway> getUserLikedWalkway(Long memberId, Integer size, Long walkwayId) {
+    public List<Walkway> getUserLikedWalkway(Long memberId, Integer size, Long walkwayId) {
         // walkwayId가 null 이면 첫 페이지 라는 뜻
         LocalDateTime lastCreatedAt = null;
         if(walkwayId != null){
             lastCreatedAt = findByMemberIdAndWalkwayId(memberId, walkwayId).getCreatedAt();
         }
-        return likedWalkwayQueryDSLRepository.getUserLikedWalkway(memberId, size, lastCreatedAt);
+        return likedWalkwayQueryDSLRepository.getUserLikedWalkway(memberId, size, lastCreatedAt)
+                .stream()
+                .map(LikedWalkway::getWalkway)
+                .toList();
     }
 
     public LikedWalkway findByMemberIdAndWalkwayId(Long memberId, Long walkwayId){

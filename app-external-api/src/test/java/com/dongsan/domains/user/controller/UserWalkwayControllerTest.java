@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.dongsan.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.domains.member.entity.Member;
+import com.dongsan.domains.user.response.WalkwayListResponse;
 import com.dongsan.domains.user.usecase.UserWalkwayUseCase;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
@@ -65,12 +66,13 @@ class UserWalkwayControllerTest {
                     createWalkwayWithId(1L, null),
                     createWalkwayWithId(2L, null),
                     createWalkwayWithId(3L, null));
-            when(userWalkwayUseCase.getUserUploadWalkway(customOAuth2User.getMemberId(), size, walkwayId)).thenReturn(walkways);
+            WalkwayListResponse response = WalkwayListResponse.from(walkways, false);
+            when(userWalkwayUseCase.getUserUploadWalkway(customOAuth2User.getMemberId(), size, walkwayId)).thenReturn(response);
 
             // when & then
             mockMvc.perform(get("/users/walkways/upload")
                             .param("size", String.valueOf(size))
-                            .param("walkwayId", String.valueOf(walkwayId))
+                            .param("lastId", String.valueOf(walkwayId))
                             .contentType("application/json;charset=UTF-8"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.walkways", hasSize(walkways.size())))
@@ -94,13 +96,14 @@ class UserWalkwayControllerTest {
                     createWalkwayWithId(1L, null),
                     createWalkwayWithId(2L, null),
                     createWalkwayWithId(3L, null));
+            WalkwayListResponse response = WalkwayListResponse.from(walkways, false);
             when(walkwayQueryService.existsByWalkwayId(walkwayId)).thenReturn(true);
-            when(userWalkwayUseCase.getUserLikedWalkway(customOAuth2User.getMemberId(), size, walkwayId)).thenReturn(walkways);
+            when(userWalkwayUseCase.getUserLikedWalkway(customOAuth2User.getMemberId(), size, walkwayId)).thenReturn(response);
 
             // when & then
             mockMvc.perform(get("/users/walkways/like")
                             .param("size", String.valueOf(size))
-                            .param("walkwayId", String.valueOf(walkwayId))
+                            .param("lastId", String.valueOf(walkwayId))
                             .contentType("application/json;charset=UTF-8"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.data.walkways", hasSize(walkways.size())))
