@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/walkways")
-@Tag(name = "💬산책로 좋아요", description = "LikedWalkway")
+@Tag(name = "산책로")
 @RequiredArgsConstructor
 @Validated
 public class LikedWalkwayController {

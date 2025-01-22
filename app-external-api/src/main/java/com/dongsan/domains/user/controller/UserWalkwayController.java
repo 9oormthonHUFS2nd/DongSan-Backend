@@ -8,7 +8,6 @@ import com.dongsan.domains.user.usecase.UserWalkwayUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,9 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/users/walkways")
-@Tag(name = "사용자가 등록한 산책로", description = "User Walkway")
+@Tag(name = "마이페이지")
 @RequiredArgsConstructor
-@Slf4j
 public class UserWalkwayController {
     private final UserWalkwayUseCase userWalkwayUseCase;
 

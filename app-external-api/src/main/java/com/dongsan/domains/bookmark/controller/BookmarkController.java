@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/bookmarks")
-@Tag(name = "북마크 API", description = "Bookmark API")
+@Tag(name = "북마크")
 @Validated
 public class BookmarkController {
     private final BookmarkUseCase bookmarkUseCase;

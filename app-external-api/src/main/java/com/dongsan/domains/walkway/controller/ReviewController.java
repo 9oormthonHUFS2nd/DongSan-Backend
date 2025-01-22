@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/walkways")
-@Tag(name = "💬산책로 리뷰", description = "Review")
+@Tag(name = "산책로 리뷰")
 @RequiredArgsConstructor
 @Validated
 public class ReviewController {

@@ -17,7 +17,6 @@ import com.dongsan.domains.walkway.dto.response.SearchWalkwayResponse;
 import com.dongsan.domains.walkway.dto.response.SearchWalkwayResult;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.usecase.HashtagUseCase;
-import com.dongsan.domains.walkway.usecase.LikedWalkwayUseCase;
 import com.dongsan.domains.walkway.usecase.WalkwayUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -40,14 +39,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/walkways")
-@Tag(name = "🚶🏻‍산책로", description = "Walkway")
+@Tag(name = "산책로")
 @RequiredArgsConstructor
 @Validated
 public class WalkwayController {
 
     private final WalkwayUseCase walkwayUseCase;
     private final BookmarkUseCase bookmarkUseCase;
-    private final LikedWalkwayUseCase likedWalkwayUseCase;
     private final HashtagUseCase hashtagUseCase;
     private final S3UseCase s3UseCase;
     private final ImageUseCase imageUseCase;

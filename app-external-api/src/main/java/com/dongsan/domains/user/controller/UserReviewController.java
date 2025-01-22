@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/users/reviews")
-@Tag(name = "💬 리뷰", description = "Review")
+@Tag(name = "마이페이지")
 @RequiredArgsConstructor
 @Validated
 public class UserReviewController {

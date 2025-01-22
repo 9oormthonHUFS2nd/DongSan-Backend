@@ -26,7 +26,7 @@ import org.springframework.context.annotation.Profile;
 @Configuration
 public class SwaggerConfig {
 
-    private final String SOCIAL_TAG_NAME = "\uD83D\uDE80 소셜 로그인";
+    private final String SOCIAL_TAG_NAME = "소셜 로그인";
     @Value("${backend.base-url}")
     private String backendBaseURL;
 
@@ -48,8 +48,13 @@ public class SwaggerConfig {
                 .info(getInfo())
                 // 서버 정보 추가
                 .servers(List.of(server))
-                .tags(List.of(new Tag().name(SOCIAL_TAG_NAME)
-                        .description("Oauth2 Endpoint")))
+                .tags(List.of(
+                        new Tag().name(SOCIAL_TAG_NAME).description("Oauth2 Endpoint"),
+                        new Tag().name("개발용 API").description("Develop API"),
+                        new Tag().name("산책로").description("Walkway"),
+                        new Tag().name("산책로 리뷰").description("Review of Walkway"),
+                        new Tag().name("북마크").description("Bookmark"),
+                        new Tag().name("마이페이지").description("Information for User")))
                 .path("/oauth2/authorization/kakao", oauth2PathItem(SocialType.KAKAO))
                 .path("/oauth2/authorization/naver", oauth2PathItem(SocialType.NAVER))
                 ;
