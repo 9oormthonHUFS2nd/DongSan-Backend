@@ -79,8 +79,9 @@ public class SwaggerConfig {
                                                 .type("object")
                                                 .example(Map.of(
                                                         "Set-Cookie",
-                                                        "accessToken=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c; Max-Age=3600; Path=/; Domain=dongsanwalk.site; HttpOnly=false; Secure=false, refreshToken=dGhpcy1pcy1hLXRlc3QtcmVmcmVzaC10b2tlbg; Max-Age=3600; Path=/; Domain=dongsanwalk.site; HttpOnly=false; Secure=false"
-                                                ))))
+                                                        "accessToken=; Max-Age=3600; Path=/; Domain=dongsanwalk.site; HttpOnly=false; Secure=true, refreshToken=; Max-Age=3600; Path=/; Domain=dongsanwalk.site; HttpOnly=false; Secure=true"
+                                                )
+                                                )))
                                 ))));
     }
 
