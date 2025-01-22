@@ -3,6 +3,7 @@ package com.dongsan.domains.walkway.service;
 import static fixture.LikedWalkwayFixture.createLikedWalkway;
 import static fixture.ReflectFixture.reflectCreatedAt;
 import static fixture.ReflectFixture.reflectField;
+import static fixture.WalkwayFixture.createWalkway;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -11,6 +12,7 @@ import static org.mockito.Mockito.when;
 import com.dongsan.common.error.code.LikedWalkwayErrorCode;
 import com.dongsan.common.error.exception.CustomException;
 import com.dongsan.domains.walkway.entity.LikedWalkway;
+import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.repository.LikedWalkwayQueryDSLRepository;
 import com.dongsan.domains.walkway.repository.LikedWalkwayRepository;
 import java.time.LocalDateTime;
@@ -46,17 +48,16 @@ class LikedWalkwayQueryServiceTest {
             Integer size = 5;
             Long walkwayId = null;
             List<LikedWalkway> likedWalkways = IntStream.range(0, 5)
-                    .mapToObj(index -> createLikedWalkway(null, null))
+                    .mapToObj(index -> createLikedWalkway(null, createWalkway(null)))
                     .toList();
             when(likedWalkwayQueryDSLRepository.getUserLikedWalkway(memberId, size, null)).thenReturn(likedWalkways);
 
             // when
-            List<LikedWalkway> result = likedWalkwayQueryService.getUserLikedWalkway(memberId, size, walkwayId);
+            List<Walkway> result = likedWalkwayQueryService.getUserLikedWalkway(memberId, size, walkwayId);
 
             // then
             assertThat(result)
-                    .hasSameSizeAs(likedWalkways)
-                    .isEqualTo(likedWalkways);
+                    .hasSameSizeAs(likedWalkways);
         }
 
         @Test
@@ -71,18 +72,17 @@ class LikedWalkwayQueryServiceTest {
             LocalDateTime lastCreatedAt = LocalDateTime.of(2024, 12, 23, 11, 11);
             reflectCreatedAt(likedWalkway, lastCreatedAt);
             List<LikedWalkway> likedWalkways = IntStream.range(0, 5)
-                    .mapToObj(index -> createLikedWalkway(null, null))
+                    .mapToObj(index -> createLikedWalkway(null, createWalkway(null)))
                     .toList();
             when(likedWalkwayRepository.findByMemberIdAndWalkwayId(memberId, walkwayId)).thenReturn(Optional.of(likedWalkway));
             when(likedWalkwayQueryDSLRepository.getUserLikedWalkway(memberId, size, likedWalkway.getCreatedAt())).thenReturn(likedWalkways);
 
             // when
-            List<LikedWalkway> result = likedWalkwayQueryService.getUserLikedWalkway(memberId, size, walkwayId);
+            List<Walkway> result = likedWalkwayQueryService.getUserLikedWalkway(memberId, size, walkwayId);
 
             // then
             assertThat(result)
-                    .hasSameSizeAs(likedWalkways)
-                    .isEqualTo(likedWalkways);
+                    .hasSameSizeAs(likedWalkways);
         }
     }
 

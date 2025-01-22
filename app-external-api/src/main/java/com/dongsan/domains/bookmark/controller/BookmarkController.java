@@ -97,11 +97,11 @@ public class BookmarkController {
     public ResponseEntity<SuccessResponse<GetBookmarkDetailResponse>> getBookmarkDetail(
             @ExistBookmark @PathVariable Long bookmarkId,
             @RequestParam(defaultValue = "10") Integer size,
-            @RequestParam(required = false) Long walkwayId,
+            @RequestParam(required = false) Long lastId,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ){
         GetBookmarkDetailResponse response = bookmarkUseCase.getBookmarkDetails(new GetBookmarkDetailParam(
-                customOAuth2User.getMemberId(), bookmarkId, size, walkwayId));
+                customOAuth2User.getMemberId(), bookmarkId, size, lastId));
         return ResponseFactory.ok(response);
     }
 }

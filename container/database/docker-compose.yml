@@ -24,11 +24,9 @@ services:
     networks:
       - dongsan-network
 
-
 volumes:
   mysql_data:
   redis_data:
-
 
 networks:
   dongsan-network:

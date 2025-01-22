@@ -279,9 +279,9 @@ class BookmarkUseCaseTest {
                     createWalkway(null));
             when(memberQueryService.getMember(param.memberId())).thenReturn(member);
             when(bookmarkQueryService.getBookmark(param.bookmarkId())).thenReturn(bookmark);
-            when(walkwayQueryService.getWalkway(param.walkwayId())).thenReturn(walkway);
+            when(walkwayQueryService.getWalkway(param.lastId())).thenReturn(walkway);
             when(markedWalkwayQueryService.getCreatedAt(bookmark, walkway)).thenReturn(lastCreatedAt);
-            when(walkwayQueryService.getBookmarkWalkway(bookmark, param.size(), lastCreatedAt)).thenReturn(walkways);
+            when(walkwayQueryService.getBookmarkWalkway(bookmark, param.size()+1, lastCreatedAt)).thenReturn(walkways);
 
             // when
             GetBookmarkDetailResponse response = bookmarkUseCase.getBookmarkDetails(param);
