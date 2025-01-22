@@ -192,14 +192,15 @@ class WalkwayQueryServiceTest {
             reflectField(bookmark, "id", 1L);
             Integer size = 10;
             LocalDateTime lastCreatedAt = LocalDateTime.of(2024, 12, 9, 11, 11);
+            Long memberId = 1L;
             List<MarkedWalkway> markedWalkways = List.of(
                     MarkedWalkwayFixture.createMarkedWalkway(createWalkway(null), bookmark),
                     MarkedWalkwayFixture.createMarkedWalkway(createWalkway(null), bookmark),
                     MarkedWalkwayFixture.createMarkedWalkway(createWalkway(null), bookmark));
-            when(markedWalkwayQueryDSLRepository.getBookmarkWalkway(bookmark.getId(), size, lastCreatedAt)).thenReturn(markedWalkways);
+            when(markedWalkwayQueryDSLRepository.getBookmarkWalkway(bookmark.getId(), size, lastCreatedAt, memberId)).thenReturn(markedWalkways);
 
             // when
-            List<Walkway> result = walkwayQueryService.getBookmarkWalkway(bookmark, size, lastCreatedAt);
+            List<Walkway> result = walkwayQueryService.getBookmarkWalkway(bookmark, size, lastCreatedAt, memberId);
 
             // then
             assertThat(result).hasSize(markedWalkways.size());
@@ -216,10 +217,11 @@ class WalkwayQueryServiceTest {
             reflectField(bookmark, "id", 1L);
             Integer size = 10;
             LocalDateTime lastCreatedAt = LocalDateTime.of(2024, 12, 9, 11, 11);
-            when(markedWalkwayQueryDSLRepository.getBookmarkWalkway(bookmark.getId(), size, lastCreatedAt)).thenReturn(Collections.emptyList());
+            Long memberId = 1L;
+            when(markedWalkwayQueryDSLRepository.getBookmarkWalkway(bookmark.getId(), size, lastCreatedAt, memberId)).thenReturn(Collections.emptyList());
 
             // when
-            List<Walkway> result = walkwayQueryService.getBookmarkWalkway(bookmark, size, lastCreatedAt);
+            List<Walkway> result = walkwayQueryService.getBookmarkWalkway(bookmark, size, lastCreatedAt, memberId);
 
             // then
             assertThat(result).isEmpty();

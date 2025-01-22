@@ -45,8 +45,8 @@ public class WalkwayQueryService {
         return walkwayRepository.existsById(walkwayId);
     }
 
-    public List<Walkway> getBookmarkWalkway(Bookmark bookmark, Integer size, LocalDateTime lastCreatedAt) {
-        return markedWalkwayQueryDSLRepository.getBookmarkWalkway(bookmark.getId(), size, lastCreatedAt)
+    public List<Walkway> getBookmarkWalkway(Bookmark bookmark, Integer size, LocalDateTime lastCreatedAt, Long memberId) {
+        return markedWalkwayQueryDSLRepository.getBookmarkWalkway(bookmark.getId(), size, lastCreatedAt, memberId)
                 .stream().map(MarkedWalkway::getWalkway).toList();
     }
 

@@ -115,7 +115,7 @@ public class BookmarkUseCase {
         Walkway walkway = param.lastId() == null ? null : walkwayQueryService.getWalkway(param.lastId());
         // 마지막 markedBookmark의 생성시간 조회
         LocalDateTime lastCreatedAt = markedWalkwayQueryService.getCreatedAt(bookmark, walkway);
-        List<Walkway> walkways = walkwayQueryService.getBookmarkWalkway(bookmark, param.size()+1, lastCreatedAt);
+        List<Walkway> walkways = walkwayQueryService.getBookmarkWalkway(bookmark, param.size()+1, lastCreatedAt, param.memberId());
         // hasNext 계산
         boolean hasNext = walkways.size() > param.size();
         if(hasNext){

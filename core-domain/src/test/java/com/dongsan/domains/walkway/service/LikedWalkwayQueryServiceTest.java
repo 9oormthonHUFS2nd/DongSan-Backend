@@ -57,7 +57,8 @@ class LikedWalkwayQueryServiceTest {
 
             // then
             assertThat(result)
-                    .hasSameSizeAs(likedWalkways);
+                    .hasSameSizeAs(likedWalkways)
+                    .isEqualTo(likedWalkways.stream().map(LikedWalkway::getWalkway).toList());
         }
 
         @Test
@@ -82,7 +83,8 @@ class LikedWalkwayQueryServiceTest {
 
             // then
             assertThat(result)
-                    .hasSameSizeAs(likedWalkways);
+                    .hasSameSizeAs(likedWalkways)
+                    .isEqualTo(likedWalkways.stream().map(LikedWalkway::getWalkway).toList());
         }
     }
 

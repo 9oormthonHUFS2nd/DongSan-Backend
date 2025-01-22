@@ -24,7 +24,7 @@ public class ReviewQueryService {
     }
 
     public List<Review> getReviews(Integer limit, LocalDateTime lastCreatedAt, Long memberId) {
-        return reviewQueryDSLRepository.getReviews(limit, lastCreatedAt, memberId);
+        return reviewQueryDSLRepository.getUserReviews(limit, lastCreatedAt, memberId);
     }
 
     public boolean existsByReviewId(Long reviewId){

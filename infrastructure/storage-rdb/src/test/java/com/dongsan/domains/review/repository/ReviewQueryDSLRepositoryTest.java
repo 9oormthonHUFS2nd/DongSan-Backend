@@ -2,6 +2,7 @@ package com.dongsan.domains.review.repository;
 
 import static fixture.MemberFixture.createMember;
 import static fixture.ReviewFixture.createReview;
+import static fixture.WalkwayFixture.createPrivateWalkway;
 import static fixture.WalkwayFixture.createWalkway;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -10,6 +11,7 @@ import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.review.dto.RatingCount;
 import com.dongsan.domains.review.entity.Review;
 import com.dongsan.domains.walkway.entity.Walkway;
+import com.dongsan.domains.walkway.enums.ExposeLevel;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +32,8 @@ class ReviewQueryDSLRepositoryTest extends RepositoryTest {
     ReviewQueryDSLRepository reviewQueryDSLRepository;
 
     @Nested
-    @DisplayName("getReviews 메소드는")
-    class Describe_getReviews{
+    @DisplayName("getUserReviews 메소드는")
+    class Describe_getUserReviews{
         Member member;
         Walkway walkway;
         List<Review> reviews = new ArrayList<>();
@@ -50,6 +52,37 @@ class ReviewQueryDSLRepositoryTest extends RepositoryTest {
         }
 
         @Test
+        @DisplayName("타인이 등록한 산책로이면 공개 상태의 산책로의 리뷰만 조회한다.")
+        void it_returns_others_public_walkway_review(){
+            // given
+            Member other = createMember();
+            Walkway otherPublicWalkway = createWalkway(other);
+            Walkway otherPrivateWalkway = createPrivateWalkway(other);
+            em.persist(other);
+            em.persist(otherPublicWalkway);
+            em.persist(otherPrivateWalkway);
+            em.persist(createReview(member, otherPublicWalkway));
+            em.persist(createReview(member, otherPrivateWalkway));
+            Integer size = 10;
+            LocalDateTime lastCreateAt = null;
+            Long memberId = member.getId();
+
+            // when
+            List<Review> result = reviewQueryDSLRepository.getUserReviews(size, lastCreateAt, memberId);
+
+            // then
+            assertThat(result.size()).isEqualTo(reviews.size() + 1);
+            for(int i=0; i< result.size(); i++){
+                Review review = result.get(i);
+                // 타인이 등록한 산책로이면
+                if(!review.getWalkway().getMember().getId().equals(member.getId())){
+                    assertThat(review.getWalkway().getExposeLevel().equals(ExposeLevel.PUBLIC));
+                }
+            }
+        }
+
+
+        @Test
         @DisplayName("lastCreateAt가 null이면 가장 최근의 review들을 내림차순으로 가져온다.")
         void it_returns_most_recent_reviews(){
             // given
@@ -58,7 +91,7 @@ class ReviewQueryDSLRepositoryTest extends RepositoryTest {
             Long memberId = member.getId();
 
             // when
-            List<Review> result = reviewQueryDSLRepository.getReviews(limit, lastCreateAt, memberId);
+            List<Review> result = reviewQueryDSLRepository.getUserReviews(limit, lastCreateAt, memberId);
 
             // then
             assertThat(result.size()).isEqualTo(5);
@@ -78,7 +111,7 @@ class ReviewQueryDSLRepositoryTest extends RepositoryTest {
             Long memberId = member.getId();
 
             // when
-            List<Review> result = reviewQueryDSLRepository.getReviews(limit, lastCreateAt, memberId);
+            List<Review> result = reviewQueryDSLRepository.getUserReviews(limit, lastCreateAt, memberId);
 
             // then
             for (Review review : result) {
@@ -94,20 +127,7 @@ class ReviewQueryDSLRepositoryTest extends RepositoryTest {
 
         }
 
-//        @Test
-//        @DisplayName("리뷰가 존재하지 않으면 빈 리스트를 반환한다.")
-//        void it_returns_empty_list(){
-//            // given
-//            Integer limit = 5;
-//            Long reviewId = reviews.get(5).getId();
-//            Long memberId = member.getId() + 1;
-//
-//            // when
-//            List<Review> result = reviewQueryDSLRepository.getReviews(limit, reviewId, memberId);
-//
-//            // then
-//            assertThat(result).isEmpty();
-//        }
+
     }
 
     @Nested

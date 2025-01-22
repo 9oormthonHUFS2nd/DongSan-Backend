@@ -2,6 +2,7 @@ package com.dongsan.domains.walkway.repository;
 
 import com.dongsan.domains.walkway.entity.LikedWalkway;
 import com.dongsan.domains.walkway.entity.QLikedWalkway;
+import com.dongsan.domains.walkway.enums.ExposeLevel;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDateTime;
@@ -17,9 +18,24 @@ public class LikedWalkwayQueryDSLRepository {
 
     private QLikedWalkway likedWalkway = QLikedWalkway.likedWalkway;
 
+    /**
+     * 사용자가 좋아요한 산책로를 좋아요를 누른 시점을 기준으로 내림차순 정렬한다.
+     * <p>
+     *     1. 사용자가 좋아요한 산책로를 조회한다. <br>
+     *     2. 내가 등록한 산책로인 경우에는 산책로의 공개/비공개 여부 상관없이 조회한다. <br>
+     *     3. 타인이 등록한 산책로인 경우에는 Public(공개) 상태의 산책로만 조회한다. <br>
+     * </p>
+     * @param memberId      사용자 id
+     * @param size          최대 조회 갯수
+     * @param lastCreatedAt 마지막으로 조회된 산책로의 좋아요 시각
+     * @return              사용자가 좋아요를 누른 산책로
+     */
     public List<LikedWalkway> getUserLikedWalkway(Long memberId, Integer size, LocalDateTime lastCreatedAt){
-        return queryFactory.selectFrom(likedWalkway)
-                .where(likedWalkway.member.id.eq(memberId), createdAtLt(lastCreatedAt))
+        return queryFactory
+                .selectFrom(likedWalkway)
+                .join(likedWalkway.walkway).fetchJoin()
+                .where(likedWalkway.member.id.eq(memberId), createdAtLt(lastCreatedAt),
+                        likedWalkway.walkway.member.id.eq(memberId).or(likedWalkway.walkway.exposeLevel.eq(ExposeLevel.PUBLIC)))
                 .orderBy(likedWalkway.createdAt.desc())
                 .limit(size)
                 .fetch();
