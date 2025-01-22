@@ -109,7 +109,7 @@ class UserWalkwayUseCaseTest {
             reflectField(walkway, "id", walkwayId);
 
             when(walkwayQueryService.getWalkway(walkwayId)).thenReturn(walkway);
-            when(likedWalkwayQueryService.getUserLikedWalkway(memberId, size, walkwayId)).thenReturn(walkways);
+            when(likedWalkwayQueryService.getUserLikedWalkway(memberId, size+1, walkwayId)).thenReturn(walkways);
 
             // when
             WalkwayListResponse response = userWalkwayUseCase.getUserLikedWalkway(memberId, size, walkwayId);
@@ -133,7 +133,7 @@ class UserWalkwayUseCaseTest {
             Integer size = 5;
             Long walkwayId = null;
             List<Walkway> walkways = Collections.emptyList();
-            when(likedWalkwayQueryService.getUserLikedWalkway(memberId, size, walkwayId)).thenReturn(walkways);
+            when(likedWalkwayQueryService.getUserLikedWalkway(memberId, size+1, walkwayId)).thenReturn(walkways);
 
             // when
             WalkwayListResponse response = userWalkwayUseCase.getUserLikedWalkway(memberId, size, walkwayId);

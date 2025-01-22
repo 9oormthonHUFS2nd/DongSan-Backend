@@ -43,7 +43,7 @@ public class UserWalkwayUseCase {
             // 2. 내가 작성한 산책로인지
             walkwayQueryService.isOwnerOfWalkway(walkway.getId(), memberId);
         }
-        List<Walkway> walkways = likedWalkwayQueryService.getUserLikedWalkway(memberId, size, walkwayId);
+        List<Walkway> walkways = likedWalkwayQueryService.getUserLikedWalkway(memberId, size+1, walkwayId);
         boolean hasNext = walkways.size() > size;
         if(hasNext){
             walkways.remove(walkways.size()-1);
