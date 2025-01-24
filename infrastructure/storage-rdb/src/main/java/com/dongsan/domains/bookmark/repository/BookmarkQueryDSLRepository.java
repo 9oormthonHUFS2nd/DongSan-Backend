@@ -28,7 +28,7 @@ public class BookmarkQueryDSLRepository {
                                 ? null
                                 : createdAtLt(lastBookmark.getCreatedAt()))
                 .limit(size)
-                .orderBy(bookmark.id.desc())
+                .orderBy(bookmark.createdAt.desc())
                 .fetch();
     }
 
