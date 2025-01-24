@@ -66,7 +66,7 @@ class BookmarkQueryDSLRepositoryTest extends RepositoryTest {
             assertThat(result).hasSize(limit);
             Bookmark beforeBookmark = lastBookmark;
             for(int i = 0; i < limit; i++) {
-                assertThat(result.get(i).getCreatedAt()).isBefore(beforeBookmark.getCreatedAt());
+                assertThat(result.get(i).getId()).isLessThan(beforeBookmark.getId());
                 beforeBookmark = result.get(i);
             }
         }
