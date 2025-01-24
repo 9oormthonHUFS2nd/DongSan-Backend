@@ -122,7 +122,7 @@ class ReviewControllerTest {
             // When
             ResultActions response = mockMvc.perform(get("/walkways/1/review/content")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .param("type", type));
+                    .param("sort", type));
 
             // Then
             response.andExpect(status().isOk())

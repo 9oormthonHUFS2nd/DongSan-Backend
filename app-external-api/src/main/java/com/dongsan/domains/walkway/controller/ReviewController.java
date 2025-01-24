@@ -45,11 +45,11 @@ public class ReviewController {
     @GetMapping("/{walkwayId}/review/content")
     public ResponseEntity<SuccessResponse<GetWalkwayReviewsResponse>> getWalkwayReviews(
             @PathVariable Long walkwayId,
-            @RequestParam String type,
+            @RequestParam String sort,
             @RequestParam(required = false) Long lastId,
             @RequestParam(required = false, defaultValue = "10") Integer size
     ) {
-        return ResponseFactory.ok(walkwayReviewUseCase.getWalkwayReviews(type, lastId, walkwayId, size));
+        return ResponseFactory.ok(walkwayReviewUseCase.getWalkwayReviews(sort, lastId, walkwayId, size));
     }
 
     @Operation(summary = "리뷰 별점 보기")
