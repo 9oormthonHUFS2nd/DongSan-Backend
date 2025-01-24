@@ -26,6 +26,7 @@ import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.user.service.MemberQueryService;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
+import fixture.BookmarkFixture;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -220,6 +221,7 @@ class BookmarkUseCaseTest {
             // Given
             Long memberId = 1L;
             Long walkwayId = 1L;
+            int size = 5;
             List<BookmarksWithMarkedWalkwayDTO> bookmarks = new ArrayList<>();
 
             for (int i = 0; i < 5; i++) {
@@ -227,12 +229,14 @@ class BookmarkUseCaseTest {
                 bookmarks.add(bookmark);
             }
 
+            Bookmark lastBookmark = BookmarkFixture.createBookmark(null);
+
             when(walkwayQueryService.existsByWalkwayId(walkwayId)).thenReturn(true);
-            when(bookmarkQueryService.getBookmarksWithMarkedWalkway(walkwayId, memberId)).thenReturn(bookmarks);
+            when(bookmarkQueryService.getBookmarksWithMarkedWalkway(walkwayId, memberId, null, size)).thenReturn(bookmarks);
 
             // When
-            BookmarksWithMarkedWalkwayResponse result = bookmarkUseCase.getBookmarksWithMarkedWalkway(memberId,
-                    walkwayId);
+            BookmarksWithMarkedWalkwayResponse result
+                    = bookmarkUseCase.getBookmarksWithMarkedWalkway(memberId, walkwayId, null, size);
 
             // Then
             assertThat(result.bookmarks()).hasSize(bookmarks.size());

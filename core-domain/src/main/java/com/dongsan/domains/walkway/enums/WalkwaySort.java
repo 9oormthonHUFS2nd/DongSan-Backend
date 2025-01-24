@@ -6,15 +6,15 @@ import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public enum Sort {
+public enum WalkwaySort {
     LIKED("liked"),
     RATING("rating")
     ;
 
     private final String type;
 
-    public static Sort typeOf(String type) {
-        return Arrays.stream(Sort.values())
+    public static WalkwaySort typeOf(String type) {
+        return Arrays.stream(WalkwaySort.values())
                 .filter(sort -> sort.type.equals(type))
                 .findFirst()
                 .orElseThrow(() -> new CustomException(WalkwayErrorCode.INVALID_SEARCH_TYPE));

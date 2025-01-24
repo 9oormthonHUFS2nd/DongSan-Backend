@@ -1,7 +1,6 @@
 package com.dongsan.domains.walkway.service;
 
 import static fixture.ReviewFixture.createReview;
-import static fixture.ReviewFixture.createReviewWithId;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -9,6 +8,11 @@ import static org.mockito.Mockito.when;
 import com.dongsan.domains.review.entity.Review;
 import com.dongsan.domains.review.repository.ReviewQueryDSLRepository;
 import com.dongsan.domains.review.repository.ReviewRepository;
+import com.dongsan.domains.walkway.entity.Walkway;
+import com.dongsan.domains.walkway.enums.ReviewSort;
+import com.dongsan.domains.walkway.service.factory.GetReviewsServiceFactory;
+import com.dongsan.domains.walkway.service.search.review.GetReviewsService;
+import fixture.WalkwayFixture;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,6 +35,10 @@ class ReviewQueryServiceTest {
     private ReviewQueryDSLRepository reviewQueryDSLRepository;
     @Mock
     private ReviewRepository reviewRepository;
+    @Mock
+    private GetReviewsServiceFactory getReviewsServiceFactory;
+    @Mock
+    private GetReviewsService getReviewsService;
 
     @Nested
     @DisplayName("getReviews 메소드는")
@@ -112,54 +120,22 @@ class ReviewQueryServiceTest {
     }
 
     @Nested
-    @DisplayName("getWalkwayReviewsLatest 메서드는")
-    class Describe_getWalkwayReviewsLatest {
+    @DisplayName("getWalkwayReviews 메서드는")
+    class Describe_getWalkwayReviews {
         @Test
         @DisplayName("리뷰를 최신순으로 반환한다.")
-        void it_returns_review_list_latest() {
+        void it_returns_reviews() {
             // Given
-            Integer limit = 5;
-            Long walkwayId = 1L;
+            Integer size = 5;
+            ReviewSort sort = ReviewSort.RATING;
+            List<Review> reviews = List.of();
+            Walkway walkway = WalkwayFixture.createWalkway(null);
 
-            List<Review> reviews = new ArrayList<>();
-            for (int i = 0; i < 5; i++) {
-                reviews.add(createReviewWithId(1L, null, null));
-            }
-
-
-            when(reviewQueryDSLRepository.getWalkwayReviewsLatest(limit, null, walkwayId))
-                    .thenReturn(reviews);
+            when(getReviewsServiceFactory.getService(sort)).thenReturn(getReviewsService);
+            when(getReviewsService.search(size, null, walkway)).thenReturn(reviews);
 
             // When
-            List<Review> result = reviewQueryService.getWalkwayReviewsLatest(limit, null, walkwayId);
-
-            // Then
-            assertThat(result).isEqualTo(reviews);
-        }
-    }
-
-    @Nested
-    @DisplayName("getWalkwayReviewsRating 메서드는")
-    class Describe_getWalkwayReviewsRating {
-        @Test
-        @DisplayName("리뷰를 별점순으로 반환한다.")
-        void it_returns_review_list_rating() {
-            // Given
-            Integer limit = 5;
-            Long walkwayId = 1L;
-            Byte rating = 5;
-
-            List<Review> reviews = new ArrayList<>();
-            for (int i = 0; i < 5; i++) {
-                reviews.add(createReviewWithId(1L, null, null));
-            }
-
-
-            when(reviewQueryDSLRepository.getWalkwayReviewsRating(limit, null, walkwayId, rating))
-                    .thenReturn(reviews);
-
-            // When
-            List<Review> result = reviewQueryService.getWalkwayReviewsRating(limit, null, walkwayId, rating);
+            List<Review> result = reviewQueryService.getWalkwayReviews(size, null, walkway, sort);
 
             // Then
             assertThat(result).isEqualTo(reviews);

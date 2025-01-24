@@ -5,7 +5,8 @@ import lombok.Builder;
 
 @Builder
 public record GetWalkwayReviewsResponse(
-    List<WalkwayReview> reviews
+    List<WalkwayReview> reviews,
+    Boolean hasNext
 ) {
     @Builder
     public record WalkwayReview(
@@ -13,7 +14,7 @@ public record GetWalkwayReviewsResponse(
             String nickname,
             String date,
             String period,
-            Byte rating,
+            Integer rating,
             String content
     ) { }
 }

@@ -35,9 +35,10 @@ public class ReviewMapper {
                 .build();
     }
 
-    public static GetWalkwayReviewsResponse toGetWalkwayReviewsResponse(List<Review> reviews) {
+    public static GetWalkwayReviewsResponse toGetWalkwayReviewsResponse(List<Review> reviews, Integer size) {
         return GetWalkwayReviewsResponse.builder()
                 .reviews(toGetWalkwayReviewsResponseReview(reviews))
+                .hasNext(reviews.size() == size)
                 .build();
     }
 
@@ -56,18 +57,19 @@ public class ReviewMapper {
     }
 
     public static GetWalkwayRatingResponse toGetWalkwayRatingResponse(List<RatingCount> ratingCounts, Walkway walkway) {
+        // 별점 1 ~ 5 의 비율을 저장하는 리스트
         List<Long> ratings = new ArrayList<>(List.of(0L, 0L, 0L, 0L, 0L));
-        Long total = 0L;
-        for(RatingCount ratingCount : ratingCounts) {
-            ratings.set(ratingCount.rating()-1, ratingCount.count());
-            total += ratingCount.count();
-        }
 
-        if (total != 0) {
-            for (int i = 0; i < 5; i++) {
-                ratings.set(i, (ratings.get(i) * 100)/total) ;
-            }
-        }
+        // count 총합
+        long totalCount = ratingCounts.stream()
+                .mapToLong(RatingCount::count)
+                .sum();
+
+        // 비율 계산 (총 리뷰가 0이 아닐 경우)
+        ratingCounts.forEach(ratingCount -> ratings.set(
+                ratingCount.rating() - 1,
+                (ratingCount.count() * 100 / totalCount)
+        ));
 
         return GetWalkwayRatingResponse.builder()
                 .rating(Math.floor(walkway.getRating() * 10) / 10)

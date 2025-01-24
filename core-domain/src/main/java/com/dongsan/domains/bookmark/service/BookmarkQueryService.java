@@ -22,8 +22,8 @@ public class BookmarkQueryService {
     private final BookmarkQueryDSLRepository bookmarkQueryDSLRepository;
     private final MarkedWalkwayRepository markedWalkwayRepository;
 
-    public List<Bookmark> getUserBookmarks(Long bookmarkId, Long memberId, Integer limit) {
-        return bookmarkQueryDSLRepository.getBookmarks(bookmarkId, memberId, limit);
+    public List<Bookmark> getUserBookmarks(Bookmark bookmark, Long memberId, Integer size) {
+        return bookmarkQueryDSLRepository.getBookmarks(bookmark, memberId, size);
     }
 
     public void hasSameBookmarkName(Long memberId, String name){
@@ -57,8 +57,8 @@ public class BookmarkQueryService {
         return markedWalkwayRepository.existsByBookmarkIdAndWalkwayId(bookmark.getId(), walkway.getId());
     }
 
-    public List<BookmarksWithMarkedWalkwayDTO> getBookmarksWithMarkedWalkway(Long walkwayId, Long memberId) {
-        return bookmarkQueryDSLRepository.getBookmarksWithMarkedWalkway(walkwayId, memberId);
+    public List<BookmarksWithMarkedWalkwayDTO> getBookmarksWithMarkedWalkway(Long walkwayId, Long memberId, Bookmark bookmark, Integer size) {
+        return bookmarkQueryDSLRepository.getBookmarksWithMarkedWalkway(walkwayId, memberId, bookmark, size);
     }
 
 }

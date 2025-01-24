@@ -8,6 +8,7 @@ import com.dongsan.domains.bookmark.entity.QBookmark;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -20,21 +21,22 @@ public class BookmarkQueryDSLRepository {
 
     private QBookmark bookmark = QBookmark.bookmark;
 
-    public List<Bookmark> getBookmarks(Long bookmarkId, Long memberId, Integer limit) {
+    public List<Bookmark> getBookmarks(Bookmark lastBookmark, Long memberId, Integer size) {
         return queryFactory.selectFrom(bookmark)
-                .where(bookmark.member.id.eq(memberId), bookmarkIdLt(bookmarkId))
-                .limit(limit)
+                .where(bookmark.member.id.eq(memberId),
+                        lastBookmark == null
+                                ? null
+                                : createdAtLt(lastBookmark.getCreatedAt()))
+                .limit(size)
                 .orderBy(bookmark.id.desc())
                 .fetch();
     }
 
-    private BooleanExpression bookmarkIdLt(Long bookmarkId){
-        // 조건 만족 안하면 null 반환
-        // where 절에서 null은 무시된다.
-        return bookmarkId != null ? bookmark.id.lt(bookmarkId) : null;
+    private BooleanExpression createdAtLt(LocalDateTime createdAt){
+        return createdAt != null ? bookmark.createdAt.lt(createdAt) : null;
     }
 
-    public List<BookmarksWithMarkedWalkwayDTO> getBookmarksWithMarkedWalkway(Long walkwayId, Long memberId) {
+    public List<BookmarksWithMarkedWalkwayDTO> getBookmarksWithMarkedWalkway(Long walkwayId, Long memberId, Bookmark lastBookmark, Integer size) {
         return queryFactory.select(Projections.constructor(
                         BookmarksWithMarkedWalkwayDTO.class,
                         bookmark.id,
@@ -45,8 +47,13 @@ public class BookmarkQueryDSLRepository {
                 .from(bookmark)
                 .leftJoin(markedWalkway)
                 .on(markedWalkway.walkway.id.eq(walkwayId).and(markedWalkway.bookmark.id.eq(bookmark.id)))
-                .where(bookmark.member.id.eq(memberId))
-                .orderBy(bookmark.id.desc())
+                .where(bookmark.member.id.eq(memberId),
+                        lastBookmark == null
+                                ? null
+                                : createdAtLt(lastBookmark.getCreatedAt())
+                )
+                .limit(size)
+                .orderBy(bookmark.createdAt.desc())
                 .fetch();
     }
 }

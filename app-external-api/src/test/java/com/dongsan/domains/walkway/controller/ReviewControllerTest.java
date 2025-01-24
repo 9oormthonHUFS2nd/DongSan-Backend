@@ -73,7 +73,7 @@ class ReviewControllerTest {
         void it_returns_reviewId() throws Exception {
             // Given
             Long walkwayId = 1L;
-            Byte rating = 5;
+            Integer rating = 5;
             CreateReviewRequest createReviewRequest = new CreateReviewRequest(rating, "test content");
 
             CreateReviewResponse createReviewResponse = CreateReviewResponse.builder()
@@ -106,7 +106,6 @@ class ReviewControllerTest {
             String type = "latest";
             Long walkwayId = 1L;
             Long lastId = null;
-            Byte rating = 5;
             Integer size = 10;
 
             Walkway walkway = WalkwayFixture.createWalkway(member);
@@ -115,9 +114,9 @@ class ReviewControllerTest {
                 reviews.add(createReviewWithId(1L, member, walkway));
             }
 
-            GetWalkwayReviewsResponse getWalkwayReviewsResponse = ReviewMapper.toGetWalkwayReviewsResponse(reviews);
+            GetWalkwayReviewsResponse getWalkwayReviewsResponse = ReviewMapper.toGetWalkwayReviewsResponse(reviews, size);
             when(walkwayQueryService.existsByWalkwayId(walkwayId)).thenReturn(true);
-            when(walkwayReviewUseCase.getWalkwayReviews(type, lastId, walkwayId, rating, size))
+            when(walkwayReviewUseCase.getWalkwayReviews(type, lastId, walkwayId, size))
                     .thenReturn(getWalkwayReviewsResponse);
 
             // When
@@ -145,7 +144,7 @@ class ReviewControllerTest {
             Walkway walkway = WalkwayFixture.createWalkway(null);
 
             List<RatingCount> ratingCounts = new ArrayList<>();
-            for(Byte i = 1; i <= 5; i++) {
+            for(Integer i = 1; i <= 5; i++) {
                 ratingCounts.add(new RatingCount(i, 10L));
             }
 

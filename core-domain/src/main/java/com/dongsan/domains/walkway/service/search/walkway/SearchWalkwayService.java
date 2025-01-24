@@ -1,12 +1,12 @@
-package com.dongsan.domains.walkway.service.search;
+package com.dongsan.domains.walkway.service.search.walkway;
 
 import com.dongsan.domains.walkway.dto.request.SearchWalkwayQuery;
 import com.dongsan.domains.walkway.dto.response.SearchWalkwayResult;
-import com.dongsan.domains.walkway.enums.Sort;
+import com.dongsan.domains.walkway.enums.WalkwaySort;
 import java.util.List;
 
 public interface SearchWalkwayService {
-    Sort getSortType();
+    WalkwaySort getSortType();
 
     List<SearchWalkwayResult> search(SearchWalkwayQuery searchWalkwayRequest);
 }

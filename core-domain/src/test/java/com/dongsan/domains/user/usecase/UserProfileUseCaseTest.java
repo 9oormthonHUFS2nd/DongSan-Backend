@@ -11,6 +11,7 @@ import com.dongsan.domains.user.service.MemberQueryService;
 import com.dongsan.domains.user.mapper.UserProfileMapper;
 import com.dongsan.domains.user.response.GetBookmarksResponse;
 import com.dongsan.domains.user.response.GetProfileResponse;
+import fixture.BookmarkFixture;
 import fixture.MemberFixture;
 import java.util.ArrayList;
 import java.util.List;
@@ -84,7 +85,10 @@ class UserProfileUseCaseTest {
                 bookmarkList.add(bookmark);
             }
 
-            when(bookmarkQueryService.getUserBookmarks(bookmarkId, userId, limit)).thenReturn(bookmarkList);
+            Bookmark lastBookmark = BookmarkFixture.createBookmarkWithId(bookmarkId, null);
+
+            when(bookmarkQueryService.getBookmark(bookmarkId)).thenReturn(lastBookmark);
+            when(bookmarkQueryService.getUserBookmarks(lastBookmark, userId, limit)).thenReturn(bookmarkList);
 
             // When
             GetBookmarksResponse result =

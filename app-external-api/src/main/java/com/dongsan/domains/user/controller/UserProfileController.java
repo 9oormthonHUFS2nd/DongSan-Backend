@@ -39,11 +39,11 @@ public class UserProfileController {
     @Operation(summary = "북마크한 산책로 제목 리스트 보기")
     @GetMapping("/users/bookmarks/title")
     public ResponseEntity<SuccessResponse<GetBookmarksResponse>> getBookmarks(
-            @RequestParam(required = false) Long bookmarkId,
+            @RequestParam(required = false) Long lastId,
             @RequestParam(defaultValue = "10") Integer size,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {
-        GetBookmarksResponse response = userProfileUsecase.getUserBookmarks(customOAuth2User.getMemberId(), bookmarkId, size);
+        GetBookmarksResponse response = userProfileUsecase.getUserBookmarks(customOAuth2User.getMemberId(), lastId, size);
         return ResponseFactory.ok(response);
     }
 }

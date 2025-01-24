@@ -9,7 +9,7 @@ import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 
 public class ReviewFixture {
-    private static final Byte RATING = 5;
+    private static final Integer RATING = 5;
     private static final String CONTENT = "리뷰 내용";
 
     public static Review createReview(Member member, Walkway walkway){
@@ -22,7 +22,7 @@ public class ReviewFixture {
 
     }
 
-    public static Review createReview(Member member, Walkway walkway, Byte rating, String content){
+    public static Review createReview(Member member, Walkway walkway, Integer rating, String content){
         return Review.builder()
                 .member(member)
                 .walkway(walkway)
@@ -38,7 +38,7 @@ public class ReviewFixture {
         return review;
     }
 
-    public static Review createReviewWithId(Long id, Member member, Walkway walkway, Byte rating, String content){
+    public static Review createReviewWithId(Long id, Member member, Walkway walkway, Integer rating, String content){
         Review review = createReview(member, walkway, rating, content);
         reflectId(id, review);
         reflectCreatedAt(LocalDateTime.now(), review);

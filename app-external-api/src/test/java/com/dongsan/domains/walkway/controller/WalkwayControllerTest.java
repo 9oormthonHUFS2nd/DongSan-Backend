@@ -234,6 +234,7 @@ class WalkwayControllerTest {
         void it_returns_bookmarks() throws Exception {
             // Given
             Long walkwayId = 1L;
+            Integer size = 5;
             List<BookmarksWithMarkedWalkwayDTO> bookmarks = new ArrayList<>();
 
             for(int i = 0; i < 5; i++) {
@@ -243,14 +244,15 @@ class WalkwayControllerTest {
             }
 
             BookmarksWithMarkedWalkwayResponse bookmarksWithMarkedWalkwayResponse =
-                    BookmarksWithMarkedWalkwayMapper.toBookmarksWithMarkedWalkwayResponse(bookmarks);
+                    BookmarksWithMarkedWalkwayMapper.toBookmarksWithMarkedWalkwayResponse(bookmarks, size);
 
             when(walkwayQueryService.existsByWalkwayId(walkwayId)).thenReturn(true);
-            when(bookmarkUseCase.getBookmarksWithMarkedWalkway(customOAuth2User.getMemberId(), walkwayId))
+            when(bookmarkUseCase.getBookmarksWithMarkedWalkway(customOAuth2User.getMemberId(), walkwayId, null, size))
                     .thenReturn(bookmarksWithMarkedWalkwayResponse);
 
             // When
             ResultActions response = mockMvc.perform(get("/walkways/" + walkwayId + "/bookmarks")
+                    .param("size", size.toString())
                     .contentType(MediaType.APPLICATION_JSON));
 
             // Then

@@ -8,11 +8,12 @@ import java.util.List;
 public class BookmarksWithMarkedWalkwayMapper {
     private BookmarksWithMarkedWalkwayMapper() {}
 
-    public static BookmarksWithMarkedWalkwayResponse toBookmarksWithMarkedWalkwayResponse(List<BookmarksWithMarkedWalkwayDTO> bookmarks) {
+    public static BookmarksWithMarkedWalkwayResponse toBookmarksWithMarkedWalkwayResponse(List<BookmarksWithMarkedWalkwayDTO> bookmarks, Integer size) {
         return BookmarksWithMarkedWalkwayResponse.builder()
                 .bookmarks(bookmarks.stream()
                         .map(BookmarksWithMarkedWalkwayMapper::toBookmarkWithMarkedWalkway)
                         .toList())
+                .hasNext(bookmarks.size() == size)
                 .build();
     }
 

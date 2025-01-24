@@ -26,13 +26,13 @@ public class Review extends BaseEntity {
     private Walkway walkway;
 
     @Column(nullable = false)
-    private Byte rating;
+    private Integer rating;
 
     @Column(nullable = false)
     private String content;
 
     @Builder
-    private Review(Byte rating, String content, Member member, Walkway walkway){
+    private Review(Integer rating, String content, Member member, Walkway walkway){
         this.rating = rating;
         this.content = content;
 

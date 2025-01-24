@@ -17,7 +17,7 @@ import com.dongsan.domains.walkway.dto.request.UpdateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.response.SearchWalkwayResult;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.enums.ExposeLevel;
-import com.dongsan.domains.walkway.enums.Sort;
+import com.dongsan.domains.walkway.enums.WalkwaySort;
 import com.dongsan.domains.walkway.service.HashtagQueryService;
 import com.dongsan.domains.walkway.service.HashtagWalkwayCommandService;
 import com.dongsan.domains.walkway.service.WalkwayCommandService;
@@ -194,7 +194,7 @@ class WalkwayUseCaseTest {
             SearchWalkwayQuery searchWalkwayRequest
                     = new SearchWalkwayQuery(userId, longitude, latitude, distance, lastWalkway, size);
 
-            Sort sort = Sort.typeOf(type);
+            WalkwaySort sort = WalkwaySort.typeOf(type);
             when(walkwayQueryService.searchWalkway(searchWalkwayRequest, sort))
                     .thenReturn(searchWalkwayResults);
 
@@ -224,7 +224,7 @@ class WalkwayUseCaseTest {
             SearchWalkwayQuery searchWalkwayRequest
                     = new SearchWalkwayQuery(userId, longitude, latitude, distance, lastWalkway, size);
 
-            Sort sort = Sort.typeOf(type);
+            WalkwaySort sort = WalkwaySort.typeOf(type);
             when(walkwayQueryService.searchWalkway(searchWalkwayRequest, sort))
                     .thenReturn(searchWalkwayResults);
 

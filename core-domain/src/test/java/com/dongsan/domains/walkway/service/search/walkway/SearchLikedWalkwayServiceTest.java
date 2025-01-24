@@ -1,4 +1,4 @@
-package com.dongsan.domains.walkway.service.search;
+package com.dongsan.domains.walkway.service.search.walkway;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -6,7 +6,7 @@ import static org.mockito.Mockito.when;
 import com.dongsan.domains.walkway.dto.request.SearchWalkwayQuery;
 import com.dongsan.domains.walkway.dto.response.SearchWalkwayResult;
 import com.dongsan.domains.walkway.entity.Walkway;
-import com.dongsan.domains.walkway.enums.Sort;
+import com.dongsan.domains.walkway.enums.WalkwaySort;
 import com.dongsan.domains.walkway.repository.WalkwayQueryDSLRepository;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,11 +29,11 @@ class SearchLikedWalkwayServiceTest {
 
     @Nested
     @DisplayName("getSortType 메서드는")
-    class Describe_getSortType {
+    class Describe_getWalkwaySortType {
         @Test
         @DisplayName("서비스에 해당하는 정렬을 반환한다.")
         void it_returns_sort() {
-            assertThat(searchLikedWalkwayService.getSortType()).isEqualTo(Sort.LIKED);
+            assertThat(searchLikedWalkwayService.getSortType()).isEqualTo(WalkwaySort.LIKED);
         }
     }
 

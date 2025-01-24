@@ -3,6 +3,7 @@ package com.dongsan.domains.walkway.entity;
 import com.dongsan.domains.common.entity.BaseEntity;
 import com.dongsan.domains.hashtag.entity.HashtagWalkway;
 import com.dongsan.domains.member.entity.Member;
+import com.dongsan.domains.review.dto.RatingCount;
 import com.dongsan.domains.walkway.enums.ExposeLevel;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -91,9 +92,17 @@ public class Walkway extends BaseEntity {
         this.rating = 0.0;
     }
 
-    public void updateRatingAndReviewCount(Byte inputRating) {
-        this.rating = ((this.rating * this.reviewCount) + inputRating) / (this.reviewCount + 1);
-        this.reviewCount++;
+    public void updateRatingAndReviewCount(List<RatingCount> ratingCounts) {
+        // 총 리뷰 수 계산
+        this.reviewCount = (int) ratingCounts.stream()
+                .mapToLong(RatingCount::count)
+                .sum();
+        // 평점 평균 계산 (소수점 한자리)
+        this.rating = Math.floor(
+                ratingCounts.stream()
+                        .mapToDouble(ratingCount -> ratingCount.rating() * ratingCount.count())
+                        .sum() / this.reviewCount * 10
+        ) / 10.0;
     }
 
     public void addHashtagWalkway(HashtagWalkway hashtagWalkway) {
@@ -113,17 +122,5 @@ public class Walkway extends BaseEntity {
         this.name = name;
         this.memo = memo;
         this.exposeLevel = exposeLevel;
-    }
-    public void registerCourse(LineString course) {
-        this.startLocation = course.getStartPoint();
-        this.endLocation = course.getEndPoint();
-        this.course = course;
-        this.startLocation.setSRID(4326);
-        this.endLocation.setSRID(4326);
-        this.course.setSRID(4326);
-    }
-
-    public void registerCourseImageUrl(String courseImageUrl) {
-        this.courseImageUrl = courseImageUrl;
     }
 }

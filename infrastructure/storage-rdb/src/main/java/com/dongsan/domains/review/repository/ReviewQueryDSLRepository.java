@@ -59,26 +59,34 @@ public class ReviewQueryDSLRepository{
         return createdAt != null ? review.createdAt.lt(createdAt) : null;
     }
 
-    public List<Review> getWalkwayReviewsLatest(Integer limit, Long reviewId, Long walkwayId) {
-        return queryFactory.selectFrom(review)
-                .join(review.walkway)
-                .fetchJoin()
-                .where(review.walkway.id.eq(walkwayId), reviewIdLt(reviewId))
-                .limit(limit)
-                .orderBy(review.createdAt.desc())
-                .fetch();
-    }
-
-    public List<Review> getWalkwayReviewsRating(Integer limit, Long reviewId, Long walkwayId, Byte rating) {
+    public List<Review> getWalkwayReviewsLatest(Integer size, Long walkwayId, Review lastReview) {
         return queryFactory.selectFrom(review)
                 .join(review.walkway)
                 .fetchJoin()
                 .where(review.walkway.id.eq(walkwayId),
-                        review.rating.eq(rating).and(reviewIdLt(reviewId))
-                                .or(review.rating.lt(rating))
+                        lastReview == null
+                                ? null
+                                : createdAtLt(lastReview.getCreatedAt())
                 )
-                .limit(limit)
-                .orderBy(review.rating.desc(), review.id.desc())
+                .limit(size)
+                .orderBy(review.createdAt.desc())
+                .fetch();
+    }
+
+    public List<Review> getWalkwayReviewsRating(Integer size, Long walkwayId, Review lastReview) {
+        return queryFactory.selectFrom(review)
+                .join(review.walkway)
+                .fetchJoin()
+                .where(review.walkway.id.eq(walkwayId),
+                        lastReview == null
+                                ? null
+                                : review.rating.lt(lastReview.getRating())
+                                                .or(review.rating.eq(lastReview.getRating())
+                                                        .and(createdAtLt(lastReview.getCreatedAt()))
+                                                )
+                )
+                .limit(size)
+                .orderBy(review.rating.desc(), review.createdAt.desc())
                 .fetch();
     }
 

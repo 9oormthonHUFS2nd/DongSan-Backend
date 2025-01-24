@@ -157,7 +157,7 @@ class ReviewQueryDSLRepositoryTest extends RepositoryTest {
             Long walkwayId = walkway.getId();
 
             // When
-            List<Review> result = reviewQueryDSLRepository.getWalkwayReviewsLatest(limit, null, walkwayId);
+            List<Review> result = reviewQueryDSLRepository.getWalkwayReviewsLatest(limit, walkwayId, null);
 
             // Then
             Long beforeId = result.get(0).getId();
@@ -181,7 +181,7 @@ class ReviewQueryDSLRepositoryTest extends RepositoryTest {
             walkway = createWalkway(member);
             em.persist(member);
             em.persist(walkway);
-            for(Byte i = 0; i<6; i++){
+            for(Integer i = 0; i<6; i++){
                 Review review = createReview(member, walkway, i, "test");
                 reviews.add(review);
                 em.persist(review);
@@ -194,15 +194,15 @@ class ReviewQueryDSLRepositoryTest extends RepositoryTest {
             // Given
             Integer limit = 5;
             Long walkwayId = walkway.getId();
-            Byte rating = 5;
+            Integer rating = 5;
 
             // When
-            List<Review> result = reviewQueryDSLRepository.getWalkwayReviewsRating(limit, null, walkwayId, rating);
+            List<Review> result = reviewQueryDSLRepository.getWalkwayReviewsRating(limit, walkwayId, null);
 
             // Then
-            Byte beforeRating = result.get(0).getRating();
+            Integer beforeRating = result.get(0).getRating();
             for(int count = 1; count < 5; count++) {
-                Byte currentRating = result.get(count).getRating();
+                Integer currentRating = result.get(count).getRating();
                 assertThat(currentRating).isLessThan(beforeRating);
                 beforeRating = currentRating;
             }
@@ -221,7 +221,7 @@ class ReviewQueryDSLRepositoryTest extends RepositoryTest {
             walkway = createWalkway(member);
             em.persist(member);
             em.persist(walkway);
-            for(Byte i = 1; i<=5; i++){
+            for(Integer i = 1; i<=5; i++){
                 Review review = createReview(member, walkway, i, "test");
                 reviews.add(review);
                 em.persist(review);

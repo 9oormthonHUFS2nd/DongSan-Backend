@@ -86,9 +86,11 @@ public class WalkwayController {
     @GetMapping("/{walkwayId}/bookmarks")
     public ResponseEntity<SuccessResponse<BookmarksWithMarkedWalkwayResponse>> getBookmarksWithMarkedWalkway(
             @PathVariable Long walkwayId,
+            @RequestParam(required = false) Long lastId,
+            @RequestParam(required = false, defaultValue = "10") Integer size,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {
-        return ResponseFactory.ok(bookmarkUseCase.getBookmarksWithMarkedWalkway(customOAuth2User.getMemberId(), walkwayId));
+        return ResponseFactory.ok(bookmarkUseCase.getBookmarksWithMarkedWalkway(customOAuth2User.getMemberId(), walkwayId, lastId, size));
     }
     @Operation(summary = "산책로 수정")
     @PutMapping("/{walkwayId}")
