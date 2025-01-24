@@ -26,7 +26,6 @@ import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.user.service.MemberQueryService;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
-import fixture.BookmarkFixture;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -228,8 +227,6 @@ class BookmarkUseCaseTest {
                 BookmarksWithMarkedWalkwayDTO bookmark = new BookmarksWithMarkedWalkwayDTO(1L, 1L, "test", 1L);
                 bookmarks.add(bookmark);
             }
-
-            Bookmark lastBookmark = BookmarkFixture.createBookmark(null);
 
             when(walkwayQueryService.existsByWalkwayId(walkwayId)).thenReturn(true);
             when(bookmarkQueryService.getBookmarksWithMarkedWalkway(walkwayId, memberId, null, size)).thenReturn(bookmarks);

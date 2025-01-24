@@ -62,7 +62,7 @@ class ReviewQueryServiceTest {
             List<Review> result = reviewQueryService.getReviews(limit, lastCreatedAt, memberId);
 
             // then
-            assertThat(result.size()).isEqualTo(5);
+            assertThat(result).hasSize(5);
             verify(reviewQueryDSLRepository).getUserReviews(limit, lastCreatedAt, memberId);
         }
 

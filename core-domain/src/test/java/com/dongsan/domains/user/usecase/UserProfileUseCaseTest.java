@@ -95,7 +95,7 @@ class UserProfileUseCaseTest {
                     userProfileUsecase.getUserBookmarks(userId, bookmarkId, limit);
 
             // Then
-            Assertions.assertThat(result.bookmarks().size()).isEqualTo(limit);
+            Assertions.assertThat(result.bookmarks()).hasSize(limit);
             Assertions.assertThat(result.bookmarks().get(0).title()).isEqualTo(bookmarkList.get(0).getName());
             Assertions.assertThat(result.bookmarks().get(1).title()).isEqualTo(bookmarkList.get(1).getName());
 

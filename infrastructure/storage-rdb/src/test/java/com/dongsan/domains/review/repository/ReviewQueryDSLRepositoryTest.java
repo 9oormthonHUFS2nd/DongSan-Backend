@@ -71,7 +71,7 @@ class ReviewQueryDSLRepositoryTest extends RepositoryTest {
             List<Review> result = reviewQueryDSLRepository.getUserReviews(size, lastCreateAt, memberId);
 
             // then
-            assertThat(result.size()).isEqualTo(reviews.size() + 1);
+            assertThat(result).hasSize(reviews.size() + 1);
             for(int i=0; i< result.size(); i++){
                 Review review = result.get(i);
                 // 타인이 등록한 산책로이면
@@ -94,7 +94,7 @@ class ReviewQueryDSLRepositoryTest extends RepositoryTest {
             List<Review> result = reviewQueryDSLRepository.getUserReviews(limit, lastCreateAt, memberId);
 
             // then
-            assertThat(result.size()).isEqualTo(5);
+            assertThat(result).hasSize(5);
             for(int i=1; i<result.size(); i++){
                 LocalDateTime after = result.get(i - 1).getCreatedAt();
                 LocalDateTime prev = result.get(i).getCreatedAt();
@@ -194,7 +194,6 @@ class ReviewQueryDSLRepositoryTest extends RepositoryTest {
             // Given
             Integer limit = 5;
             Long walkwayId = walkway.getId();
-            Integer rating = 5;
 
             // When
             List<Review> result = reviewQueryDSLRepository.getWalkwayReviewsRating(limit, walkwayId, null);

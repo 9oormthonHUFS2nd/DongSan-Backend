@@ -1,7 +1,6 @@
 package com.dongsan.domains.walkway.service.search.review;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 import com.dongsan.domains.review.entity.Review;

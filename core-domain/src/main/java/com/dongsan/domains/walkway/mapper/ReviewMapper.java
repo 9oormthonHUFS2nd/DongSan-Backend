@@ -13,7 +13,6 @@ import com.dongsan.domains.walkway.entity.Walkway;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ReviewMapper {
 
@@ -53,7 +52,7 @@ public class ReviewMapper {
                         .content(review.getContent())
                         .build()
                 )
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public static GetWalkwayRatingResponse toGetWalkwayRatingResponse(List<RatingCount> ratingCounts, Walkway walkway) {
