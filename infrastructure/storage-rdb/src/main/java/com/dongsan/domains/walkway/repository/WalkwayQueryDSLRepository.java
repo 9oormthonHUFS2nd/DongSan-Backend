@@ -35,7 +35,10 @@ public class WalkwayQueryDSLRepository {
                 .leftJoin(hashtagWalkway.hashtag, hashtag)
                 .leftJoin(walkway.likedWalkways, likedWalkway)
                 .on(likedWalkway.member.id.eq(userId))
-                .where(walkway.id.eq(walkwayId))
+                .where(walkway.id.eq(walkwayId),
+                        walkway.exposeLevel.eq(ExposeLevel.PUBLIC)
+                                .or(walkway.member.id.eq(userId))
+                )
                 .fetchOne();
     }
 
@@ -122,7 +125,8 @@ public class WalkwayQueryDSLRepository {
                 .from(walkway)
                 .where(
                         this.searchFilterDistance(searchWalkwayRequest),
-                        walkway.exposeLevel.eq(ExposeLevel.PUBLIC),
+                        walkway.exposeLevel.eq(ExposeLevel.PUBLIC)
+                                .or(walkway.member.id.eq(searchWalkwayRequest.userId())),
                         searchWalkwayRequest.walkway() == null
                                 ? null
                                 : walkway.likeCount.lt(searchWalkwayRequest.walkway().getLikeCount())
@@ -149,7 +153,8 @@ public class WalkwayQueryDSLRepository {
                 .from(walkway)
                 .where(
                         this.searchFilterDistance(searchWalkwayRequest),
-                        walkway.exposeLevel.eq(ExposeLevel.PUBLIC),
+                        walkway.exposeLevel.eq(ExposeLevel.PUBLIC)
+                                .or(walkway.member.id.eq(searchWalkwayRequest.userId())),
                         searchWalkwayRequest.walkway() == null
                                 ? null
                                 : walkway.rating.lt(searchWalkwayRequest.walkway().getRating())

@@ -49,10 +49,10 @@ public class WalkwayReviewUseCase {
     }
 
     @Transactional(readOnly = true)
-    public GetWalkwayReviewsResponse getWalkwayReviews(String type, Long lastId, Long walkwayId, Integer size) {
+    public GetWalkwayReviewsResponse getWalkwayReviews(String type, Long lastId, Long walkwayId, Integer size, Long memberId) {
         Walkway walkway = walkwayQueryService.getWalkway(walkwayId);
 
-        if (walkway.getExposeLevel().equals(ExposeLevel.PRIVATE)) {
+        if (walkway.getExposeLevel().equals(ExposeLevel.PRIVATE) && !walkway.getMember().getId().equals(memberId)) {
             throw new CustomException(WalkwayErrorCode.WALKWAY_PRIVATE);
         }
 
@@ -68,10 +68,10 @@ public class WalkwayReviewUseCase {
     }
 
     @Transactional(readOnly = true)
-    public GetWalkwayRatingResponse getWalkwayRating(Long walkwayId) {
+    public GetWalkwayRatingResponse getWalkwayRating(Long walkwayId, Long memberId) {
         Walkway walkway = walkwayQueryService.getWalkway(walkwayId);
 
-        if (walkway.getExposeLevel().equals(ExposeLevel.PRIVATE)) {
+        if (walkway.getExposeLevel().equals(ExposeLevel.PRIVATE) && !walkway.getMember().getId().equals(memberId)) {
             throw new CustomException(WalkwayErrorCode.WALKWAY_PRIVATE);
         }
 

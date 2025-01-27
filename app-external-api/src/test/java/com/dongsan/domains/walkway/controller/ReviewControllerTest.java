@@ -116,7 +116,7 @@ class ReviewControllerTest {
 
             GetWalkwayReviewsResponse getWalkwayReviewsResponse = ReviewMapper.toGetWalkwayReviewsResponse(reviews, size);
             when(walkwayQueryService.existsByWalkwayId(walkwayId)).thenReturn(true);
-            when(walkwayReviewUseCase.getWalkwayReviews(type, lastId, walkwayId, size))
+            when(walkwayReviewUseCase.getWalkwayReviews(type, lastId, walkwayId, size, member.getId()))
                     .thenReturn(getWalkwayReviewsResponse);
 
             // When
@@ -150,7 +150,7 @@ class ReviewControllerTest {
 
             GetWalkwayRatingResponse getWalkwayRatingResponse = ReviewMapper.toGetWalkwayRatingResponse(ratingCounts, walkway);
             when(walkwayQueryService.existsByWalkwayId(walkwayId)).thenReturn(true);
-            when(walkwayReviewUseCase.getWalkwayRating(walkwayId)).thenReturn(getWalkwayRatingResponse);
+            when(walkwayReviewUseCase.getWalkwayRating(walkwayId, member.getId())).thenReturn(getWalkwayRatingResponse);
 
             // When
             ResultActions response = mockMvc.perform(get("/walkways/1/review/rating")
