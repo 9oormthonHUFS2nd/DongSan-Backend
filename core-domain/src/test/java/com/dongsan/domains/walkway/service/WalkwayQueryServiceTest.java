@@ -16,11 +16,11 @@ import com.dongsan.domains.bookmark.repository.MarkedWalkwayQueryDSLRepository;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.walkway.dto.response.SearchWalkwayResult;
 import com.dongsan.domains.walkway.entity.Walkway;
-import com.dongsan.domains.walkway.enums.Sort;
+import com.dongsan.domains.walkway.enums.WalkwaySort;
 import com.dongsan.domains.walkway.repository.WalkwayQueryDSLRepository;
 import com.dongsan.domains.walkway.repository.WalkwayRepository;
 import com.dongsan.domains.walkway.service.factory.SearchWalkwayServiceFactory;
-import com.dongsan.domains.walkway.service.search.SearchWalkwayService;
+import com.dongsan.domains.walkway.service.search.walkway.SearchWalkwayService;
 import fixture.MarkedWalkwayFixture;
 import fixture.MemberFixture;
 import fixture.WalkwayFixture;
@@ -234,7 +234,7 @@ class WalkwayQueryServiceTest {
         @Test
         @DisplayName("검색 결과를 반환한다.")
         void it_returns_list() {
-            Sort sort = Sort.LIKED; // 테스트 대상 Sort
+            WalkwaySort sort = WalkwaySort.LIKED; // 테스트 대상 Sort
             List<SearchWalkwayResult> searchWalkwayResults = List.of(); // 예상 결과 생성
 
             when(serviceFactory.getService(sort)).thenReturn(searchWalkwayService);

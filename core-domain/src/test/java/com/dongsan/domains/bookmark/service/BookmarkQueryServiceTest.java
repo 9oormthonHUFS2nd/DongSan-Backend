@@ -19,6 +19,7 @@ import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.common.error.code.BookmarkErrorCode;
 import com.dongsan.common.error.exception.CustomException;
+import fixture.BookmarkFixture;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -62,10 +63,12 @@ class BookmarkQueryServiceTest {
                 bookmarkList.add(bookmark);
             }
 
-            when(bookmarkQueryDSLRepository.getBookmarks(bookmarkId, memberId, limit)).thenReturn(bookmarkList);
+            Bookmark lastBookmark = BookmarkFixture.createBookmarkWithId(bookmarkId, null);
+
+            when(bookmarkQueryDSLRepository.getBookmarks(lastBookmark, memberId, limit)).thenReturn(bookmarkList);
 
             // When
-            List<Bookmark> result = bookmarkQueryService.getUserBookmarks(bookmarkId, memberId, limit);
+            List<Bookmark> result = bookmarkQueryService.getUserBookmarks(lastBookmark, memberId, limit);
 
             // Then
             assertThat(result).isNotNull().hasSize(limit);
@@ -279,10 +282,12 @@ class BookmarkQueryServiceTest {
                 dto.add(new BookmarksWithMarkedWalkwayDTO(1L, 1L, "test", 1L));
             }
 
-            when(bookmarkQueryDSLRepository.getBookmarksWithMarkedWalkway(walkwayId, memberId)).thenReturn(dto);
+            Bookmark lastBookmark = BookmarkFixture.createBookmark(null);
+
+            when(bookmarkQueryDSLRepository.getBookmarksWithMarkedWalkway(walkwayId, memberId, lastBookmark, 5)).thenReturn(dto);
 
             // When
-            List<BookmarksWithMarkedWalkwayDTO> result = bookmarkQueryService.getBookmarksWithMarkedWalkway(walkwayId, memberId);
+            List<BookmarksWithMarkedWalkwayDTO> result = bookmarkQueryService.getBookmarksWithMarkedWalkway(walkwayId, memberId, lastBookmark, 5);
 
             // Then
             assertThat(result).isEqualTo(dto);

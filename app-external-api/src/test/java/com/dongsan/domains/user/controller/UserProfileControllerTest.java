@@ -101,7 +101,7 @@ class UserProfileControllerTest {
                 bookmarkInfoList.add(bookmarkInfo);
             }
 
-            GetBookmarksResponse getBookmarksResponse = new GetBookmarksResponse(bookmarkInfoList);
+            GetBookmarksResponse getBookmarksResponse = new GetBookmarksResponse(bookmarkInfoList, true);
 
             Integer limit = 2;
             Long userId = member.getId();
@@ -112,7 +112,7 @@ class UserProfileControllerTest {
             // When
             ResultActions response = mockMvc.perform(get("/users/bookmarks/title")
                     .contentType(MediaType.APPLICATION_JSON)
-                    .param("bookmarkId", "3")
+                    .param("lastId", "3")
                     .param("size", "2"));
 
 

@@ -9,7 +9,6 @@ import com.dongsan.domains.walkway.dto.response.GetWalkwayRatingResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayReviewsResponse;
 import com.dongsan.domains.walkway.usecase.WalkwayReviewUseCase;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -46,19 +45,20 @@ public class ReviewController {
     @GetMapping("/{walkwayId}/review/content")
     public ResponseEntity<SuccessResponse<GetWalkwayReviewsResponse>> getWalkwayReviews(
             @PathVariable Long walkwayId,
-            @RequestParam String type,
+            @RequestParam String sort,
             @RequestParam(required = false) Long lastId,
-            @Parameter(example = "5") @RequestParam(required = false, defaultValue = "5") Byte rating,
-            @RequestParam(required = false, defaultValue = "10") Integer size
+            @RequestParam(required = false, defaultValue = "10") Integer size,
+            @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {
-        return ResponseFactory.ok(walkwayReviewUseCase.getWalkwayReviews(type, lastId, walkwayId, rating, size));
+        return ResponseFactory.ok(walkwayReviewUseCase.getWalkwayReviews(sort, lastId, walkwayId, size, customOAuth2User.getMemberId()));
     }
 
     @Operation(summary = "리뷰 별점 보기")
     @GetMapping("/{walkwayId}/review/rating")
     public ResponseEntity<SuccessResponse<GetWalkwayRatingResponse>> getWalkwaysRating(
-            @PathVariable Long walkwayId
+            @PathVariable Long walkwayId,
+            @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {
-        return ResponseFactory.ok(walkwayReviewUseCase.getWalkwayRating(walkwayId));
+        return ResponseFactory.ok(walkwayReviewUseCase.getWalkwayRating(walkwayId, customOAuth2User.getMemberId()));
     }
 }

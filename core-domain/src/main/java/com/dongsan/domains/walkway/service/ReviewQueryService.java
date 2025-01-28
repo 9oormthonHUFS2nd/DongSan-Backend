@@ -6,6 +6,9 @@ import com.dongsan.domains.review.repository.ReviewQueryDSLRepository;
 import com.dongsan.domains.review.repository.ReviewRepository;
 import com.dongsan.common.error.code.ReviewErrorCode;
 import com.dongsan.common.error.exception.CustomException;
+import com.dongsan.domains.walkway.entity.Walkway;
+import com.dongsan.domains.walkway.enums.ReviewSort;
+import com.dongsan.domains.walkway.service.factory.GetReviewsServiceFactory;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReviewQueryService {
     private final ReviewQueryDSLRepository reviewQueryDSLRepository;
     private final ReviewRepository reviewRepository;
+    private final GetReviewsServiceFactory getReviewsServiceFactory;
 
     public Review getReview(Long reviewId){
         return reviewRepository.findById(reviewId).orElseThrow(() -> new CustomException(ReviewErrorCode.REVIEW_NOT_FOUND));
@@ -31,14 +35,6 @@ public class ReviewQueryService {
         return reviewRepository.existsById(reviewId);
     }
 
-    public List<Review> getWalkwayReviewsLatest(Integer limit, Long reviewId, Long walkwayId) {
-        return reviewQueryDSLRepository.getWalkwayReviewsLatest(limit, reviewId, walkwayId);
-    }
-
-    public List<Review> getWalkwayReviewsRating(Integer limit, Long reviewId, Long walkwayId, Byte rating) {
-        return reviewQueryDSLRepository.getWalkwayReviewsRating(limit, reviewId, walkwayId, rating);
-    }
-
     public List<RatingCount> getWalkwaysRating(Long walkwayId) {
         return reviewQueryDSLRepository.getWalkwaysRating(walkwayId);
     }
@@ -50,7 +46,7 @@ public class ReviewQueryService {
         }
     }
 
-    public Integer getWalkwayReviewCount(Long walkwayId) {
-        return reviewRepository.countByWalkwayId(walkwayId);
+    public List<Review> getWalkwayReviews(Integer size, Review review, Walkway walkway, ReviewSort sort) {
+        return getReviewsServiceFactory.getService(sort).search(size, review, walkway);
     }
 }

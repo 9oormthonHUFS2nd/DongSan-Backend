@@ -220,6 +220,7 @@ class BookmarkUseCaseTest {
             // Given
             Long memberId = 1L;
             Long walkwayId = 1L;
+            int size = 5;
             List<BookmarksWithMarkedWalkwayDTO> bookmarks = new ArrayList<>();
 
             for (int i = 0; i < 5; i++) {
@@ -228,11 +229,11 @@ class BookmarkUseCaseTest {
             }
 
             when(walkwayQueryService.existsByWalkwayId(walkwayId)).thenReturn(true);
-            when(bookmarkQueryService.getBookmarksWithMarkedWalkway(walkwayId, memberId)).thenReturn(bookmarks);
+            when(bookmarkQueryService.getBookmarksWithMarkedWalkway(walkwayId, memberId, null, size)).thenReturn(bookmarks);
 
             // When
-            BookmarksWithMarkedWalkwayResponse result = bookmarkUseCase.getBookmarksWithMarkedWalkway(memberId,
-                    walkwayId);
+            BookmarksWithMarkedWalkwayResponse result
+                    = bookmarkUseCase.getBookmarksWithMarkedWalkway(memberId, walkwayId, null, size);
 
             // Then
             assertThat(result.bookmarks()).hasSize(bookmarks.size());

@@ -35,7 +35,10 @@ public class WalkwayQueryDSLRepository {
                 .leftJoin(hashtagWalkway.hashtag, hashtag)
                 .leftJoin(walkway.likedWalkways, likedWalkway)
                 .on(likedWalkway.member.id.eq(userId))
-                .where(walkway.id.eq(walkwayId))
+                .where(walkway.id.eq(walkwayId),
+                        walkway.exposeLevel.eq(ExposeLevel.PUBLIC)
+                                .or(walkway.member.id.eq(userId))
+                )
                 .fetchOne();
     }
 
@@ -65,14 +68,6 @@ public class WalkwayQueryDSLRepository {
      */
     private BooleanExpression createdAtLt(LocalDateTime createdAt) {
         return createdAt != null ? walkway.createdAt.lt(createdAt) : null;
-    }
-
-    private BooleanExpression ratingEqLt(Double rating) {
-        return rating == null ? null : walkway.rating.loe(rating);
-    }
-
-    private BooleanExpression likeCountEqLt(Integer likeCount) {
-        return likeCount == null ? null : walkway.likeCount.loe(likeCount);
     }
 
     // 검색 산책로 시작지점 거리 계산
@@ -130,11 +125,14 @@ public class WalkwayQueryDSLRepository {
                 .from(walkway)
                 .where(
                         this.searchFilterDistance(searchWalkwayRequest),
-                        walkway.exposeLevel.eq(ExposeLevel.PUBLIC),
+                        walkway.exposeLevel.eq(ExposeLevel.PUBLIC)
+                                .or(walkway.member.id.eq(searchWalkwayRequest.userId())),
                         searchWalkwayRequest.walkway() == null
                                 ? null
-                                : likeCountEqLt(searchWalkwayRequest.walkway().getLikeCount())
-                                        .and(createdAtLt(searchWalkwayRequest.walkway().getCreatedAt()))
+                                : walkway.likeCount.lt(searchWalkwayRequest.walkway().getLikeCount())
+                                                .or(walkway.likeCount.eq(searchWalkwayRequest.walkway().getLikeCount())
+                                                        .and(createdAtLt(searchWalkwayRequest.walkway().getCreatedAt()))
+                                                )
                 )
                 .limit(searchWalkwayRequest.size())
                 .orderBy(walkway.likeCount.desc(), walkway.createdAt.desc())
@@ -155,11 +153,14 @@ public class WalkwayQueryDSLRepository {
                 .from(walkway)
                 .where(
                         this.searchFilterDistance(searchWalkwayRequest),
-                        walkway.exposeLevel.eq(ExposeLevel.PUBLIC),
+                        walkway.exposeLevel.eq(ExposeLevel.PUBLIC)
+                                .or(walkway.member.id.eq(searchWalkwayRequest.userId())),
                         searchWalkwayRequest.walkway() == null
                                 ? null
-                                : ratingEqLt(searchWalkwayRequest.walkway().getRating())
-                                        .and(createdAtLt(searchWalkwayRequest.walkway().getCreatedAt()))
+                                : walkway.rating.lt(searchWalkwayRequest.walkway().getRating())
+                                                .or(walkway.rating.eq(searchWalkwayRequest.walkway().getRating())
+                                                        .and(createdAtLt(searchWalkwayRequest.walkway().getCreatedAt()))
+                                                )
                 )
                 .limit(searchWalkwayRequest.size())
                 .orderBy(walkway.rating.desc(), walkway.createdAt.desc())

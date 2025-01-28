@@ -12,9 +12,10 @@ public class UserBookmarkMapper {
     /**
      * List Bookmark -> GetBookmarkResponse
      */
-    public static GetBookmarksResponse toGetBookmarksResponse(List<Bookmark> bookmarkList) {
+    public static GetBookmarksResponse toGetBookmarksResponse(List<Bookmark> bookmarkList, Integer size) {
         return GetBookmarksResponse.builder()
                 .bookmarks(toBookmarkInfo(bookmarkList))
+                .hasNext(bookmarkList.size() == size)
                 .build();
     }
 

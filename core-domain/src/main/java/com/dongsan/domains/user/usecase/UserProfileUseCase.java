@@ -30,11 +30,15 @@ public class UserProfileUseCase {
 
 
     @Transactional(readOnly = true)
-    public GetBookmarksResponse getUserBookmarks(Long userId, Long bookmarkId, Integer limit) {
+    public GetBookmarksResponse getUserBookmarks(Long userId, Long bookmarkId, Integer size) {
+        Bookmark bookmark = null;
+        if (bookmarkId != null) {
+            bookmark = bookmarkQueryService.getBookmark(bookmarkId);
+        }
 
-        List<Bookmark> bookmarkList = bookmarkQueryService.getUserBookmarks(bookmarkId, userId, limit);
+        List<Bookmark> bookmarkList = bookmarkQueryService.getUserBookmarks(bookmark, userId, size);
 
-        return UserBookmarkMapper.toGetBookmarksResponse(bookmarkList);
+        return UserBookmarkMapper.toGetBookmarksResponse(bookmarkList, size);
     }
 
 }

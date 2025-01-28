@@ -56,19 +56,18 @@ class BookmarkQueryDSLRepositoryTest extends RepositoryTest {
         void it_returns_after_bookmarkId_bookmarks() {
             // Given
             Integer limit = 3;
-            Long bookmarkId = bookmarkList.get(5).getId();
+            Bookmark lastBookmark = bookmarkList.get(5);
             Long memberId = member1.getId();
 
             // When
-            List<Bookmark> result = bookmarkQueryDSLRepository.getBookmarks(bookmarkId, memberId, limit);
+            List<Bookmark> result = bookmarkQueryDSLRepository.getBookmarks(lastBookmark, memberId, limit);
 
             // Then
             assertThat(result).hasSize(limit);
-            for(int i = 0; i < limit; i++) {
-                assertThat(result.get(i).getId()).isLessThan(bookmarkId);
-                if (i < limit - 1) {
-                    assertThat(result.get(i).getId()).isGreaterThan(result.get(i + 1).getId());
-                }
+            Bookmark beforeBookmark = lastBookmark;
+            for(int i = 1; i < limit; i++) {
+                assertThat(result.get(i).getId()).isLessThan(beforeBookmark.getId());
+                beforeBookmark = result.get(i);
             }
         }
 
@@ -77,11 +76,10 @@ class BookmarkQueryDSLRepositoryTest extends RepositoryTest {
         void it_returns_first_page_bookmarks() {
             // Given
             Integer limit = 3;
-            Long bookmarkId = null;
             Long memberId = member1.getId();
 
             // When
-            List<Bookmark> result = bookmarkQueryDSLRepository.getBookmarks(bookmarkId, memberId, limit);
+            List<Bookmark> result = bookmarkQueryDSLRepository.getBookmarks(null, memberId, limit);
 
             // Then
             assertThat(result).hasSize(limit);
@@ -97,11 +95,10 @@ class BookmarkQueryDSLRepositoryTest extends RepositoryTest {
         void it_returns_empty_list() {
             // Given
             Integer limit = 3;
-            Long bookmarkId = null;
             Long memberId = member2.getId();
 
             // When
-            List<Bookmark> result = bookmarkQueryDSLRepository.getBookmarks(bookmarkId, memberId, limit);
+            List<Bookmark> result = bookmarkQueryDSLRepository.getBookmarks(null, memberId, limit);
 
             // Then
             assertThat(result).isEmpty();
@@ -138,9 +135,10 @@ class BookmarkQueryDSLRepositoryTest extends RepositoryTest {
             // Given
             Long memberId = member.getId();
             Long walkwayId = walkway.getId();
+            Integer size = 10;
 
             // When
-            List<BookmarksWithMarkedWalkwayDTO> result = bookmarkQueryDSLRepository.getBookmarksWithMarkedWalkway(walkwayId, memberId);
+            List<BookmarksWithMarkedWalkwayDTO> result = bookmarkQueryDSLRepository.getBookmarksWithMarkedWalkway(walkwayId, memberId, null, size);
 
             // Then
             assertThat(result).hasSize(10);

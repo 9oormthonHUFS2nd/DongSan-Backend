@@ -7,7 +7,8 @@ import java.util.List;
 
 @Builder
 public record GetBookmarksResponse(
-        List<BookmarkInfo> bookmarks
+        List<BookmarkInfo> bookmarks,
+        Boolean hasNext
 ) {
     @Builder
     public record BookmarkInfo(

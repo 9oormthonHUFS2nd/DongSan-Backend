@@ -87,12 +87,18 @@ public class BookmarkUseCase {
     }
 
     @Transactional(readOnly = true)
-    public BookmarksWithMarkedWalkwayResponse getBookmarksWithMarkedWalkway(Long memberId, Long walkwayId) {
+    public BookmarksWithMarkedWalkwayResponse getBookmarksWithMarkedWalkway(Long memberId, Long walkwayId, Long lastId, Integer size) {
         if (!walkwayQueryService.existsByWalkwayId(walkwayId)) {
             throw new CustomException(WalkwayErrorCode.WALKWAY_NOT_FOUND);
         }
-        List<BookmarksWithMarkedWalkwayDTO> bookmarks = bookmarkQueryService.getBookmarksWithMarkedWalkway(walkwayId, memberId);
-        return BookmarksWithMarkedWalkwayMapper.toBookmarksWithMarkedWalkwayResponse(bookmarks);
+
+        Bookmark bookmark = null;
+        if (lastId != null) {
+            bookmark = bookmarkQueryService.getBookmark(lastId);
+        }
+
+        List<BookmarksWithMarkedWalkwayDTO> bookmarks = bookmarkQueryService.getBookmarksWithMarkedWalkway(walkwayId, memberId, bookmark, size);
+        return BookmarksWithMarkedWalkwayMapper.toBookmarksWithMarkedWalkwayResponse(bookmarks, size);
     }
 
     @Transactional

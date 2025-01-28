@@ -1,8 +1,8 @@
-package com.dongsan.domains.walkway.service.search;
+package com.dongsan.domains.walkway.service.search.walkway;
 
 import com.dongsan.domains.walkway.dto.request.SearchWalkwayQuery;
 import com.dongsan.domains.walkway.dto.response.SearchWalkwayResult;
-import com.dongsan.domains.walkway.enums.Sort;
+import com.dongsan.domains.walkway.enums.WalkwaySort;
 import com.dongsan.domains.walkway.repository.WalkwayQueryDSLRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -11,18 +11,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class SearchLikedWalkwayService implements SearchWalkwayService {
-
+public class SearchRatingWalkwayService implements SearchWalkwayService {
     private final WalkwayQueryDSLRepository walkwayQueryDSLRepository;
-
     @Override
-    public Sort getSortType() {
-        return Sort.LIKED;
+    public WalkwaySort getSortType() {
+        return WalkwaySort.RATING;
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<SearchWalkwayResult> search(SearchWalkwayQuery searchWalkwayRequest) {
-        return walkwayQueryDSLRepository.searchWalkwaysLiked(searchWalkwayRequest);
+        return walkwayQueryDSLRepository.searchWalkwaysRating(searchWalkwayRequest);
     }
 }

@@ -5,7 +5,8 @@ import lombok.Builder;
 
 @Builder
 public record BookmarksWithMarkedWalkwayResponse(
-    List<BookmarkWithMarkedWalkway> bookmarks
+    List<BookmarkWithMarkedWalkway> bookmarks,
+    Boolean hasNext
 ) {
     @Builder
     public record BookmarkWithMarkedWalkway (

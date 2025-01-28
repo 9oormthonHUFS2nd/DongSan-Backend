@@ -15,6 +15,7 @@ import com.dongsan.domains.walkway.dto.response.CreateReviewResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayRatingResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayReviewsResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
+import com.dongsan.domains.walkway.enums.ReviewSort;
 import com.dongsan.domains.walkway.service.ReviewCommandService;
 import com.dongsan.domains.walkway.service.ReviewQueryService;
 import com.dongsan.domains.walkway.service.WalkwayCommandService;
@@ -58,7 +59,7 @@ class WalkwayReviewUseCaseTest {
             Long memberId = 1L;
             Long walkwayId = 1L;
             Long reviewId = 1L;
-            Byte rating = 5;
+            Integer rating = 5;
             CreateReviewRequest createReviewRequest = new CreateReviewRequest(rating, "test content");
 
             Member member = MemberFixture.createMemberWithId(memberId);
@@ -86,21 +87,21 @@ class WalkwayReviewUseCaseTest {
             // Given
             Integer size = 5;
             Long walkwayId = 1L;
-            Byte rating = 5;
             String type = "rating";
             Member member = MemberFixture.createMember();
             Walkway walkway = WalkwayFixture.createWalkway(member);
+            ReviewSort sort = ReviewSort.RATING;
 
             List<Review> reviews = new ArrayList<>();
             for (int i = 0; i < 5; i++) {
                 reviews.add(ReviewFixture.createReviewWithId(1L, member, walkway));
             }
 
-            when(walkwayQueryService.existsByWalkwayId(walkwayId)).thenReturn(true);
-            when(reviewQueryService.getWalkwayReviewsRating(size, null, walkwayId, rating)).thenReturn(reviews);
+            when(walkwayQueryService.getWalkway(walkwayId)).thenReturn(walkway);
+            when(reviewQueryService.getWalkwayReviews(size, null, walkway, sort)).thenReturn(reviews);
 
             // When
-            GetWalkwayReviewsResponse result = walkwayReviewUseCase.getWalkwayReviews(type, null, walkwayId, rating, size);
+            GetWalkwayReviewsResponse result = walkwayReviewUseCase.getWalkwayReviews(type, null, walkwayId, size, member.getId());
 
             // Then
             assertThat(result.reviews()).hasSize(size);
@@ -112,21 +113,21 @@ class WalkwayReviewUseCaseTest {
             // Given
             Integer size = 5;
             Long walkwayId = 1L;
-            Byte rating = 5;
             String type = "latest";
             Member member = MemberFixture.createMember();
             Walkway walkway = WalkwayFixture.createWalkway(member);
+            ReviewSort sort = ReviewSort.LATEST;
 
             List<Review> reviews = new ArrayList<>();
             for (int i = 0; i < 5; i++) {
                 reviews.add(ReviewFixture.createReviewWithId(1L, member, walkway));
             }
 
-            when(walkwayQueryService.existsByWalkwayId(walkwayId)).thenReturn(true);
-            when(reviewQueryService.getWalkwayReviewsLatest(size, null, walkwayId)).thenReturn(reviews);
+            when(walkwayQueryService.getWalkway(walkwayId)).thenReturn(walkway);
+            when(reviewQueryService.getWalkwayReviews(size, null, walkway, sort)).thenReturn(reviews);
 
             // When
-            GetWalkwayReviewsResponse result = walkwayReviewUseCase.getWalkwayReviews(type, null, walkwayId, rating, size);
+            GetWalkwayReviewsResponse result = walkwayReviewUseCase.getWalkwayReviews(type, null, walkwayId, size, member.getId());
 
             // Then
             assertThat(result.reviews()).hasSize(size);
@@ -138,11 +139,15 @@ class WalkwayReviewUseCaseTest {
             // Given
             Integer size = 5;
             Long walkwayId = 1L;
-            Byte rating = 5;
             String type = "크아아아ㅏ아아아악";
+            Member member = MemberFixture.createMember();
+
+            Walkway walkway = WalkwayFixture.createWalkwayWithId(walkwayId, null);
+
+            when(walkwayQueryService.getWalkway(walkwayId)).thenReturn(walkway);
 
             // When & Then
-            assertThatThrownBy(() -> walkwayReviewUseCase.getWalkwayReviews(type, null, walkwayId, rating, size))
+            assertThatThrownBy(() -> walkwayReviewUseCase.getWalkwayReviews(type, null, walkwayId, size, member.getId()))
                     .isInstanceOf(CustomException.class);
         }
     }
@@ -155,9 +160,10 @@ class WalkwayReviewUseCaseTest {
         void it_returns_walkway_rating_info() {
             // Given
             Walkway walkway = WalkwayFixture.createWalkway(null);
+            Member member = MemberFixture.createMember();
 
             List<RatingCount> ratingCounts = new ArrayList<>();
-            for(Byte i = 1; i <= 5; i++) {
+            for(Integer i = 1; i <= 5; i++) {
                 ratingCounts.add(new RatingCount(i, 10L));
             }
 
@@ -165,7 +171,7 @@ class WalkwayReviewUseCaseTest {
             when(reviewQueryService.getWalkwaysRating(walkway.getId())).thenReturn(ratingCounts);
 
             // When
-            GetWalkwayRatingResponse result = walkwayReviewUseCase.getWalkwayRating(walkway.getId());
+            GetWalkwayRatingResponse result = walkwayReviewUseCase.getWalkwayRating(walkway.getId(), member.getId());
 
             // Then
             assertThat(result.five()).isEqualTo(20L);
@@ -180,6 +186,7 @@ class WalkwayReviewUseCaseTest {
         void it_returns_walkway_rating_empty_info() {
             // Given
             Walkway walkway = WalkwayFixture.createWalkway(null);
+            Member member = MemberFixture.createMember();
 
             List<RatingCount> ratingCounts = new ArrayList<>();
 
@@ -187,7 +194,7 @@ class WalkwayReviewUseCaseTest {
             when(reviewQueryService.getWalkwaysRating(walkway.getId())).thenReturn(ratingCounts);
 
             // When
-            GetWalkwayRatingResponse result = walkwayReviewUseCase.getWalkwayRating(walkway.getId());
+            GetWalkwayRatingResponse result = walkwayReviewUseCase.getWalkwayRating(walkway.getId(), member.getId());
 
             // Then
             assertThat(result.five()).isZero();

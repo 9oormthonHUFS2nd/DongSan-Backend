@@ -1,7 +1,7 @@
 package com.dongsan.domains.walkway.service.factory;
 
-import com.dongsan.domains.walkway.enums.Sort;
-import com.dongsan.domains.walkway.service.search.SearchWalkwayService;
+import com.dongsan.domains.walkway.enums.WalkwaySort;
+import com.dongsan.domains.walkway.service.search.walkway.SearchWalkwayService;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SearchWalkwayServiceFactory {
-    private final Map<Sort, SearchWalkwayService> walkwaySearchServiceMap = new EnumMap<>(Sort.class);
+    private final Map<WalkwaySort, SearchWalkwayService> walkwaySearchServiceMap = new EnumMap<>(WalkwaySort.class);
 
     public SearchWalkwayServiceFactory(List<SearchWalkwayService> walkwaySearchServices) {
         for (SearchWalkwayService walkwaySearchService : walkwaySearchServices) {
@@ -17,7 +17,7 @@ public class SearchWalkwayServiceFactory {
         }
     }
 
-    public SearchWalkwayService getService(Sort sort) {
+    public SearchWalkwayService getService(WalkwaySort sort) {
         return walkwaySearchServiceMap.get(sort);
     }
 }
