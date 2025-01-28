@@ -1,5 +1,6 @@
 package com.dongsan.domains.walkway.dto.response;
 
+import com.dongsan.domains.walkway.dto.WalkwayCoordinate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public record SearchWalkwayResponse(
             Integer reviewCount,
             Double rating,
             String courseImageUrl,
-            List<Double> location,
+            WalkwayCoordinate location,
             String registerDate
     ) {
         public Walkway(SearchWalkwayResult walkway) {
@@ -42,7 +43,7 @@ public record SearchWalkwayResponse(
                     walkway.reviewCount(),
                     walkway.rating(),
                     walkway.courseImageUrl(),
-                    List.of(walkway.startLocation().getX(), walkway.startLocation().getY()),
+                    new WalkwayCoordinate(walkway.startLocation().getY(), walkway.startLocation().getX()),
                     walkway.createdAt().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))
             );
         }

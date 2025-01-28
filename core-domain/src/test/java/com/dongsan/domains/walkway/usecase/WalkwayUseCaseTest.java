@@ -11,6 +11,7 @@ import com.dongsan.domains.image.entity.Image;
 import com.dongsan.domains.image.service.ImageQueryService;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.user.service.MemberQueryService;
+import com.dongsan.domains.walkway.dto.WalkwayCoordinate;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.request.SearchWalkwayQuery;
 import com.dongsan.domains.walkway.dto.request.UpdateWalkwayRequest;
@@ -70,9 +71,9 @@ class WalkwayUseCaseTest {
             Long imageId = 1L;
             Image image = ImageFixture.createImage();
             Member member = MemberFixture.createMemberWithId(memberId);
-            List<List<Double>> course = new ArrayList<>();
+            List<WalkwayCoordinate> course = new ArrayList<>();
             for (int i = 0; i < 5; i++) {
-                course.add(List.of(0.0, 0.0));
+                course.add(new WalkwayCoordinate(0.0, 0.0));
             }
             CreateWalkwayRequest createWalkwayRequest = new CreateWalkwayRequest(
                     imageId,

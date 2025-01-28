@@ -1,5 +1,6 @@
 package com.dongsan.domains.walkway.mapper;
 
+import com.dongsan.domains.walkway.dto.WalkwayCoordinate;
 import java.util.ArrayList;
 import java.util.List;
 import org.locationtech.jts.geom.Coordinate;
@@ -9,25 +10,22 @@ import org.locationtech.jts.geom.LineString;
 public class LineStringMapper {
     private LineStringMapper(){}
 
-    public static List<List<Double>> toList(LineString lineString) {
-        List<List<Double>> coordinatesList = new ArrayList<>();
-
+    public static List<WalkwayCoordinate> toList(LineString lineString) {
+        List<WalkwayCoordinate> course = new ArrayList<>();
         for (Coordinate coordinate : lineString.getCoordinates()) {
-            List<Double> point = List.of(coordinate.getX(), coordinate.getY());
-            coordinatesList.add(point);
+            WalkwayCoordinate point = new WalkwayCoordinate(coordinate.getY(), coordinate.getX());
+            course.add(point);
         }
-
-        return coordinatesList;
+        return course;
     }
 
-    public static LineString toLineString(List<List<Double>> course) {
-        // 경로
+    public static LineString toLineString(List<WalkwayCoordinate> course) {
         GeometryFactory geometryFactory = new GeometryFactory();
         Coordinate[] coordinateList = new Coordinate[course.size()];
 
         for(int i = 0; i < course.size(); i++) {
-            List<Double> point = course.get(i);
-            coordinateList[i] = new Coordinate(point.get(0), point.get(1));
+            WalkwayCoordinate point = course.get(i);
+            coordinateList[i] = new Coordinate(point.longitude(), point.latitude());
         }
 
         return geometryFactory.createLineString(coordinateList);

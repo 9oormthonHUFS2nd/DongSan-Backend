@@ -1,5 +1,6 @@
 package com.dongsan.domains.walkway.dto.request;
 
+import com.dongsan.domains.walkway.dto.WalkwayCoordinate;
 import com.dongsan.domains.walkway.enums.ExposeLevel;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -16,6 +17,6 @@ public record CreateWalkwayRequest(
         @NotNull
         List<String> hashtags,
         ExposeLevel exposeLevel,
-        List<List<Double>> course
+        List<WalkwayCoordinate> course
 ) {
 }

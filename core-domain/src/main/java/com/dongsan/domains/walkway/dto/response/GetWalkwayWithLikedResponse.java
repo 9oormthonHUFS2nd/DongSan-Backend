@@ -2,6 +2,7 @@ package com.dongsan.domains.walkway.dto.response;
 
 import static com.dongsan.domains.walkway.mapper.LineStringMapper.toList;
 
+import com.dongsan.domains.walkway.dto.WalkwayCoordinate;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.enums.ExposeLevel;
 import java.time.format.DateTimeFormatter;
@@ -19,7 +20,7 @@ public record GetWalkwayWithLikedResponse(
         Integer reviewCount,
         List<String> hashtags,
         ExposeLevel accessLevel,
-        List<List<Double>> course
+        List<WalkwayCoordinate> course
 ) {
     public GetWalkwayWithLikedResponse(Walkway walkway) {
         this (
