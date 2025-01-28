@@ -4,6 +4,7 @@ dependencies {
     implementation project(":infrastructure:storage-rdb")  // 삭제 예정
     testImplementation(testFixtures(project(":infrastructure:storage-rdb"))) // 삭제 예정
     implementation project(':infrastructure:storage-file')  // 삭제 예정
+    implementation project(":infrastructure:storage-cache")  // 삭제 예정
 
     // spring boot web
     implementation 'org.springframework.boot:spring-boot-starter-web'

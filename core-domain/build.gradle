@@ -1,5 +1,6 @@
 dependencies {
     implementation project(":infrastructure:storage-rdb") // 수정 예정
+    implementation project(":infrastructure:storage-cache") // 수정 예정
     testImplementation(testFixtures(project(":infrastructure:storage-rdb")))  // 수정 예정
 
     // validation
