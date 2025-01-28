@@ -7,7 +7,6 @@ import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.enums.ExposeLevel;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public record GetWalkwayWithLikedResponse(
         String date,
@@ -34,7 +33,7 @@ public record GetWalkwayWithLikedResponse(
                 walkway.getReviewCount(),
                 walkway.getHashtagWalkways().stream()
                         .map(hashtagWalkway -> "#" + hashtagWalkway.getHashtag().getName())
-                        .collect(Collectors.toList()),
+                        .toList(),
                 walkway.getExposeLevel(),
                 toList(walkway.getCourse())
         );
