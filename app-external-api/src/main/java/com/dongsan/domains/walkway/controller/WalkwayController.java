@@ -8,15 +8,18 @@ import com.dongsan.domains.bookmark.usecase.BookmarkUseCase;
 import com.dongsan.domains.image.entity.Image;
 import com.dongsan.domains.image.usecase.ImageUseCase;
 import com.dongsan.domains.image.usecase.S3UseCase;
+import com.dongsan.domains.walkway.dto.request.CreateWalkwayHistoryRequest;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.request.UpdateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.response.CreateWalkwayCourseImageRequest;
+import com.dongsan.domains.walkway.dto.response.CreateWalkwayHistoryResponse;
 import com.dongsan.domains.walkway.dto.response.CreateWalkwayResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayWithLikedResponse;
 import com.dongsan.domains.walkway.dto.response.SearchWalkwayResponse;
 import com.dongsan.domains.walkway.dto.response.SearchWalkwayResult;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.usecase.HashtagUseCase;
+import com.dongsan.domains.walkway.usecase.WalkwayHistoryUseCase;
 import com.dongsan.domains.walkway.usecase.WalkwayUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -49,6 +52,7 @@ public class WalkwayController {
     private final HashtagUseCase hashtagUseCase;
     private final S3UseCase s3UseCase;
     private final ImageUseCase imageUseCase;
+    private final WalkwayHistoryUseCase walkwayHistoryUseCase;
 
     @Operation(summary = "산책로 등록")
     @PostMapping("")
@@ -118,5 +122,17 @@ public class WalkwayController {
         List<SearchWalkwayResult> searchWalkwayResults
                 = walkwayUseCase.searchWalkway(customOAuth2User.getMemberId(), sort, latitude, longitude, distance, lastId, size);
         return ResponseFactory.ok(new SearchWalkwayResponse(searchWalkwayResults, size));
+    }
+
+    @Operation(summary = "산책로 이용 기록")
+    @PostMapping("/{walkwayId}/history")
+    public ResponseEntity<SuccessResponse<CreateWalkwayHistoryResponse>> createHistory(
+            @PathVariable Long walkwayId,
+            @Validated @RequestBody CreateWalkwayHistoryRequest createWalkwayHistoryRequest,
+            @AuthenticationPrincipal CustomOAuth2User customOAuth2User
+    ) {
+        Long walkwayHistoryId
+                = walkwayHistoryUseCase.createWalkwayHistory(customOAuth2User.getMemberId(), walkwayId, createWalkwayHistoryRequest);
+        return ResponseFactory.created(new CreateWalkwayHistoryResponse(walkwayHistoryId));
     }
 }
