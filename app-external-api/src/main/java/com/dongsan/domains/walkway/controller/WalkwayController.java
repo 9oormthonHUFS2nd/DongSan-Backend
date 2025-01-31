@@ -79,7 +79,8 @@ public class WalkwayController {
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {
         Walkway walkway = walkwayUseCase.getWalkwayWithLiked(walkwayId, customOAuth2User.getMemberId());
-        return ResponseFactory.ok(new GetWalkwayWithLikedResponse(walkway));
+        boolean isMarked = walkwayUseCase.isMarkedWalkway(walkwayId, customOAuth2User.getMemberId());
+        return ResponseFactory.ok(new GetWalkwayWithLikedResponse(walkway, isMarked));
     }
 
     @Operation(summary = "북마크 목록 보기(산책로 마크 여부 포함)")

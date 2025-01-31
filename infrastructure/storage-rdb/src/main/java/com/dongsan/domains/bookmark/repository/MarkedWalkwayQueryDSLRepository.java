@@ -38,4 +38,14 @@ public class MarkedWalkwayQueryDSLRepository {
         return lastCreatedAt != null ? markedWalkway.createdAt.lt(lastCreatedAt) : null;
     }
 
+    public boolean existsMarkedWalkwayByMemberAndWalkway(Long walkwayId, Long memberId) {
+        return queryFactory
+                .selectOne()
+                .from(markedWalkway)
+                .where(
+                        markedWalkway.walkway.id.eq(walkwayId), // 직접 비교 가능
+                        markedWalkway.bookmark.member.id.eq(memberId) // 회원 ID 조건
+                )
+                .fetchFirst() != null;
+    }
 }

@@ -211,7 +211,7 @@ class WalkwayControllerTest {
             // Given
             Long walkwayId = 1L;
             Walkway walkway = WalkwayFixture.createWalkwayWithId(1L, null);
-            GetWalkwayWithLikedResponse getWalkwayWithLikedResponse = new GetWalkwayWithLikedResponse(walkway);
+            GetWalkwayWithLikedResponse getWalkwayWithLikedResponse = new GetWalkwayWithLikedResponse(walkway, true);
 
             when(walkwayUseCase.getWalkwayWithLiked(walkwayId, customOAuth2User.getMemberId()))
                     .thenReturn(walkway);

@@ -60,4 +60,8 @@ public class WalkwayQueryService {
     public List<SearchWalkwayResult> searchWalkway(SearchWalkwayQuery searchWalkwayRequest, WalkwaySort sort) {
         return searchWalkwayServiceFactory.getService(sort).search(searchWalkwayRequest);
     }
+
+    public boolean isMarkedWalkway(Long walkwayId, Long memberId) {
+        return markedWalkwayQueryDSLRepository.existsMarkedWalkwayByMemberAndWalkway(walkwayId, memberId);
+    }
 }
