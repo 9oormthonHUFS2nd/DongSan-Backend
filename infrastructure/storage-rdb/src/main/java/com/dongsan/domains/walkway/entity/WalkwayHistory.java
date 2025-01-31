@@ -48,4 +48,8 @@ public class WalkwayHistory extends BaseEntity {
         this.time = time;
         this.isReviewed = false;
     }
+
+    public void updateIsReviewed() {
+        this.isReviewed = true;
+    }
 }

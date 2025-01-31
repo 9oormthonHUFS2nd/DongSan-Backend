@@ -15,10 +15,13 @@ import com.dongsan.domains.walkway.dto.response.CreateReviewResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayRatingResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayReviewsResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
+import com.dongsan.domains.walkway.entity.WalkwayHistory;
 import com.dongsan.domains.walkway.enums.ReviewSort;
 import com.dongsan.domains.walkway.service.ReviewCommandService;
 import com.dongsan.domains.walkway.service.ReviewQueryService;
 import com.dongsan.domains.walkway.service.WalkwayCommandService;
+import com.dongsan.domains.walkway.service.WalkwayHistoryCommandService;
+import com.dongsan.domains.walkway.service.WalkwayHistoryQueryService;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
 import fixture.MemberFixture;
 import fixture.ReviewFixture;
@@ -46,6 +49,10 @@ class WalkwayReviewUseCaseTest {
     ReviewQueryService reviewQueryService;
     @Mock
     WalkwayCommandService walkwayCommandService;
+    @Mock
+    WalkwayHistoryQueryService walkwayHistoryQueryService;
+    @Mock
+    WalkwayHistoryCommandService walkwayHistoryCommandService;
     @InjectMocks
     WalkwayReviewUseCase walkwayReviewUseCase;
 
@@ -65,9 +72,16 @@ class WalkwayReviewUseCaseTest {
             Member member = MemberFixture.createMemberWithId(memberId);
             Walkway walkway = WalkwayFixture.createWalkwayWithId(walkwayId, member);
             Review review = ReviewFixture.createReviewWithId(reviewId, member, walkway);
+            WalkwayHistory walkwayHistory = WalkwayHistory.builder()
+                    .walkway(walkway)
+                    .member(member)
+                    .time(10)
+                    .distance(10.0)
+                    .build();
 
             when(memberQueryService.getMember(member.getId())).thenReturn(member);
             when(walkwayQueryService.getWalkway(walkway.getId())).thenReturn(walkway);
+            when(walkwayHistoryQueryService.findByWalkwayAndMember(walkwayId, memberId)).thenReturn(walkwayHistory);
             when(reviewCommandService.createReview(any())).thenReturn(review);
 
             // When

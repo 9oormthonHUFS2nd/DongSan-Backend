@@ -2,6 +2,7 @@ package com.dongsan.domains.walkway.usecase;
 
 import com.dongsan.common.annotation.UseCase;
 import com.dongsan.common.error.code.WalkwayErrorCode;
+import com.dongsan.common.error.code.WalkwayHistoryErrorCode;
 import com.dongsan.common.error.exception.CustomException;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.review.dto.RatingCount;
@@ -12,12 +13,15 @@ import com.dongsan.domains.walkway.dto.response.CreateReviewResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayRatingResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayReviewsResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
+import com.dongsan.domains.walkway.entity.WalkwayHistory;
 import com.dongsan.domains.walkway.enums.ExposeLevel;
 import com.dongsan.domains.walkway.enums.ReviewSort;
 import com.dongsan.domains.walkway.mapper.ReviewMapper;
 import com.dongsan.domains.walkway.service.ReviewCommandService;
 import com.dongsan.domains.walkway.service.ReviewQueryService;
 import com.dongsan.domains.walkway.service.WalkwayCommandService;
+import com.dongsan.domains.walkway.service.WalkwayHistoryCommandService;
+import com.dongsan.domains.walkway.service.WalkwayHistoryQueryService;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -32,11 +36,26 @@ public class WalkwayReviewUseCase {
     private final WalkwayQueryService walkwayQueryService;
     private final ReviewQueryService reviewQueryService;
     private final WalkwayCommandService walkwayCommandService;
+    private final WalkwayHistoryQueryService walkwayHistoryQueryService;
+    private final WalkwayHistoryCommandService walkwayHistoryCommandService;
 
     @Transactional
     public CreateReviewResponse createReview(Long memberId, Long walkwayId, CreateReviewRequest createReviewRequest) {
         Member member = memberQueryService.getMember(memberId);
         Walkway walkway = walkwayQueryService.getWalkway(walkwayId);
+
+        WalkwayHistory walkwayHistory = walkwayHistoryQueryService.findByWalkwayAndMember(walkwayId, memberId);
+
+        if (walkway.getDistance() * 2/3 > walkwayHistory.getDistance()) {
+            throw new CustomException(WalkwayHistoryErrorCode.NOT_ENOUGH_DISTANCE);
+        }
+
+        if(walkwayHistory.getIsReviewed()) {
+            throw new CustomException(WalkwayHistoryErrorCode.ALREADY_REVIEWED);
+        }
+
+        walkwayHistory.updateIsReviewed();
+        walkwayHistoryCommandService.createWalkwayHistory(walkwayHistory);
 
         Review review = ReviewMapper.toReview(createReviewRequest, walkway, member);
         review = reviewCommandService.createReview(review);
