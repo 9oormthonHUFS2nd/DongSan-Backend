@@ -43,8 +43,8 @@ public class MarkedWalkwayQueryDSLRepository {
                 .selectOne()
                 .from(markedWalkway)
                 .where(
-                        markedWalkway.walkway.id.eq(walkwayId), // 직접 비교 가능
-                        markedWalkway.bookmark.member.id.eq(memberId) // 회원 ID 조건
+                        markedWalkway.walkway.id.eq(walkwayId),
+                        markedWalkway.bookmark.member.id.eq(memberId)
                 )
                 .fetchFirst() != null;
     }
