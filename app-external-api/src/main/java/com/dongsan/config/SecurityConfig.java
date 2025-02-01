@@ -6,8 +6,6 @@ import com.dongsan.domains.auth.security.handler.CustomAuthenticationEntryPoint;
 import com.dongsan.domains.auth.security.oauth2.handler.CustomSuccessHandler;
 import com.dongsan.domains.auth.security.oauth2.service.CustomOAuthUserService;
 import com.dongsan.domains.auth.service.JwtService;
-import java.util.Arrays;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +20,9 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -121,7 +122,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/",
                                 "/health",
-                                "/dev/**"
+                                "/dev/**",
+                                "/auth/refresh"
                         ).permitAll()
                         // 이외 요청 모두 jwt 필터를 타도록 설정
                         .anyRequest()

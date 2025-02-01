@@ -2,6 +2,7 @@ package com.dongsan.domains.dev.controller;
 
 import com.dongsan.common.apiResponse.ResponseFactory;
 import com.dongsan.common.apiResponse.SuccessResponse;
+import com.dongsan.domains.auth.AuthService;
 import com.dongsan.domains.dev.dto.request.GenerateTokenRequest;
 import com.dongsan.domains.dev.dto.response.GenerateTokenResponse;
 import com.dongsan.domains.dev.dto.response.GetMemberInfoResponse;
@@ -10,6 +11,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotBlank;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -32,6 +35,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 public class DevController {
     private final DevUseCase devUseCase;
+    private final AuthService authService;
 
     @Operation(summary = "개발용 토큰 발급")
     @PostMapping("/token")
@@ -48,6 +52,17 @@ public class DevController {
             @RequestParam @NotBlank String accessToken
     ){
         GetMemberInfoResponse response = devUseCase.getMemberInfo(accessToken);
+        return ResponseFactory.ok(response);
+    }
+
+    @Operation(summary = "memberId로 서버에 저장된 refreshToken 확인하기")
+    @GetMapping("/token/refresh")
+    public ResponseEntity<SuccessResponse<Map<String, String>>> getRefreshToken(
+            @RequestParam @RequestBody Long memberId
+    ){
+        String refreshToken = authService.getRefreshToken(memberId);
+        Map<String, String> response = new HashMap<>();
+        response.put("refreshToken", refreshToken);
         return ResponseFactory.ok(response);
     }
 

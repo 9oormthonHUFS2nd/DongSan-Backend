@@ -38,7 +38,7 @@ dependencies {
 
 // application.yml 설정 파일 복사
 tasks.register('copyConfig', Copy){
-    from '../../Config/domain/rdb'
+    from '../../Config/storage/rdb'
     include "application*.yml"
     into 'src/main/resources'
 }
