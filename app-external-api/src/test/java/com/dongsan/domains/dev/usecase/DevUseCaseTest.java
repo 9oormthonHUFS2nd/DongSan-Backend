@@ -1,5 +1,9 @@
 package com.dongsan.domains.dev.usecase;
 
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
+
+import com.dongsan.domains.auth.AuthService;
 import com.dongsan.domains.auth.service.JwtService;
 import com.dongsan.domains.dev.dto.response.GenerateTokenResponse;
 import com.dongsan.domains.dev.dto.response.GetMemberInfoResponse;
@@ -13,7 +17,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -25,6 +28,9 @@ class DevUseCaseTest {
     MemberQueryService memberQueryService;
     @Mock
     JwtService jwtService;
+    @Mock
+    AuthService authService;
+
 
     @Nested
     @DisplayName("generateToken 메소드는")
@@ -36,8 +42,9 @@ class DevUseCaseTest {
             Long memberId = 1L;
             String accessToken = "ac_t";
             String refreshToken = "rf_t";
-            Mockito.when(jwtService.createAccessToken(memberId)).thenReturn(accessToken);
-            Mockito.when(jwtService.createRefreshToken(memberId)).thenReturn(refreshToken);
+            when(jwtService.createAccessToken(memberId)).thenReturn(accessToken);
+            when(jwtService.createRefreshToken(memberId)).thenReturn(refreshToken);
+            doNothing().when(authService).saveRefreshToken(memberId, refreshToken);
 
             // when
             GenerateTokenResponse response = devUseCase.generateToken(memberId);
@@ -57,7 +64,7 @@ class DevUseCaseTest {
             // given
             String accessToken = "ac_t";
             Member member = MemberFixture.createMemberWithId(1L);
-            Mockito.when(jwtService.getMemberFromAccessToken(accessToken)).thenReturn(member);
+            when(jwtService.getMemberFromAccessToken(accessToken)).thenReturn(member);
 
             // when
             GetMemberInfoResponse response = devUseCase.getMemberInfo(accessToken);

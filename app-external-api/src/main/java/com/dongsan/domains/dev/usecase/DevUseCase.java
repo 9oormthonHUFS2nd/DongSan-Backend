@@ -1,6 +1,7 @@
 package com.dongsan.domains.dev.usecase;
 
 import com.dongsan.common.annotation.UseCase;
+import com.dongsan.domains.auth.AuthService;
 import com.dongsan.domains.auth.service.JwtService;
 import com.dongsan.domains.dev.dto.response.GenerateTokenResponse;
 import com.dongsan.domains.dev.dto.response.GetMemberInfoResponse;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class DevUseCase {
     private final MemberQueryService memberQueryService;
+    private final AuthService authService;
     private final JwtService jwtService;
     private final S3FileService s3FileService;
 
@@ -25,6 +27,8 @@ public class DevUseCase {
         memberQueryService.getMember(memberId);
         String accessToken = jwtService.createAccessToken(memberId);
         String refreshToken = jwtService.createRefreshToken(memberId);
+        authService.saveRefreshToken(memberId, refreshToken);
+
         return DevMapper.toGenerateTokenResponse(accessToken, refreshToken);
     }
 

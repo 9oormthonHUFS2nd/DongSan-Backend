@@ -1,30 +1,26 @@
 package com.dongsan.domains.auth.service;
 
-import com.dongsan.domains.auth.enums.TokenType;
-import com.dongsan.domains.member.entity.Member;
-import com.dongsan.domains.member.repository.MemberRepository;
 import com.dongsan.common.error.code.AuthErrorCode;
 import com.dongsan.common.error.code.SystemErrorCode;
 import com.dongsan.common.error.exception.CustomException;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
+import com.dongsan.domains.auth.enums.TokenType;
+import com.dongsan.domains.member.entity.Member;
+import com.dongsan.domains.member.repository.MemberRepository;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.Jwts.SIG;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.Date;
-import javax.crypto.SecretKey;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+
+import javax.crypto.SecretKey;
+import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
@@ -79,7 +75,6 @@ public class JwtService {
                 .signWith(secretKey, SIG.HS256)
                 .compact();
     }
-
 
     public Member getMemberFromAccessToken(String accessToken){
         return getMember(accessToken, accessTokenSecretKey);
