@@ -15,12 +15,12 @@ public class WalkwayHistoryQueryService {
     private final WalkwayHistoryRepository walkwayHistoryRepository;
     private final WalkwayHistoryQueryDSLRepository walkwayHistoryQueryDSLRepository;
 
-    public WalkwayHistory findTop1ByWalkwayAndMember(Long walkwayId, Long memberId) {
-        return walkwayHistoryRepository.findTop1ByWalkwayIdAndMemberIdOrderByCreatedAtDesc(walkwayId, memberId)
-                .orElseThrow(() -> new CustomException(WalkwayHistoryErrorCode.HISTORY_NOT_FOUND));
-    }
-
     public List<WalkwayHistory> getCanReviewWalkwayHistories(Long walkwayId, Long memberId) {
         return walkwayHistoryQueryDSLRepository.getCanReviewWalkwayHistories(walkwayId, memberId);
+    }
+
+    public WalkwayHistory getById(Long walkwayHistoryId) {
+        return walkwayHistoryRepository.findById(walkwayHistoryId)
+                .orElseThrow(() -> new CustomException(WalkwayHistoryErrorCode.HISTORY_NOT_FOUND));
     }
 }

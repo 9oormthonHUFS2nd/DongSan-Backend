@@ -7,6 +7,8 @@ import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 
 public record CreateReviewRequest(
+        @NotNull
+        Long walkwayHistoryId,
         @NotNull(message = "별점을 입력해주세요.")
         @Min(1)
         @Max(5)

@@ -44,7 +44,12 @@ public class WalkwayReviewUseCase {
         Member member = memberQueryService.getMember(memberId);
         Walkway walkway = walkwayQueryService.getWalkway(walkwayId);
 
-        WalkwayHistory walkwayHistory = walkwayHistoryQueryService.findTop1ByWalkwayAndMember(walkwayId, memberId);
+        WalkwayHistory walkwayHistory
+                = walkwayHistoryQueryService.getById(createReviewRequest.walkwayHistoryId());
+
+        if (!walkwayHistory.getWalkway().equals(walkway) || !walkwayHistory.getMember().equals(member)) {
+            throw new CustomException(WalkwayHistoryErrorCode.INVALID_ACCESS);
+        }
 
         if (walkway.getDistance() * 2/3 > walkwayHistory.getDistance()) {
             throw new CustomException(WalkwayHistoryErrorCode.NOT_ENOUGH_DISTANCE);
