@@ -44,7 +44,7 @@ public class WalkwayReviewUseCase {
         Member member = memberQueryService.getMember(memberId);
         Walkway walkway = walkwayQueryService.getWalkway(walkwayId);
 
-        WalkwayHistory walkwayHistory = walkwayHistoryQueryService.findByWalkwayAndMember(walkwayId, memberId);
+        WalkwayHistory walkwayHistory = walkwayHistoryQueryService.findTop1ByWalkwayAndMember(walkwayId, memberId);
 
         if (walkway.getDistance() * 2/3 > walkwayHistory.getDistance()) {
             throw new CustomException(WalkwayHistoryErrorCode.NOT_ENOUGH_DISTANCE);

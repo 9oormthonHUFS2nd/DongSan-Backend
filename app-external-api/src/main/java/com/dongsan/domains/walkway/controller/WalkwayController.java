@@ -14,10 +14,12 @@ import com.dongsan.domains.walkway.dto.request.UpdateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.response.CreateWalkwayCourseImageRequest;
 import com.dongsan.domains.walkway.dto.response.CreateWalkwayHistoryResponse;
 import com.dongsan.domains.walkway.dto.response.CreateWalkwayResponse;
+import com.dongsan.domains.walkway.dto.response.GetWalkwayHistoriesResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayWithLikedResponse;
 import com.dongsan.domains.walkway.dto.response.SearchWalkwayResponse;
 import com.dongsan.domains.walkway.dto.response.SearchWalkwayResult;
 import com.dongsan.domains.walkway.entity.Walkway;
+import com.dongsan.domains.walkway.entity.WalkwayHistory;
 import com.dongsan.domains.walkway.usecase.HashtagUseCase;
 import com.dongsan.domains.walkway.usecase.WalkwayHistoryUseCase;
 import com.dongsan.domains.walkway.usecase.WalkwayUseCase;
@@ -134,5 +136,22 @@ public class WalkwayController {
         Long walkwayHistoryId
                 = walkwayHistoryUseCase.createWalkwayHistory(customOAuth2User.getMemberId(), walkwayId, createWalkwayHistoryRequest);
         return ResponseFactory.created(new CreateWalkwayHistoryResponse(walkwayHistoryId));
+    }
+
+    @Operation(summary = "리뷰 작성 가능한 산책로 이용 기록 보기")
+    @GetMapping("/{walkwayId}/history")
+    public ResponseEntity<SuccessResponse<List<GetWalkwayHistoriesResponse>>> getHistories(
+            @PathVariable Long walkwayId,
+            @AuthenticationPrincipal CustomOAuth2User customOAuth2User
+    ) {
+        List<WalkwayHistory> walkwayHistories
+                = walkwayHistoryUseCase.getWalkwayHistories(customOAuth2User.getMemberId(), walkwayId);
+
+        List<GetWalkwayHistoriesResponse> getWalkwayHistoriesResponses
+                = walkwayHistories.stream()
+                .map(GetWalkwayHistoriesResponse::new)
+                .toList();
+
+        return ResponseFactory.created(getWalkwayHistoriesResponses);
     }
 }

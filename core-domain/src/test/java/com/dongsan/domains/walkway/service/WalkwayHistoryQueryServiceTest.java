@@ -41,7 +41,7 @@ class WalkwayHistoryQueryServiceTest {
                     .thenReturn(Optional.of(walkwayHistory));
 
             // when
-            WalkwayHistory result = walkwayHistoryQueryService.findByWalkwayAndMember(walkwayId, memberId);
+            WalkwayHistory result = walkwayHistoryQueryService.findTop1ByWalkwayAndMember(walkwayId, memberId);
 
             // then
             assertThat(result).isEqualTo(walkwayHistory);
@@ -58,7 +58,7 @@ class WalkwayHistoryQueryServiceTest {
                     .thenReturn(Optional.empty());
 
             // when & then
-            assertThatThrownBy(() -> walkwayHistoryQueryService.findByWalkwayAndMember(walkwayId, memberId))
+            assertThatThrownBy(() -> walkwayHistoryQueryService.findTop1ByWalkwayAndMember(walkwayId, memberId))
                     .isInstanceOf(CustomException.class);
         }
     }

@@ -81,7 +81,7 @@ class WalkwayReviewUseCaseTest {
 
             when(memberQueryService.getMember(member.getId())).thenReturn(member);
             when(walkwayQueryService.getWalkway(walkway.getId())).thenReturn(walkway);
-            when(walkwayHistoryQueryService.findByWalkwayAndMember(walkwayId, memberId)).thenReturn(walkwayHistory);
+            when(walkwayHistoryQueryService.findTop1ByWalkwayAndMember(walkwayId, memberId)).thenReturn(walkwayHistory);
             when(reviewCommandService.createReview(any())).thenReturn(review);
 
             // When
