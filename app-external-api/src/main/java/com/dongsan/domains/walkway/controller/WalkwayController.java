@@ -140,18 +140,13 @@ public class WalkwayController {
 
     @Operation(summary = "리뷰 작성 가능한 산책로 이용 기록 보기")
     @GetMapping("/{walkwayId}/history")
-    public ResponseEntity<SuccessResponse<List<GetWalkwayHistoriesResponse>>> getHistories(
+    public ResponseEntity<SuccessResponse<GetWalkwayHistoriesResponse>> getHistories(
             @PathVariable Long walkwayId,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {
         List<WalkwayHistory> walkwayHistories
                 = walkwayHistoryUseCase.getWalkwayHistories(customOAuth2User.getMemberId(), walkwayId);
 
-        List<GetWalkwayHistoriesResponse> getWalkwayHistoriesResponses
-                = walkwayHistories.stream()
-                .map(GetWalkwayHistoriesResponse::new)
-                .toList();
-
-        return ResponseFactory.created(getWalkwayHistoriesResponses);
+        return ResponseFactory.ok(GetWalkwayHistoriesResponse.from(walkwayHistories));
     }
 }

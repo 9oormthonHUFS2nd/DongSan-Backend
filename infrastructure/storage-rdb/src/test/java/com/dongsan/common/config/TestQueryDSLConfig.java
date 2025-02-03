@@ -5,6 +5,7 @@ import com.dongsan.domains.bookmark.repository.MarkedWalkwayQueryDSLRepository;
 import com.dongsan.domains.hashtag.repository.HashtagDSLRepository;
 import com.dongsan.domains.review.repository.ReviewQueryDSLRepository;
 import com.dongsan.domains.walkway.repository.LikedWalkwayQueryDSLRepository;
+import com.dongsan.domains.walkway.repository.WalkwayHistoryQueryDSLRepository;
 import com.dongsan.domains.walkway.repository.WalkwayQueryDSLRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -50,5 +51,10 @@ public class TestQueryDSLConfig {
     @Bean
     public MarkedWalkwayQueryDSLRepository markedWalkwayQueryDSLRepository(JPAQueryFactory jpaQueryFactory){
         return new MarkedWalkwayQueryDSLRepository(jpaQueryFactory);
+    }
+
+    @Bean
+    public WalkwayHistoryQueryDSLRepository walkwayHistoryQueryDSLRepository(JPAQueryFactory jpaQueryFactory){
+        return new WalkwayHistoryQueryDSLRepository(jpaQueryFactory);
     }
 }

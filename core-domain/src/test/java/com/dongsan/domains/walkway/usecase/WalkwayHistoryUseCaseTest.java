@@ -11,10 +11,13 @@ import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.entity.WalkwayHistory;
 import com.dongsan.domains.walkway.mapper.WalkwayHistoryMapper;
 import com.dongsan.domains.walkway.service.WalkwayHistoryCommandService;
+import com.dongsan.domains.walkway.service.WalkwayHistoryQueryService;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
 import fixture.MemberFixture;
 import fixture.WalkwayFixture;
 import fixture.WalkwayHistoryFixture;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -37,6 +40,8 @@ class WalkwayHistoryUseCaseTest {
     MemberQueryService memberQueryService;
     @Mock
     WalkwayHistoryMapper walkwayHistoryMapper;
+    @Mock
+    WalkwayHistoryQueryService walkwayHistoryQueryService;
 
     @Nested
     @DisplayName("createWalkwayHistory 메서드는")
@@ -64,6 +69,35 @@ class WalkwayHistoryUseCaseTest {
 
             // then
             assertThat(result).isEqualTo(walkwayHistoryId);
+        }
+    }
+
+    @Nested
+    @DisplayName("getWalkwayHistories 메서드는")
+    class Describe_getWalkwayHistories {
+
+        @Test
+        @DisplayName("공개된 산책로인 경우, 리뷰 가능한 WalkwayHistory 목록을 반환한다.")
+        void it_returns_walkway_histories() {
+            // given
+            Long walkwayId = 1L;
+            Long memberId = 1L;
+            Walkway walkway = WalkwayFixture.createWalkwayWithId(walkwayId, null);
+
+            List<WalkwayHistory> histories = new ArrayList<>();
+            for (int i = 0; i < 3; i++) {
+                histories.add(WalkwayHistoryFixture.createWalkwayHistory(null, walkway));
+            }
+
+            when(walkwayQueryService.getWalkway(walkwayId)).thenReturn(walkway);
+            when(walkwayHistoryQueryService.getCanReviewWalkwayHistories(walkwayId, memberId))
+                    .thenReturn(histories);
+
+            // when
+            List<WalkwayHistory> result = walkwayHistoryUseCase.getWalkwayHistories(memberId, walkwayId);
+
+            // then
+            assertThat(result).hasSize(3);
         }
     }
 }
