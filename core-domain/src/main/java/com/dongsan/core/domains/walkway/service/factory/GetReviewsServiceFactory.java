@@ -1,7 +1,7 @@
 package com.dongsan.core.domains.walkway.service.factory;
 
 import com.dongsan.core.domains.walkway.enums.ReviewSort;
-import com.dongsan.core.domains.walkway.service.search.review.GetReviewsService;
+import com.dongsan.core.domains.review.GetReviewsService;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;

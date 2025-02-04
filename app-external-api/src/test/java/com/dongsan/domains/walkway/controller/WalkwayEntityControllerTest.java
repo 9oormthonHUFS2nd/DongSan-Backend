@@ -14,9 +14,9 @@ import com.dongsan.api.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.domains.bookmark.dto.BookmarksWithMarkedWalkwayDTO;
 import com.dongsan.domains.bookmark.controller.BookmarksWithMarkedWalkwayResponse;
 import com.dongsan.core.domains.bookmark.BookmarksWithMarkedWalkwayMapper;
-import com.dongsan.core.domains.bookmark.BookmarkUseCase;
+import com.dongsan.core.domains.bookmark.BookmarkService;
 import com.dongsan.domains.image.entity.Image;
-import com.dongsan.core.domains.image.ImageUseCase;
+import com.dongsan.core.domains.image.ImageService;
 import com.dongsan.domains.image.usecase.S3UseCase;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.walkway.controller.dto.WalkwayCoordinate;
@@ -27,10 +27,10 @@ import com.dongsan.domains.walkway.controller.dto.response.SearchWalkwayResponse
 import com.dongsan.domains.walkway.dto.response.SearchWalkwayResult;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.enums.ExposeLevel;
-import com.dongsan.core.domains.walkway.service.WalkwayQueryService;
-import com.dongsan.core.domains.walkway.usecase.HashtagUseCase;
-import com.dongsan.core.domains.walkway.usecase.LikedWalkwayUseCase;
-import com.dongsan.core.domains.walkway.usecase.WalkwayUseCase;
+import com.dongsan.core.domains.walkway.service.WalkwayReader;
+import com.dongsan.core.domains.walkway.usecase.HashtagService;
+import com.dongsan.core.domains.walkway.usecase.LikedWalkwayService;
+import com.dongsan.core.domains.walkway.usecase.WalkwayService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fixture.ImageFixture;
 import fixture.WalkwayFixture;
@@ -68,25 +68,25 @@ class WalkwayEntityControllerTest {
     ObjectMapper objectMapper;
 
     @MockBean
-    WalkwayUseCase walkwayUseCase;
+    WalkwayService walkwayUseCase;
 
     @MockBean
-    BookmarkUseCase bookmarkUseCase;
+    BookmarkService bookmarkService;
 
     @MockBean
-    WalkwayQueryService walkwayQueryService;
+    WalkwayReader walkwayQueryService;
 
     @MockBean
-    LikedWalkwayUseCase likedWalkwayUseCase;
+    LikedWalkwayService likedWalkwayUseCase;
 
     @MockBean
-    HashtagUseCase hashtagUseCase;
+    HashtagService hashtagUseCase;
 
     @MockBean
     S3UseCase s3UseCase;
 
     @MockBean
-    ImageUseCase imageUseCase;
+    ImageService imageService;
 
     final Member member = createMemberWithId(1L);
     final CustomOAuth2User customOAuth2User = new CustomOAuth2User(member);
@@ -185,7 +185,7 @@ class WalkwayEntityControllerTest {
             Image image = ImageFixture.createImageWithId(imageId, imageUrl);
 
             when(s3UseCase.uploadCourseImage(any())).thenReturn(imageUrl);
-            when(imageUseCase.createImage(imageUrl))
+            when(imageService.createImage(imageUrl))
                     .thenReturn(image);
 
             // When
@@ -247,7 +247,7 @@ class WalkwayEntityControllerTest {
                     BookmarksWithMarkedWalkwayMapper.toBookmarksWithMarkedWalkwayResponse(bookmarks, size);
 
             when(walkwayQueryService.existsByWalkwayId(walkwayId)).thenReturn(true);
-            when(bookmarkUseCase.getBookmarksWithMarkedWalkway(customOAuth2User.getMemberId(), walkwayId, null, size))
+            when(bookmarkService.getBookmarksWithMarkedWalkway(customOAuth2User.getMemberId(), walkwayId, null, size))
                     .thenReturn(bookmarksWithMarkedWalkwayResponse);
 
             // When

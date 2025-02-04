@@ -5,13 +5,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.dongsan.core.domains.walkway.usecase.LikedWalkwayUseCase;
+import com.dongsan.core.domains.walkway.usecase.LikedWalkwayService;
 import com.dongsan.domains.member.entity.Member;
-import com.dongsan.core.domains.user.MemberQueryService;
+import com.dongsan.core.domains.member.MemberReader;
 import com.dongsan.domains.walkway.entity.Walkway;
-import com.dongsan.core.domains.walkway.service.LikedWalkwayCommandService;
-import com.dongsan.core.domains.walkway.service.LikedWalkwayQueryService;
-import com.dongsan.core.domains.walkway.service.WalkwayQueryService;
+import com.dongsan.core.domains.walkway.service.LikedWalkwayWriter;
+import com.dongsan.core.domains.walkway.service.LikedWalkwayReader;
+import com.dongsan.core.domains.walkway.service.WalkwayReader;
 import fixture.MemberFixture;
 import fixture.WalkwayFixture;
 import java.util.ArrayList;
@@ -28,15 +28,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @DisplayName("LikedWalkwayUseCase Unit Test")
 class LikedWalkwayUseCaseTest {
     @Mock
-    LikedWalkwayCommandService likedWalkwayCommandService;
+    LikedWalkwayWriter likedWalkwayWriter;
     @Mock
-    MemberQueryService memberQueryService;
+    MemberReader memberReader;
     @Mock
-    WalkwayQueryService walkwayQueryService;
+    WalkwayReader walkwayQueryService;
     @Mock
-    LikedWalkwayQueryService likedWalkwayQueryService;
+    LikedWalkwayReader likedWalkwayQueryService;
     @InjectMocks
-    LikedWalkwayUseCase likedWalkwayUseCase;
+    LikedWalkwayService likedWalkwayUseCase;
 
     @Nested
     @DisplayName("createLikedWalkway 메서드는")
@@ -48,15 +48,15 @@ class LikedWalkwayUseCaseTest {
             Member member = MemberFixture.createMember();
             Walkway walkway = WalkwayFixture.createWalkway(member);
 
-            when(memberQueryService.getMember(member.getId())).thenReturn(member);
+            when(memberReader.getMember(member.getId())).thenReturn(member);
             when(walkwayQueryService.getWalkway(walkway.getId())).thenReturn(walkway);
-            when(likedWalkwayCommandService.existsLikedWalkwayByMemberAndWalkway(member, walkway)).thenReturn(false);
+            when(likedWalkwayWriter.existsLikedWalkwayByMemberAndWalkway(member, walkway)).thenReturn(false);
 
             // When
             likedWalkwayUseCase.createLikedWalkway(member.getId(), walkway.getId());
 
             // Then
-            verify(likedWalkwayCommandService).createLikedWalkway(any());
+            verify(likedWalkwayWriter).createLikedWalkway(any());
         }
     }
 
@@ -70,15 +70,15 @@ class LikedWalkwayUseCaseTest {
             Member member = MemberFixture.createMember();
             Walkway walkway = WalkwayFixture.createWalkway(member);
 
-            when(memberQueryService.getMember(member.getId())).thenReturn(member);
+            when(memberReader.getMember(member.getId())).thenReturn(member);
             when(walkwayQueryService.getWalkway(walkway.getId())).thenReturn(walkway);
-            when(likedWalkwayCommandService.existsLikedWalkwayByMemberAndWalkway(member, walkway)).thenReturn(true);
+            when(likedWalkwayWriter.existsLikedWalkwayByMemberAndWalkway(member, walkway)).thenReturn(true);
 
             // When
             likedWalkwayUseCase.deleteLikedWalkway(member.getId(), walkway.getId());
 
             // Then
-            verify(likedWalkwayCommandService).deleteLikedWalkway(member, walkway);
+            verify(likedWalkwayWriter).deleteLikedWalkway(member, walkway);
         }
     }
 

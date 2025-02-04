@@ -11,9 +11,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.dongsan.api.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.domains.member.entity.Member;
-import com.dongsan.core.domains.review.ReviewQueryService;
+import com.dongsan.core.domains.review.ReviewReader;
 import com.dongsan.api.domains.review.GetReviewResponse;
-import com.dongsan.core.domains.review.UserReviewUseCase;
+import com.dongsan.core.domains.review.UserReviewService;
 import java.util.Collections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -39,9 +39,9 @@ class UserReviewControllerTestEntity {
     @Autowired
     MockMvc mockMvc;
     @MockBean
-    UserReviewUseCase userReviewUseCase;
+    UserReviewService userReviewService;
     @MockBean
-    ReviewQueryService reviewQueryService;
+    ReviewReader reviewReader;
     final Member member = createMemberWithId(1L);
     final CustomOAuth2User customOAuth2User = new CustomOAuth2User(member);
 
@@ -70,8 +70,8 @@ class UserReviewControllerTestEntity {
                     .reviews(Collections.singletonList(reviewInfo))
                     .hasNext(false)
                     .build();
-            when(reviewQueryService.existsByReviewId(lastId)).thenReturn(true);
-            when(userReviewUseCase.getReviews(size, lastId, customOAuth2User.getMemberId())).thenReturn(response);
+            when(reviewReader.existsByReviewId(lastId)).thenReturn(true);
+            when(userReviewService.getReviews(size, lastId, customOAuth2User.getMemberId())).thenReturn(response);
 
             // when & then
             mockMvc.perform(get("/users/reviews")

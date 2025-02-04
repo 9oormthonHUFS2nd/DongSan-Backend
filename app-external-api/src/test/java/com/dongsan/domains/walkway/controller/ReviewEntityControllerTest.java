@@ -18,8 +18,8 @@ import com.dongsan.domains.walkway.controller.dto.response.GetWalkwayRatingRespo
 import com.dongsan.domains.walkway.controller.dto.response.GetWalkwayReviewsResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.core.domains.review.ReviewMapper;
-import com.dongsan.core.domains.walkway.service.WalkwayQueryService;
-import com.dongsan.core.domains.review.ReviewUseCase;
+import com.dongsan.core.domains.walkway.service.WalkwayReader;
+import com.dongsan.core.domains.review.ReviewService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fixture.WalkwayFixture;
 import java.util.ArrayList;
@@ -52,9 +52,9 @@ class ReviewEntityControllerTest {
     @Autowired
     ObjectMapper objectMapper;
     @MockBean
-    WalkwayQueryService walkwayQueryService;
+    WalkwayReader walkwayQueryService;
     @MockBean
-    ReviewUseCase reviewUseCase;
+    ReviewService reviewService;
     final Member member = createMemberWithId(1L);
     final CustomOAuth2User customOAuth2User = new CustomOAuth2User(member);
 
@@ -81,7 +81,7 @@ class ReviewEntityControllerTest {
                     .build();
 
             when(walkwayQueryService.existsByWalkwayId(walkwayId)).thenReturn(true);
-            when(reviewUseCase.createReview(customOAuth2User.getMemberId(), walkwayId, createReviewRequest))
+            when(reviewService.createReview(customOAuth2User.getMemberId(), walkwayId, createReviewRequest))
                     .thenReturn(createReviewResponse);
 
             // When
@@ -116,7 +116,7 @@ class ReviewEntityControllerTest {
 
             GetWalkwayReviewsResponse getWalkwayReviewsResponse = ReviewMapper.toGetWalkwayReviewsResponse(reviews, size);
             when(walkwayQueryService.existsByWalkwayId(walkwayId)).thenReturn(true);
-            when(reviewUseCase.getWalkwayReviews(type, lastId, walkwayId, size, member.getId()))
+            when(reviewService.getWalkwayReviews(type, lastId, walkwayId, size, member.getId()))
                     .thenReturn(getWalkwayReviewsResponse);
 
             // When
@@ -150,7 +150,7 @@ class ReviewEntityControllerTest {
 
             GetWalkwayRatingResponse getWalkwayRatingResponse = ReviewMapper.toGetWalkwayRatingResponse(ratingCounts, walkway);
             when(walkwayQueryService.existsByWalkwayId(walkwayId)).thenReturn(true);
-            when(reviewUseCase.getWalkwayRating(walkwayId, member.getId())).thenReturn(getWalkwayRatingResponse);
+            when(reviewService.getWalkwayRating(walkwayId, member.getId())).thenReturn(getWalkwayRatingResponse);
 
             // When
             ResultActions response = mockMvc.perform(get("/walkways/1/review/rating")

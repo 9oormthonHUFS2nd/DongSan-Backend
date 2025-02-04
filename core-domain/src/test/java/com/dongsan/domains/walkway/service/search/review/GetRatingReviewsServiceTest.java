@@ -3,7 +3,7 @@ package com.dongsan.domains.walkway.service.search.review;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-import com.dongsan.core.domains.walkway.service.search.review.GetRatingReviewsService;
+import com.dongsan.core.domains.review.GetRatingReviewsService;
 import com.dongsan.domains.review.entity.Review;
 import com.dongsan.domains.review.repository.ReviewQueryDSLRepository;
 import com.dongsan.domains.walkway.entity.Walkway;

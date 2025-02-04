@@ -6,13 +6,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import com.dongsan.core.domains.walkway.usecase.HashtagUseCase;
-import com.dongsan.core.domains.walkway.usecase.WalkwayUseCase;
+import com.dongsan.core.domains.walkway.usecase.HashtagService;
+import com.dongsan.core.domains.walkway.usecase.WalkwayService;
 import com.dongsan.common.error.exception.CustomException;
 import com.dongsan.domains.image.entity.Image;
-import com.dongsan.core.domains.image.ImageQueryService;
+import com.dongsan.core.domains.image.ImageReader;
 import com.dongsan.domains.member.entity.Member;
-import com.dongsan.core.domains.user.MemberQueryService;
+import com.dongsan.core.domains.member.MemberReader;
 import com.dongsan.core.domains.walkway.dto.WalkwayCoordinate;
 import com.dongsan.core.domains.walkway.dto.request.CreateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.request.SearchWalkwayQuery;
@@ -21,10 +21,10 @@ import com.dongsan.domains.walkway.dto.response.SearchWalkwayResult;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.enums.ExposeLevel;
 import com.dongsan.core.domains.walkway.enums.WalkwaySort;
-import com.dongsan.core.domains.walkway.service.HashtagQueryService;
-import com.dongsan.core.domains.walkway.service.HashtagWalkwayCommandService;
-import com.dongsan.core.domains.walkway.service.WalkwayCommandService;
-import com.dongsan.core.domains.walkway.service.WalkwayQueryService;
+import com.dongsan.core.domains.walkway.service.HashtagReader;
+import com.dongsan.core.domains.walkway.service.HashtagWalkwayWriter;
+import com.dongsan.core.domains.walkway.service.WalkwayWriter;
+import com.dongsan.core.domains.walkway.service.WalkwayReader;
 import fixture.ImageFixture;
 import fixture.MemberFixture;
 import fixture.WalkwayFixture;
@@ -45,21 +45,21 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class WalkwayUseCaseTest {
 
     @Mock
-    WalkwayCommandService walkwayCommandService;
+    WalkwayWriter walkwayCommandService;
     @Mock
-    WalkwayQueryService walkwayQueryService;
+    WalkwayReader walkwayQueryService;
     @Mock
-    MemberQueryService memberQueryService;
+    MemberReader memberReader;
     @Mock
-    HashtagWalkwayCommandService hashtagWalkwayCommandService;
+    HashtagWalkwayWriter hashtagWalkwayWriter;
     @Mock
-    HashtagQueryService hashtagQueryService;
+    HashtagReader hashtagReader;
     @Mock
-    HashtagUseCase hashtagUseCase;
+    HashtagService hashtagUseCase;
     @Mock
-    ImageQueryService imageQueryService;
+    ImageReader imageReader;
     @InjectMocks
-    WalkwayUseCase walkwayUseCase;
+    WalkwayService walkwayUseCase;
 
     @Nested
     @DisplayName("createWalkway 메서드는")
@@ -90,8 +90,8 @@ class WalkwayUseCaseTest {
 
             Walkway walkway = WalkwayFixture.createWalkwayWithId(1L, member);
 
-            when(memberQueryService.getMember(member.getId())).thenReturn(member);
-            when(imageQueryService.getImage(imageId)).thenReturn(image);
+            when(memberReader.getMember(member.getId())).thenReturn(member);
+            when(imageReader.getImage(imageId)).thenReturn(image);
             when(walkwayCommandService.createWalkway(any()))
                     .thenReturn(walkway);
 

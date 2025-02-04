@@ -10,7 +10,7 @@ import com.dongsan.api.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.bookmark.controller.GetBookmarksResponse;
 import com.dongsan.domains.bookmark.controller.GetBookmarksResponse.BookmarkInfo;
-import com.dongsan.core.domains.user.UserProfileUseCase;
+import com.dongsan.core.domains.member.MemberService;
 import java.util.ArrayList;
 import java.util.List;
 import org.hamcrest.CoreMatchers;
@@ -42,7 +42,7 @@ class UserProfileControllerTest {
     MockMvc mockMvc;
 
     @MockBean
-    UserProfileUseCase userProfileUsecase;
+    MemberService userProfileUsecase;
 
     final Member member = createMemberWithId(1L);
     final CustomOAuth2User customOAuth2User = new CustomOAuth2User(member);

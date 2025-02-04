@@ -4,9 +4,9 @@ import com.dongsan.api.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.core.common.apiResponse.ResponseFactory;
 import com.dongsan.core.common.apiResponse.SuccessResponse;
 import com.dongsan.domains.bookmark.controller.BookmarksWithMarkedWalkwayResponse;
-import com.dongsan.core.domains.bookmark.BookmarkUseCase;
+import com.dongsan.core.domains.bookmark.BookmarkService;
 import com.dongsan.domains.image.entity.Image;
-import com.dongsan.core.domains.image.ImageUseCase;
+import com.dongsan.core.domains.image.ImageService;
 import com.dongsan.domains.image.usecase.S3UseCase;
 import com.dongsan.domains.walkway.controller.dto.request.CreateWalkwayRequest;
 import com.dongsan.domains.walkway.controller.dto.request.UpdateWalkwayRequest;
@@ -16,8 +16,8 @@ import com.dongsan.domains.walkway.controller.dto.response.GetWalkwayWithLikedRe
 import com.dongsan.domains.walkway.controller.dto.response.SearchWalkwayResponse;
 import com.dongsan.domains.walkway.dto.response.SearchWalkwayResult;
 import com.dongsan.domains.walkway.entity.Walkway;
-import com.dongsan.core.domains.walkway.usecase.HashtagUseCase;
-import com.dongsan.core.domains.walkway.usecase.WalkwayUseCase;
+import com.dongsan.core.domains.walkway.usecase.HashtagService;
+import com.dongsan.core.domains.walkway.usecase.WalkwayService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
@@ -44,11 +44,11 @@ import org.springframework.web.multipart.MultipartFile;
 @Validated
 public class WalkwayController {
 
-    private final WalkwayUseCase walkwayUseCase;
-    private final BookmarkUseCase bookmarkUseCase;
-    private final HashtagUseCase hashtagUseCase;
+    private final WalkwayService walkwayUseCase;
+    private final BookmarkService bookmarkService;
+    private final HashtagService hashtagUseCase;
     private final S3UseCase s3UseCase;
-    private final ImageUseCase imageUseCase;
+    private final ImageService imageService;
 
     @Operation(summary = "산책로 등록")
     @PostMapping("")
@@ -68,7 +68,7 @@ public class WalkwayController {
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {
         String imageUrl = s3UseCase.uploadCourseImage(courseImage);
-        Image image = imageUseCase.createImage(imageUrl);
+        Image image = imageService.createImage(imageUrl);
         return ResponseFactory.created(new CreateWalkwayCourseImageRequest(image));
     }
 
@@ -90,7 +90,8 @@ public class WalkwayController {
             @RequestParam(required = false, defaultValue = "10") Integer size,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {
-        return ResponseFactory.ok(bookmarkUseCase.getBookmarksWithMarkedWalkway(customOAuth2User.getMemberId(), walkwayId, lastId, size));
+        return ResponseFactory.ok(
+                bookmarkService.getBookmarksWithMarkedWalkway(customOAuth2User.getMemberId(), walkwayId, lastId, size));
     }
     @Operation(summary = "산책로 수정")
     @PutMapping("/{walkwayId}")

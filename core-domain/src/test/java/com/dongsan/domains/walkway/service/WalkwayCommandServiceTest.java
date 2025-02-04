@@ -2,7 +2,7 @@ package com.dongsan.domains.walkway.service;
 
 import static org.mockito.Mockito.when;
 
-import com.dongsan.core.domains.walkway.service.WalkwayCommandService;
+import com.dongsan.core.domains.walkway.service.WalkwayWriter;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.repository.WalkwayRepository;
@@ -25,7 +25,7 @@ class WalkwayCommandServiceTest {
     private WalkwayRepository walkwayRepository;
 
     @InjectMocks
-    private WalkwayCommandService walkwayCommandService;
+    private WalkwayWriter walkwayCommandService;
 
     @Nested
     @DisplayName("createWalkway 메서드는")

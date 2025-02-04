@@ -7,7 +7,7 @@ import com.dongsan.domains.walkway.controller.dto.request.CreateReviewRequest;
 import com.dongsan.domains.walkway.controller.dto.response.CreateReviewResponse;
 import com.dongsan.domains.walkway.controller.dto.response.GetWalkwayRatingResponse;
 import com.dongsan.domains.walkway.controller.dto.response.GetWalkwayReviewsResponse;
-import com.dongsan.core.domains.review.ReviewUseCase;
+import com.dongsan.core.domains.review.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 public class ReviewController {
 
-    private final ReviewUseCase reviewUseCase;
+    private final ReviewService reviewService;
 
     @Operation(summary = "리뷰 작성")
     @PostMapping("/{walkwayId}/review")
@@ -39,7 +39,7 @@ public class ReviewController {
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {
         return ResponseFactory.created(
-                reviewUseCase.createReview(customOAuth2User.getMemberId(), walkwayId, createReviewRequest));
+                reviewService.createReview(customOAuth2User.getMemberId(), walkwayId, createReviewRequest));
     }
 
     @Operation(summary = "리뷰 내용 보기")
@@ -51,7 +51,7 @@ public class ReviewController {
             @RequestParam(required = false, defaultValue = "10") Integer size,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {
-        return ResponseFactory.ok(reviewUseCase.getWalkwayReviews(sort, lastId, walkwayId, size, customOAuth2User.getMemberId()));
+        return ResponseFactory.ok(reviewService.getWalkwayReviews(sort, lastId, walkwayId, size, customOAuth2User.getMemberId()));
     }
 
     @Operation(summary = "리뷰 별점 보기")
@@ -60,6 +60,6 @@ public class ReviewController {
             @PathVariable Long walkwayId,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {
-        return ResponseFactory.ok(reviewUseCase.getWalkwayRating(walkwayId, customOAuth2User.getMemberId()));
+        return ResponseFactory.ok(reviewService.getWalkwayRating(walkwayId, customOAuth2User.getMemberId()));
     }
 }

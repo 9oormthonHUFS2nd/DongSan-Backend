@@ -4,7 +4,7 @@ import com.dongsan.api.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.core.common.apiResponse.ResponseFactory;
 import com.dongsan.core.common.apiResponse.SuccessResponse;
 import com.dongsan.api.domains.review.GetReviewResponse;
-import com.dongsan.core.domains.review.UserReviewUseCase;
+import com.dongsan.core.domains.review.UserReviewService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Validated
 public class UserReviewController {
-    private final UserReviewUseCase userReviewUsecase;
+    private final UserReviewService userReviewUsecase;
 
     /**
      * 작성한 리뷰 전체 보기

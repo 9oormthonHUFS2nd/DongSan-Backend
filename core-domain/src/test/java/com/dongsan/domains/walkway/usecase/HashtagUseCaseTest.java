@@ -4,14 +4,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import com.dongsan.core.domains.walkway.usecase.HashtagUseCase;
+import com.dongsan.core.domains.walkway.usecase.HashtagService;
 import com.dongsan.domains.hashtag.entity.Hashtag;
 import com.dongsan.domains.hashtag.entity.HashtagWalkway;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.walkway.entity.Walkway;
-import com.dongsan.core.domains.walkway.service.HashtagCommandService;
-import com.dongsan.core.domains.walkway.service.HashtagQueryService;
-import com.dongsan.core.domains.walkway.service.HashtagWalkwayCommandService;
+import com.dongsan.core.domains.walkway.service.HashtagWriter;
+import com.dongsan.core.domains.walkway.service.HashtagReader;
+import com.dongsan.core.domains.walkway.service.HashtagWalkwayWriter;
 import fixture.HashtagFixture;
 import fixture.HashtagWalkwayFixture;
 import fixture.MemberFixture;
@@ -32,14 +32,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @DisplayName("HashtagUseCaseTest Unit Test")
 class HashtagUseCaseTest {
     @Mock
-    HashtagWalkwayCommandService hashtagWalkwayCommandService;
+    HashtagWalkwayWriter hashtagWalkwayWriter;
     @Mock
-    HashtagQueryService hashtagQueryService;
+    HashtagReader hashtagReader;
     @Mock
-    HashtagCommandService hashtagCommandService;
+    HashtagWriter hashtagWriter;
     @Spy
     @InjectMocks
-    HashtagUseCase hashtagUseCase;
+    HashtagService hashtagUseCase;
 
 
     @Nested
@@ -68,10 +68,10 @@ class HashtagUseCaseTest {
             }
 
             for (int i = 0; i < 3; i++) {
-                when(hashtagQueryService.findByNameOptional(hashtagNames.get(i)))
+                when(hashtagReader.findByNameOptional(hashtagNames.get(i)))
                         .thenReturn(Optional.ofNullable(hashtags.get(i)));
             }
-            when(hashtagWalkwayCommandService.createHashtagWalkways(any())).thenReturn(hashtagWalkways);
+            when(hashtagWalkwayWriter.createHashtagWalkways(any())).thenReturn(hashtagWalkways);
 
             // When
             List<HashtagWalkway> result = hashtagUseCase.createHashtagWalkways(walkway, hashtagNames);

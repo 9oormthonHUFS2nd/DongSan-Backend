@@ -7,7 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.dongsan.api.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.domains.member.entity.Member;
-import com.dongsan.core.domains.walkway.usecase.LikedWalkwayUseCase;
+import com.dongsan.core.domains.walkway.usecase.LikedWalkwayService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -37,7 +37,7 @@ class LikedWalkwayControllerTestEntity {
     @Autowired
     ObjectMapper objectMapper;
     @MockBean
-    LikedWalkwayUseCase likedWalkwayUseCase;
+    LikedWalkwayService likedWalkwayUseCase;
     final Member member = createMemberWithId(1L);
     final CustomOAuth2User customOAuth2User = new CustomOAuth2User(member);
 

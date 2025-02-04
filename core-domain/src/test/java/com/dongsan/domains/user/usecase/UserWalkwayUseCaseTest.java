@@ -10,8 +10,8 @@ import com.dongsan.core.domains.walkway.UserWalkwayUseCase;
 import com.dongsan.core.domains.walkway.WalkwayListResponse;
 import com.dongsan.core.domains.walkway.WalkwayListResponse.WalkwayResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
-import com.dongsan.core.domains.walkway.service.LikedWalkwayQueryService;
-import com.dongsan.core.domains.walkway.service.WalkwayQueryService;
+import com.dongsan.core.domains.walkway.service.LikedWalkwayReader;
+import com.dongsan.core.domains.walkway.service.WalkwayReader;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -31,9 +31,9 @@ class UserWalkwayUseCaseTest {
     @InjectMocks
     UserWalkwayUseCase userWalkwayUseCase;
     @Mock
-    WalkwayQueryService walkwayQueryService;
+    WalkwayReader walkwayQueryService;
     @Mock
-    LikedWalkwayQueryService likedWalkwayQueryService;
+    LikedWalkwayReader likedWalkwayQueryService;
 
     @Nested
     @DisplayName("getUserUploadWalkway 메소드는")

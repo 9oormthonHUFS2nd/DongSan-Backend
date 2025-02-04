@@ -9,7 +9,7 @@ import com.dongsan.api.domains.dev.DevUseCase;
 import com.dongsan.api.domains.dev.GenerateTokenResponse;
 import com.dongsan.api.domains.dev.GetMemberInfoResponse;
 import com.dongsan.domains.member.entity.Member;
-import com.dongsan.core.domains.user.MemberQueryService;
+import com.dongsan.core.domains.member.MemberReader;
 import fixture.MemberFixture;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -26,7 +26,7 @@ class DevUseCaseTest {
     @InjectMocks
     DevUseCase devUseCase;
     @Mock
-    MemberQueryService memberQueryService;
+    MemberReader memberReader;
     @Mock
     JwtService jwtService;
     @Mock

@@ -6,7 +6,7 @@ import com.dongsan.core.common.apiResponse.SuccessResponse;
 import com.dongsan.core.common.validation.annotation.ExistBookmark;
 import com.dongsan.core.common.validation.annotation.ExistWalkway;
 import com.dongsan.core.domains.bookmark.GetBookmarkDetailParam;
-import com.dongsan.core.domains.bookmark.BookmarkUseCase;
+import com.dongsan.core.domains.bookmark.BookmarkService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "북마크")
 @Validated
 public class BookmarkController {
-    private final BookmarkUseCase bookmarkUseCase;
+    private final BookmarkService bookmarkService;
 
     @PostMapping()
     @Operation(summary = "북마크 생성")
@@ -38,7 +38,7 @@ public class BookmarkController {
             @Valid @RequestBody BookmarkNameRequest request,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ){
-        BookmarkIdResponse response = bookmarkUseCase.createBookmark(customOAuth2User.getMemberId(), request);
+        BookmarkIdResponse response = bookmarkService.createBookmark(customOAuth2User.getMemberId(), request);
         return ResponseFactory.created(response);
     }
 
@@ -49,7 +49,7 @@ public class BookmarkController {
             @Valid @RequestBody BookmarkNameRequest request,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ){
-        bookmarkUseCase.renameBookmark(customOAuth2User.getMemberId(), bookmarkId, request);
+        bookmarkService.renameBookmark(customOAuth2User.getMemberId(), bookmarkId, request);
         return ResponseFactory.noContent();
     }
 
@@ -60,7 +60,7 @@ public class BookmarkController {
             @Valid @RequestBody WalkwayIdRequest request,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ){
-        bookmarkUseCase.addWalkway(customOAuth2User.getMemberId(), bookmarkId, request);
+        bookmarkService.addWalkway(customOAuth2User.getMemberId(), bookmarkId, request);
         return ResponseFactory.noContent();
     }
 
@@ -71,7 +71,7 @@ public class BookmarkController {
             @ExistWalkway @PathVariable Long walkwayId,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ){
-        bookmarkUseCase.deleteWalkway(customOAuth2User.getMemberId(), bookmarkId, walkwayId);
+        bookmarkService.deleteWalkway(customOAuth2User.getMemberId(), bookmarkId, walkwayId);
         return ResponseFactory.noContent();
     }
 
@@ -81,7 +81,7 @@ public class BookmarkController {
             @ExistBookmark @PathVariable Long bookmarkId,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ){
-        bookmarkUseCase.deleteBookmark(customOAuth2User.getMemberId(), bookmarkId);
+        bookmarkService.deleteBookmark(customOAuth2User.getMemberId(), bookmarkId);
         return ResponseFactory.noContent();
     }
 
@@ -96,7 +96,7 @@ public class BookmarkController {
             @RequestParam(required = false) Long lastId,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ){
-        GetBookmarkDetailResponse response = bookmarkUseCase.getBookmarkDetails(new GetBookmarkDetailParam(
+        GetBookmarkDetailResponse response = bookmarkService.getBookmarkDetails(new GetBookmarkDetailParam(
                 customOAuth2User.getMemberId(), bookmarkId, size, lastId));
         return ResponseFactory.ok(response);
     }

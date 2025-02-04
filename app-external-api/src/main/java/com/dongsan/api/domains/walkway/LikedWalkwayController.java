@@ -3,7 +3,7 @@ package com.dongsan.api.domains.walkway;
 import com.dongsan.api.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.core.common.apiResponse.ResponseFactory;
 import com.dongsan.core.common.apiResponse.SuccessResponse;
-import com.dongsan.core.domains.walkway.usecase.LikedWalkwayUseCase;
+import com.dongsan.core.domains.walkway.usecase.LikedWalkwayService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequiredArgsConstructor
 @Validated
 public class LikedWalkwayController {
-    private final LikedWalkwayUseCase likedWalkwayUseCase;
+    private final LikedWalkwayService likedWalkwayUseCase;
 
     @Operation(summary = "산책로 좋아요")
     @PostMapping("/{walkwayId}/likes")

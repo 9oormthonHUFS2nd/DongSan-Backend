@@ -4,7 +4,7 @@ import com.dongsan.api.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.core.common.apiResponse.ResponseFactory;
 import com.dongsan.core.common.apiResponse.SuccessResponse;
 import com.dongsan.domains.bookmark.controller.GetBookmarksResponse;
-import com.dongsan.core.domains.user.UserProfileUseCase;
+import com.dongsan.core.domains.member.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "마이페이지")
 public class UserProfileController {
 
-    private final UserProfileUseCase userProfileUsecase;
+    private final MemberService userProfileUsecase;
 
     /**
      * 유저 프로필 조회

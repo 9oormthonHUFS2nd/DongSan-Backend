@@ -1,7 +1,7 @@
 package com.dongsan.core.common.validation.validator;
 
 import com.dongsan.core.common.validation.annotation.ExistReview;
-import com.dongsan.core.domains.review.ReviewQueryService;
+import com.dongsan.core.domains.review.ReviewReader;
 import com.dongsan.common.error.code.ReviewErrorCode;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -11,13 +11,13 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class ExistReviewValidator implements ConstraintValidator<ExistReview, Long> {
-    private final ReviewQueryService reviewQueryService;
+    private final ReviewReader reviewReader;
 
     @Override
     public boolean isValid(Long value, ConstraintValidatorContext context) {
         boolean isValid = false;
         if(value != null){
-            isValid = reviewQueryService.existsByReviewId(value);
+            isValid = reviewReader.existsByReviewId(value);
         }
 
         if (!isValid) {

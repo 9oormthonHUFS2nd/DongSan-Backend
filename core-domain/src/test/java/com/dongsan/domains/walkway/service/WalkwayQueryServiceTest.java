@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-import com.dongsan.core.domains.walkway.service.WalkwayQueryService;
+import com.dongsan.core.domains.walkway.service.WalkwayReader;
 import com.dongsan.common.error.exception.CustomException;
 import com.dongsan.domains.bookmark.entity.Bookmark;
 import com.dongsan.domains.bookmark.entity.MarkedWalkway;
@@ -43,7 +43,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @DisplayName("WalkwayQueryService Unit Test")
 class WalkwayQueryServiceTest {
     @InjectMocks
-    WalkwayQueryService walkwayQueryService;
+    WalkwayReader walkwayQueryService;
     @Mock
     WalkwayRepository walkwayRepository;
     @Mock

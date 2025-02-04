@@ -5,9 +5,9 @@ import static org.mockito.Mockito.when;
 
 import com.dongsan.core.domains.walkway.enums.ReviewSort;
 import com.dongsan.core.domains.walkway.service.factory.GetReviewsServiceFactory;
-import com.dongsan.core.domains.walkway.service.search.review.GetLatestReviewsService;
-import com.dongsan.core.domains.walkway.service.search.review.GetRatingReviewsService;
-import com.dongsan.core.domains.walkway.service.search.review.GetReviewsService;
+import com.dongsan.core.domains.review.GetLatestReviewsService;
+import com.dongsan.core.domains.review.GetRatingReviewsService;
+import com.dongsan.core.domains.review.GetReviewsService;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

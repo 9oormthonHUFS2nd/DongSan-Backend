@@ -12,10 +12,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.dongsan.api.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.core.domains.bookmark.GetBookmarkDetailParam;
 import com.dongsan.domains.bookmark.controller.GetBookmarkDetailResponse.WalkwayInfo;
-import com.dongsan.core.domains.bookmark.BookmarkQueryService;
-import com.dongsan.core.domains.bookmark.BookmarkUseCase;
+import com.dongsan.core.domains.bookmark.BookmarkReader;
+import com.dongsan.core.domains.bookmark.BookmarkService;
 import com.dongsan.domains.member.entity.Member;
-import com.dongsan.core.domains.walkway.service.WalkwayQueryService;
+import com.dongsan.core.domains.walkway.service.WalkwayReader;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -46,11 +46,11 @@ class BookmarkEntityControllerTest {
     @Autowired
     ObjectMapper objectMapper;
     @MockBean
-    BookmarkUseCase bookmarkUseCase;
+    BookmarkService bookmarkService;
     @MockBean
-    BookmarkQueryService bookmarkQueryService;
+    BookmarkReader bookmarkReader;
     @MockBean
-    WalkwayQueryService walkwayQueryService;
+    WalkwayReader walkwayQueryService;
     final Member member = createMemberWithId(1L);
     final CustomOAuth2User customOAuth2User = new CustomOAuth2User(member);
 
@@ -108,7 +108,7 @@ class BookmarkEntityControllerTest {
             BookmarkIdResponse response = BookmarkIdResponse.builder()
                     .bookmarkId(1L)
                     .build();
-            when(bookmarkUseCase.createBookmark(customOAuth2User.getMemberId(), request)).thenReturn(response);
+            when(bookmarkService.createBookmark(customOAuth2User.getMemberId(), request)).thenReturn(response);
             String requestBody = objectMapper.writeValueAsString(request);
 
             // when & then
@@ -150,7 +150,7 @@ class BookmarkEntityControllerTest {
             BookmarkNameRequest request = BookmarkNameRequest.builder()
                     .name("북마크1")
                     .build();
-            when(bookmarkQueryService.existsById(bookmarkId)).thenReturn(false);
+            when(bookmarkReader.existsById(bookmarkId)).thenReturn(false);
             String requestBody = objectMapper.writeValueAsString(request);
 
             // when & then
@@ -169,7 +169,7 @@ class BookmarkEntityControllerTest {
             BookmarkNameRequest request = BookmarkNameRequest.builder()
                     .name("북마크1")
                     .build();
-            when(bookmarkQueryService.existsById(bookmarkId)).thenReturn(true);
+            when(bookmarkReader.existsById(bookmarkId)).thenReturn(true);
             String requestBody = objectMapper.writeValueAsString(request);
 
             // when & then
@@ -211,7 +211,7 @@ class BookmarkEntityControllerTest {
                     .walkwayId(2L)
                     .build();
             String requestBody = objectMapper.writeValueAsString(request);
-            when(bookmarkQueryService.existsById(bookmarkId)).thenReturn(false);
+            when(bookmarkReader.existsById(bookmarkId)).thenReturn(false);
 
             // when & then
             mockMvc.perform(post("/bookmarks/{bookmarkId}/walkways", bookmarkId)
@@ -230,7 +230,7 @@ class BookmarkEntityControllerTest {
                     .walkwayId(2L)
                     .build();
             String requestBody = objectMapper.writeValueAsString(request);
-            when(bookmarkQueryService.existsById(bookmarkId)).thenReturn(true);
+            when(bookmarkReader.existsById(bookmarkId)).thenReturn(true);
 
             // when & then
             mockMvc.perform(post("/bookmarks/{bookmarkId}/walkways", bookmarkId)
@@ -250,7 +250,7 @@ class BookmarkEntityControllerTest {
             // given
             Long bookmarkId = 1L;
             Long walkwayId = 2L;
-            when(bookmarkQueryService.existsById(bookmarkId)).thenReturn(false);
+            when(bookmarkReader.existsById(bookmarkId)).thenReturn(false);
             when(walkwayQueryService.existsByWalkwayId(walkwayId)).thenReturn(true);
 
             // when & then
@@ -266,7 +266,7 @@ class BookmarkEntityControllerTest {
             // given
             Long bookmarkId = 1L;
             Long walkwayId = 2L;
-            when(bookmarkQueryService.existsById(bookmarkId)).thenReturn(true);
+            when(bookmarkReader.existsById(bookmarkId)).thenReturn(true);
             when(walkwayQueryService.existsByWalkwayId(walkwayId)).thenReturn(false);
 
             // when & then
@@ -282,7 +282,7 @@ class BookmarkEntityControllerTest {
             // given
             Long bookmarkId = 1L;
             Long walkwayId = 2L;
-            when(bookmarkQueryService.existsById(bookmarkId)).thenReturn(true);
+            when(bookmarkReader.existsById(bookmarkId)).thenReturn(true);
             when(walkwayQueryService.existsByWalkwayId(walkwayId)).thenReturn(true);
 
             // when & then
@@ -301,7 +301,7 @@ class BookmarkEntityControllerTest {
         void it_returns_400_when_bookmark_not_exist() throws Exception{
             // given
             Long bookmarkId = 1L;
-            when(bookmarkQueryService.existsById(bookmarkId)).thenReturn(false);
+            when(bookmarkReader.existsById(bookmarkId)).thenReturn(false);
 
             // when & then
             mockMvc.perform(delete("/bookmarks/{bookmarkId}", bookmarkId)
@@ -315,7 +315,7 @@ class BookmarkEntityControllerTest {
         void it_returns_204() throws Exception{
             // given
             Long bookmarkId = 1L;
-            when(bookmarkQueryService.existsById(bookmarkId)).thenReturn(true);
+            when(bookmarkReader.existsById(bookmarkId)).thenReturn(true);
 
             // when & then
             mockMvc.perform(delete("/bookmarks/{bookmarkId}", bookmarkId)
@@ -335,7 +335,7 @@ class BookmarkEntityControllerTest {
             Long bookmarkId = 1L;
             Integer size = 10;
             Long walkwayId = 3L;
-            when(bookmarkQueryService.existsById(bookmarkId)).thenReturn(false);
+            when(bookmarkReader.existsById(bookmarkId)).thenReturn(false);
 
             // when & then
             mockMvc.perform(get("/bookmarks/{bookmarkId}/walkways", bookmarkId)
@@ -367,8 +367,8 @@ class BookmarkEntityControllerTest {
                                     .build()
                     ))
                     .build();
-            when(bookmarkQueryService.existsById(bookmarkId)).thenReturn(true);
-            when(bookmarkUseCase.getBookmarkDetails(param)).thenReturn(response);
+            when(bookmarkReader.existsById(bookmarkId)).thenReturn(true);
+            when(bookmarkService.getBookmarkDetails(param)).thenReturn(response);
 
             // when & then
             mockMvc.perform(get("/bookmarks/{bookmarkId}/walkways", bookmarkId)
