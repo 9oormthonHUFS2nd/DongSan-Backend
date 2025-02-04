@@ -11,6 +11,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.dongsan.core.domains.bookmark.BookmarkCommandService;
 import com.dongsan.domains.bookmark.entity.Bookmark;
 import com.dongsan.domains.bookmark.entity.MarkedWalkway;
 import com.dongsan.domains.bookmark.repository.BookmarkRepository;

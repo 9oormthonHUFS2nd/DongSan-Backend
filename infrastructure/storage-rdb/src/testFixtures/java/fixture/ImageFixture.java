@@ -1,58 +1,58 @@
 package fixture;
 
-import com.dongsan.domains.common.entity.BaseEntity;
-import com.dongsan.domains.image.entity.Image;
+import com.dongsan.rdb.domains.common.entity.BaseEntity;
+import com.dongsan.rdb.domains.image.ImageEntity;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 
 public class ImageFixture {
     private static final String URL = "https://test.com";
 
-    public static Image createImage(String url) {
-        return Image.builder()
+    public static ImageEntity createImage(String url) {
+        return ImageEntity.builder()
                 .url(url)
                 .build();
     }
 
-    public static Image createImage() {
-        return Image.builder()
+    public static ImageEntity createImage() {
+        return ImageEntity.builder()
                 .url(URL)
                 .build();
     }
 
-    public static Image createImageWithId(Long id, String url) {
-        Image image = Image.builder()
+    public static ImageEntity createImageWithId(Long id, String url) {
+        ImageEntity imageEntity = ImageEntity.builder()
                 .url(url)
                 .build();
-        reflectId(id, image);
-        reflectCreatedAt(LocalDateTime.now(), image);
-        return image;
+        reflectId(id, imageEntity);
+        reflectCreatedAt(LocalDateTime.now(), imageEntity);
+        return imageEntity;
     }
 
-    public static Image createImageWithId(Long id) {
-        Image image = Image.builder()
+    public static ImageEntity createImageWithId(Long id) {
+        ImageEntity imageEntity = ImageEntity.builder()
                 .url(URL)
                 .build();
-        reflectId(id, image);
-        reflectCreatedAt(LocalDateTime.now(), image);
-        return image;
+        reflectId(id, imageEntity);
+        reflectCreatedAt(LocalDateTime.now(), imageEntity);
+        return imageEntity;
     }
 
-    private static void reflectId(Long id, Image image){
+    private static void reflectId(Long id, ImageEntity imageEntity){
         try {
-            Field idField = Image.class.getDeclaredField("id");
+            Field idField = ImageEntity.class.getDeclaredField("id");
             idField.setAccessible(true);
-            idField.set(image, id);
+            idField.set(imageEntity, id);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
     }
 
-    private static void reflectCreatedAt(LocalDateTime createdAt, Image image){
+    private static void reflectCreatedAt(LocalDateTime createdAt, ImageEntity imageEntity){
         try {
             Field createdAtField = BaseEntity.class.getDeclaredField("createdAt");
             createdAtField.setAccessible(true);
-            createdAtField.set(image, createdAt);
+            createdAtField.set(imageEntity, createdAt);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }

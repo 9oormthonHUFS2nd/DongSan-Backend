@@ -5,12 +5,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.dongsan.core.domains.walkway.usecase.LikedWalkwayUseCase;
 import com.dongsan.domains.member.entity.Member;
-import com.dongsan.domains.user.service.MemberQueryService;
+import com.dongsan.core.domains.user.MemberQueryService;
 import com.dongsan.domains.walkway.entity.Walkway;
-import com.dongsan.domains.walkway.service.LikedWalkwayCommandService;
-import com.dongsan.domains.walkway.service.LikedWalkwayQueryService;
-import com.dongsan.domains.walkway.service.WalkwayQueryService;
+import com.dongsan.core.domains.walkway.service.LikedWalkwayCommandService;
+import com.dongsan.core.domains.walkway.service.LikedWalkwayQueryService;
+import com.dongsan.core.domains.walkway.service.WalkwayQueryService;
 import fixture.MemberFixture;
 import fixture.WalkwayFixture;
 import java.util.ArrayList;

@@ -6,12 +6,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.dongsan.domains.auth.security.oauth2.dto.CustomOAuth2User;
+import com.dongsan.api.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.domains.member.entity.Member;
-import com.dongsan.domains.user.response.GetBookmarksResponse;
-import com.dongsan.domains.user.response.GetBookmarksResponse.BookmarkInfo;
-import com.dongsan.domains.user.response.GetProfileResponse;
-import com.dongsan.domains.user.usecase.UserProfileUseCase;
+import com.dongsan.domains.bookmark.controller.GetBookmarksResponse;
+import com.dongsan.domains.bookmark.controller.GetBookmarksResponse.BookmarkInfo;
+import com.dongsan.core.domains.user.UserProfileUseCase;
 import java.util.ArrayList;
 import java.util.List;
 import org.hamcrest.CoreMatchers;

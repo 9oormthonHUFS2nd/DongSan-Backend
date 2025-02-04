@@ -6,11 +6,12 @@ import static fixture.WalkwayFixture.createWalkway;
 import static fixture.WalkwayFixture.createWalkwayWithId;
 import static org.mockito.Mockito.when;
 
-import com.dongsan.domains.user.response.WalkwayListResponse;
-import com.dongsan.domains.user.response.WalkwayListResponse.WalkwayResponse;
+import com.dongsan.core.domains.walkway.UserWalkwayUseCase;
+import com.dongsan.core.domains.walkway.WalkwayListResponse;
+import com.dongsan.core.domains.walkway.WalkwayListResponse.WalkwayResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
-import com.dongsan.domains.walkway.service.LikedWalkwayQueryService;
-import com.dongsan.domains.walkway.service.WalkwayQueryService;
+import com.dongsan.core.domains.walkway.service.LikedWalkwayQueryService;
+import com.dongsan.core.domains.walkway.service.WalkwayQueryService;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;

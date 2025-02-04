@@ -1,11 +1,8 @@
 package com.dongsan.common.config;
 
-import com.dongsan.domains.bookmark.repository.BookmarkQueryDSLRepository;
-import com.dongsan.domains.bookmark.repository.MarkedWalkwayQueryDSLRepository;
-import com.dongsan.domains.hashtag.repository.HashtagDSLRepository;
-import com.dongsan.domains.review.repository.ReviewQueryDSLRepository;
-import com.dongsan.domains.walkway.repository.LikedWalkwayQueryDSLRepository;
-import com.dongsan.domains.walkway.repository.WalkwayQueryDSLRepository;
+import com.dongsan.rdb.domains.walkway.repository.HashtagDSLRepository;
+import com.dongsan.rdb.domains.walkway.repository.LikedWalkwayQueryDSLRepository;
+import com.dongsan.rdb.domains.walkway.repository.WalkwayQueryDSLRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;

@@ -3,6 +3,7 @@ package com.dongsan.domains.walkway.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
+import com.dongsan.core.domains.walkway.service.HashtagQueryService;
 import com.dongsan.domains.hashtag.entity.Hashtag;
 import com.dongsan.domains.hashtag.repository.HashtagRepository;
 import fixture.HashtagFixture;

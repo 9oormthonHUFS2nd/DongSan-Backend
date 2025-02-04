@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
+import com.dongsan.core.domains.walkway.service.LikedWalkwayQueryService;
 import com.dongsan.common.error.code.LikedWalkwayErrorCode;
 import com.dongsan.common.error.exception.CustomException;
 import com.dongsan.domains.walkway.entity.LikedWalkway;

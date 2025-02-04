@@ -5,12 +5,13 @@ import static fixture.MemberFixture.createMemberWithId;
 import static org.mockito.Mockito.when;
 
 import com.dongsan.domains.bookmark.entity.Bookmark;
-import com.dongsan.domains.bookmark.service.BookmarkQueryService;
+import com.dongsan.core.domains.bookmark.BookmarkQueryService;
 import com.dongsan.domains.member.entity.Member;
-import com.dongsan.domains.user.service.MemberQueryService;
-import com.dongsan.domains.user.mapper.UserProfileMapper;
-import com.dongsan.domains.user.response.GetBookmarksResponse;
-import com.dongsan.domains.user.response.GetProfileResponse;
+import com.dongsan.core.domains.user.UserProfileUseCase;
+import com.dongsan.core.domains.user.MemberQueryService;
+import com.dongsan.core.domains.user.UserProfileMapper;
+import com.dongsan.core.domains.bookmark.GetBookmarksResponse;
+import com.dongsan.core.domains.user.GetProfileResponse;
 import fixture.BookmarkFixture;
 import fixture.MemberFixture;
 import java.util.ArrayList;

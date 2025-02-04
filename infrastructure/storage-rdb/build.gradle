@@ -5,12 +5,13 @@ plugins {
 }
 
 dependencies {
+    compileOnly project(':core-domain')
 
     // LineString
-    api 'org.hibernate:hibernate-spatial:6.2.2.Final'
+    implementation'org.hibernate:hibernate-spatial:6.2.2.Final'
 
     // JPA
-    api 'org.springframework.boot:spring-boot-starter-data-jpa'  // external-api 의 OauthSecurity에서 사용됨... 추후 수정
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
     // querydsl
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
@@ -30,10 +31,6 @@ dependencies {
     // testFixtures
     testFixturesImplementation 'org.junit.jupiter:junit-jupiter-api'
     testFixturesImplementation 'org.locationtech.jts:jts-core:1.20.0'
-
-    // 응답 통일
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-validation'
 }
 
 // application.yml 설정 파일 복사

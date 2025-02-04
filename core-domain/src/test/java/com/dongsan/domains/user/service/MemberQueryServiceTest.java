@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.member.repository.MemberRepository;
 import com.dongsan.common.error.exception.CustomException;
+import com.dongsan.core.domains.user.MemberQueryService;
 import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;

@@ -9,10 +9,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 import com.dongsan.domains.member.entity.Member;
+import com.dongsan.core.domains.review.UserReviewUseCase;
 import com.dongsan.domains.review.entity.Review;
-import com.dongsan.domains.walkway.service.ReviewQueryService;
-import com.dongsan.domains.user.response.GetReviewResponse;
-import com.dongsan.domains.user.response.GetReviewResponse.ReviewInfo;
+import com.dongsan.core.domains.review.ReviewQueryService;
+import com.dongsan.core.domains.review.GetReviewResponse;
+import com.dongsan.core.domains.review.GetReviewResponse.ReviewInfo;
 import com.dongsan.domains.walkway.entity.Walkway;
 import fixture.ReviewFixture;
 import java.time.LocalDateTime;

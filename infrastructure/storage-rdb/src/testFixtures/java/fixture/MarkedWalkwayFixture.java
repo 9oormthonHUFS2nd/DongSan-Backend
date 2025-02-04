@@ -1,24 +1,24 @@
 package fixture;
 
-import com.dongsan.domains.bookmark.entity.Bookmark;
-import com.dongsan.domains.bookmark.entity.MarkedWalkway;
-import com.dongsan.domains.common.entity.BaseEntity;
-import com.dongsan.domains.walkway.entity.Walkway;
+import com.dongsan.rdb.domains.bookmark.BookmarkEntity;
+import com.dongsan.rdb.domains.bookmark.MarkedWalkway;
+import com.dongsan.rdb.domains.common.entity.BaseEntity;
+import com.dongsan.rdb.domains.walkway.entity.WalkwayEntity;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 
 public class MarkedWalkwayFixture {
 
-    public static MarkedWalkway createMarkedWalkway(Walkway walkway, Bookmark bookmark){
+    public static MarkedWalkway createMarkedWalkway(WalkwayEntity walkwayEntity, BookmarkEntity bookmarkEntity){
         return MarkedWalkway.builder()
-                .walkway(walkway)
-                .bookmark(bookmark)
+                .walkway(walkwayEntity)
+                .bookmark(bookmarkEntity)
                 .build();
     }
 
 
-    public static MarkedWalkway createMarkedWalkwayWithId(Walkway walkway, Bookmark bookmark, Long id){
-        MarkedWalkway markedWalkway = createMarkedWalkway(walkway, bookmark);
+    public static MarkedWalkway createMarkedWalkwayWithId(WalkwayEntity walkwayEntity, BookmarkEntity bookmarkEntity, Long id){
+        MarkedWalkway markedWalkway = createMarkedWalkway(walkwayEntity, bookmarkEntity);
         reflectId(id, markedWalkway);
         reflectCreatedAt(LocalDateTime.now(), markedWalkway);
         return markedWalkway;

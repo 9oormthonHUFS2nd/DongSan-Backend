@@ -3,8 +3,9 @@ package com.dongsan.domains.image.usecase;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
+import com.dongsan.core.domains.image.ImageUseCase;
 import com.dongsan.domains.image.entity.Image;
-import com.dongsan.domains.image.service.ImageCommandService;
+import com.dongsan.core.domains.image.ImageCommandService;
 import fixture.ImageFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

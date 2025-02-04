@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import com.dongsan.core.domains.image.ImageCommandService;
 import com.dongsan.domains.image.entity.Image;
 import com.dongsan.domains.image.repository.ImageRepository;
 import fixture.ImageFixture;

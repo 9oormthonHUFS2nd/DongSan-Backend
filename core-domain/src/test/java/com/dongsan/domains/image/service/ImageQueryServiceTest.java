@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 import com.dongsan.common.error.exception.CustomException;
+import com.dongsan.core.domains.image.ImageQueryService;
 import com.dongsan.domains.image.entity.Image;
 import com.dongsan.domains.image.repository.ImageRepository;
 import fixture.ImageFixture;

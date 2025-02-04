@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.Mockito.when;
 
+import com.dongsan.core.domains.walkway.service.LikedWalkwayCommandService;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.walkway.entity.LikedWalkway;
 import com.dongsan.domains.walkway.entity.Walkway;

@@ -1,8 +1,8 @@
 package fixture;
 
-import com.dongsan.domains.bookmark.entity.Bookmark;
-import com.dongsan.domains.common.entity.BaseEntity;
-import com.dongsan.domains.member.entity.Member;
+import com.dongsan.rdb.domains.bookmark.BookmarkEntity;
+import com.dongsan.rdb.domains.common.entity.BaseEntity;
+import com.dongsan.rdb.domains.member.MemberEntity;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
@@ -11,49 +11,49 @@ public class BookmarkFixture {
 
     private static final String NAME = "산책로 모음이에용";
 
-    public static Bookmark createBookmark(Member member){
-        return Bookmark.builder()
+    public static BookmarkEntity createBookmark(MemberEntity memberEntity){
+        return BookmarkEntity.builder()
                 .name(NAME)
-                .member(member)
+                .member(memberEntity)
                 .build();
     }
 
-    public static Bookmark createBookmark(Member member, String name){
-        return Bookmark.builder()
+    public static BookmarkEntity createBookmark(MemberEntity memberEntity, String name){
+        return BookmarkEntity.builder()
                 .name(name)
-                .member(member)
+                .member(memberEntity)
                 .build();
     }
 
-    public static Bookmark createBookmarkWithId(Long id, Member member){
-        Bookmark bookmark = createBookmark(member);
-        reflectId(id, bookmark);
-        reflectCreatedAt(LocalDateTime.now(), bookmark);
-        return bookmark;
+    public static BookmarkEntity createBookmarkWithId(Long id, MemberEntity memberEntity){
+        BookmarkEntity bookmarkEntity = createBookmark(memberEntity);
+        reflectId(id, bookmarkEntity);
+        reflectCreatedAt(LocalDateTime.now(), bookmarkEntity);
+        return bookmarkEntity;
     }
 
-    public static Bookmark createBookmarkWithId(Long id, Member member, String name){
-        Bookmark bookmark = createBookmark(member, name);
-        reflectId(id, bookmark);
-        reflectCreatedAt(LocalDateTime.now(), bookmark);
-        return bookmark;
+    public static BookmarkEntity createBookmarkWithId(Long id, MemberEntity memberEntity, String name){
+        BookmarkEntity bookmarkEntity = createBookmark(memberEntity, name);
+        reflectId(id, bookmarkEntity);
+        reflectCreatedAt(LocalDateTime.now(), bookmarkEntity);
+        return bookmarkEntity;
     }
 
-    private static void reflectId(Long id, Bookmark bookmark){
+    private static void reflectId(Long id, BookmarkEntity bookmarkEntity){
         try {
-            Field idField = Bookmark.class.getDeclaredField("id");
+            Field idField = BookmarkEntity.class.getDeclaredField("id");
             idField.setAccessible(true);
-            idField.set(bookmark, id);
+            idField.set(bookmarkEntity, id);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
     }
 
-    private static void reflectCreatedAt(LocalDateTime createdAt, Bookmark bookmark){
+    private static void reflectCreatedAt(LocalDateTime createdAt, BookmarkEntity bookmarkEntity){
         try {
             Field createdAtField = BaseEntity.class.getDeclaredField("createdAt");
             createdAtField.setAccessible(true);
-            createdAtField.set(bookmark, createdAt);
+            createdAtField.set(bookmarkEntity, createdAt);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }

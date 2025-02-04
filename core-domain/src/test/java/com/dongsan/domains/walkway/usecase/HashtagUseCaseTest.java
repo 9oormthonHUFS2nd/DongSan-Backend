@@ -4,13 +4,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import com.dongsan.core.domains.walkway.usecase.HashtagUseCase;
 import com.dongsan.domains.hashtag.entity.Hashtag;
 import com.dongsan.domains.hashtag.entity.HashtagWalkway;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.walkway.entity.Walkway;
-import com.dongsan.domains.walkway.service.HashtagCommandService;
-import com.dongsan.domains.walkway.service.HashtagQueryService;
-import com.dongsan.domains.walkway.service.HashtagWalkwayCommandService;
+import com.dongsan.core.domains.walkway.service.HashtagCommandService;
+import com.dongsan.core.domains.walkway.service.HashtagQueryService;
+import com.dongsan.core.domains.walkway.service.HashtagWalkwayCommandService;
 import fixture.HashtagFixture;
 import fixture.HashtagWalkwayFixture;
 import fixture.MemberFixture;

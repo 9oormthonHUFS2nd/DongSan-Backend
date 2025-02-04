@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.dongsan.domains.member.entity.Member;
+import com.dongsan.core.domains.review.ReviewCommandService;
 import com.dongsan.domains.review.entity.Review;
 import com.dongsan.domains.review.repository.ReviewRepository;
 import com.dongsan.domains.walkway.entity.Walkway;

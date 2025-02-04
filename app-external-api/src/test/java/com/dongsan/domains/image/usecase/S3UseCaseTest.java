@@ -1,10 +1,9 @@
 package com.dongsan.domains.image.usecase;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-import com.dongsan.service.S3FileService;
+import com.dongsan.file.service.S3FileService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -25,7 +24,7 @@ class S3UseCaseTest {
 
     @Nested
     @DisplayName("uploadCourseImage")
-    class Describe_uploadCourseImage {
+    class Describe_uploadCourseImageEntity {
         @Test
         @DisplayName("이미지 파일이 입력되면 이미지 URL을 반환한다.")
         void it_returns_url() {

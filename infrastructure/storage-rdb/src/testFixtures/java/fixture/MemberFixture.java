@@ -1,7 +1,7 @@
 package fixture;
 
-import com.dongsan.domains.common.entity.BaseEntity;
-import com.dongsan.domains.member.entity.Member;
+import com.dongsan.rdb.domains.common.entity.BaseEntity;
+import com.dongsan.rdb.domains.member.MemberEntity;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
@@ -11,51 +11,51 @@ public class MemberFixture {
     private static final String NICKNAME = "동네산책";
     private static final String PROFILE_IMAGE_URL = "image.png";
 
-    public static Member createMember(){
-        return Member.builder()
+    public static MemberEntity createMember(){
+        return MemberEntity.builder()
                 .email(EMAIL)
                 .nickname(NICKNAME)
                 .profileImageUrl(PROFILE_IMAGE_URL)
                 .build();
     }
 
-    public static Member createMember(String email, String nickname, String profileImageUrl){
-        return Member.builder()
+    public static MemberEntity createMember(String email, String nickname, String profileImageUrl){
+        return MemberEntity.builder()
                 .email(email)
                 .nickname(nickname)
                 .profileImageUrl(profileImageUrl)
                 .build();
     }
 
-    public static Member createMemberWithId(Long id){
-        Member member = createMember();
-        reflectId(id, member);
-        reflectCreatedAt(LocalDateTime.now(), member);
-        return member;
+    public static MemberEntity createMemberWithId(Long id){
+        MemberEntity memberEntity = createMember();
+        reflectId(id, memberEntity);
+        reflectCreatedAt(LocalDateTime.now(), memberEntity);
+        return memberEntity;
     }
 
-    public static Member createMemberWithId(Long id, String email, String nickname, String profileImageUrl){
-        Member member = createMember(email, nickname, profileImageUrl);
-        reflectId(id, member);
-        reflectCreatedAt(LocalDateTime.now(), member);
-        return member;
+    public static MemberEntity createMemberWithId(Long id, String email, String nickname, String profileImageUrl){
+        MemberEntity memberEntity = createMember(email, nickname, profileImageUrl);
+        reflectId(id, memberEntity);
+        reflectCreatedAt(LocalDateTime.now(), memberEntity);
+        return memberEntity;
     }
 
-    private static void reflectId(Long id, Member member){
+    private static void reflectId(Long id, MemberEntity memberEntity){
         try {
-            Field idField = Member.class.getDeclaredField("id");
+            Field idField = MemberEntity.class.getDeclaredField("id");
             idField.setAccessible(true);
-            idField.set(member, id);
+            idField.set(memberEntity, id);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
     }
 
-    private static void reflectCreatedAt(LocalDateTime createdAt, Member member){
+    private static void reflectCreatedAt(LocalDateTime createdAt, MemberEntity memberEntity){
         try {
             Field createdAtField = BaseEntity.class.getDeclaredField("createdAt");
             createdAtField.setAccessible(true);
-            createdAtField.set(member, createdAt);
+            createdAtField.set(memberEntity, createdAt);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }

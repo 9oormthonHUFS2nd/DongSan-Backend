@@ -3,10 +3,11 @@ package com.dongsan.domains.walkway.service.search.walkway;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
+import com.dongsan.core.domains.walkway.service.search.walkway.SearchRatingWalkwayService;
 import com.dongsan.domains.walkway.dto.request.SearchWalkwayQuery;
 import com.dongsan.domains.walkway.dto.response.SearchWalkwayResult;
 import com.dongsan.domains.walkway.entity.Walkway;
-import com.dongsan.domains.walkway.enums.WalkwaySort;
+import com.dongsan.core.domains.walkway.enums.WalkwaySort;
 import com.dongsan.domains.walkway.repository.WalkwayQueryDSLRepository;
 import java.util.ArrayList;
 import java.util.List;

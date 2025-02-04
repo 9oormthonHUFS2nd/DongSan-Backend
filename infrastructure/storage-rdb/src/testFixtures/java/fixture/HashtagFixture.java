@@ -1,7 +1,7 @@
 package fixture;
 
-import com.dongsan.domains.common.entity.BaseEntity;
-import com.dongsan.domains.hashtag.entity.Hashtag;
+import com.dongsan.rdb.domains.common.entity.BaseEntity;
+import com.dongsan.rdb.domains.walkway.repository.HashtagEntity;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
@@ -10,47 +10,47 @@ public class HashtagFixture {
 
     private static final String NAME = "산책로 태그";
 
-    public static Hashtag createHashtag(){
-        return Hashtag.builder()
+    public static HashtagEntity createHashtag(){
+        return HashtagEntity.builder()
                 .name(NAME)
                 .build();
     }
 
-    public static Hashtag createHashtag(String name){
-        return Hashtag.builder()
+    public static HashtagEntity createHashtag(String name){
+        return HashtagEntity.builder()
                 .name(name)
                 .build();
     }
 
-    public static Hashtag createHashtagWithId(Long id){
-        Hashtag hashtag = createHashtag();
-        reflectId(id, hashtag);
-        reflectCreatedAt(LocalDateTime.now(), hashtag);
-        return hashtag;
+    public static HashtagEntity createHashtagWithId(Long id){
+        HashtagEntity hashtagEntity = createHashtag();
+        reflectId(id, hashtagEntity);
+        reflectCreatedAt(LocalDateTime.now(), hashtagEntity);
+        return hashtagEntity;
     }
 
-    public static Hashtag createHashtagWithId(Long id, String name){
-        Hashtag hashtag = createHashtag(name);
-        reflectId(id, hashtag);
-        reflectCreatedAt(LocalDateTime.now(), hashtag);
-        return hashtag;
+    public static HashtagEntity createHashtagWithId(Long id, String name){
+        HashtagEntity hashtagEntity = createHashtag(name);
+        reflectId(id, hashtagEntity);
+        reflectCreatedAt(LocalDateTime.now(), hashtagEntity);
+        return hashtagEntity;
     }
 
-    private static void reflectId(Long id, Hashtag hashtag){
+    private static void reflectId(Long id, HashtagEntity hashtagEntity){
         try {
-            Field idField = Hashtag.class.getDeclaredField("id");
+            Field idField = HashtagEntity.class.getDeclaredField("id");
             idField.setAccessible(true);
-            idField.set(hashtag, id);
+            idField.set(hashtagEntity, id);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
     }
 
-    private static void reflectCreatedAt(LocalDateTime createdAt, Hashtag hashtag){
+    private static void reflectCreatedAt(LocalDateTime createdAt, HashtagEntity hashtagEntity){
         try {
             Field createdAtField = BaseEntity.class.getDeclaredField("createdAt");
             createdAtField.setAccessible(true);
-            createdAtField.set(hashtag, createdAt);
+            createdAtField.set(hashtagEntity, createdAt);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }

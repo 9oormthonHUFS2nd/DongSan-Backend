@@ -2,7 +2,7 @@ package com.dongsan.domains.walkway.service;
 
 import com.dongsan.domains.hashtag.entity.Hashtag;
 import com.dongsan.domains.hashtag.repository.HashtagRepository;
-import com.dongsan.domains.walkway.service.HashtagCommandService;
+import com.dongsan.core.domains.walkway.service.HashtagCommandService;
 import fixture.HashtagFixture;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;

@@ -6,11 +6,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.dongsan.domains.auth.AuthService;
-import com.dongsan.domains.dev.dto.request.GenerateTokenRequest;
-import com.dongsan.domains.dev.dto.response.GenerateTokenResponse;
-import com.dongsan.domains.dev.dto.response.GetMemberInfoResponse;
-import com.dongsan.domains.dev.usecase.DevUseCase;
+import com.dongsan.core.domains.auth.AuthService;
+import com.dongsan.api.domains.dev.DevController;
+import com.dongsan.api.domains.dev.GenerateTokenRequest;
+import com.dongsan.api.domains.dev.GenerateTokenResponse;
+import com.dongsan.api.domains.dev.GetMemberInfoResponse;
+import com.dongsan.api.domains.dev.DevUseCase;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -67,7 +68,7 @@ class DevControllerTest {
 
     @Nested
     @DisplayName("getMemberInfo 메소드는")
-    class Describe_getMemberInfo{
+    class Describe_getMemberInfoEntity {
         @Test
         @DisplayName("사용자가 존재하면 사용자 정보를 반환한다.")
         void it_returns_memberInfo() throws Exception{

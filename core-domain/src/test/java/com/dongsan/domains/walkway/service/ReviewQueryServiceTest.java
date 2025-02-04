@@ -5,13 +5,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.dongsan.core.domains.review.ReviewQueryService;
 import com.dongsan.domains.review.entity.Review;
 import com.dongsan.domains.review.repository.ReviewQueryDSLRepository;
 import com.dongsan.domains.review.repository.ReviewRepository;
 import com.dongsan.domains.walkway.entity.Walkway;
-import com.dongsan.domains.walkway.enums.ReviewSort;
-import com.dongsan.domains.walkway.service.factory.GetReviewsServiceFactory;
-import com.dongsan.domains.walkway.service.search.review.GetReviewsService;
+import com.dongsan.core.domains.walkway.enums.ReviewSort;
+import com.dongsan.core.domains.walkway.service.factory.GetReviewsServiceFactory;
+import com.dongsan.core.domains.walkway.service.search.review.GetReviewsService;
 import fixture.WalkwayFixture;
 import java.time.LocalDateTime;
 import java.util.ArrayList;

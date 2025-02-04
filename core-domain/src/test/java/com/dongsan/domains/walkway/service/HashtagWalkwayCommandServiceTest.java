@@ -8,7 +8,7 @@ import com.dongsan.domains.hashtag.entity.HashtagWalkway;
 import com.dongsan.domains.hashtag.repository.HashtagWalkwayRepository;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.walkway.entity.Walkway;
-import com.dongsan.domains.walkway.service.HashtagWalkwayCommandService;
+import com.dongsan.core.domains.walkway.service.HashtagWalkwayCommandService;
 import fixture.HashtagFixture;
 import fixture.HashtagWalkwayFixture;
 import fixture.MemberFixture;

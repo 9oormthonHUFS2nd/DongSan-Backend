@@ -3,10 +3,11 @@ package com.dongsan.domains.walkway.service.factory;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-import com.dongsan.domains.walkway.enums.ReviewSort;
-import com.dongsan.domains.walkway.service.search.review.GetLatestReviewsService;
-import com.dongsan.domains.walkway.service.search.review.GetRatingReviewsService;
-import com.dongsan.domains.walkway.service.search.review.GetReviewsService;
+import com.dongsan.core.domains.walkway.enums.ReviewSort;
+import com.dongsan.core.domains.walkway.service.factory.GetReviewsServiceFactory;
+import com.dongsan.core.domains.walkway.service.search.review.GetLatestReviewsService;
+import com.dongsan.core.domains.walkway.service.search.review.GetRatingReviewsService;
+import com.dongsan.core.domains.walkway.service.search.review.GetReviewsService;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
