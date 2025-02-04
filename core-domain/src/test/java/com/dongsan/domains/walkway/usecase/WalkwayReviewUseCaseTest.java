@@ -15,14 +15,18 @@ import com.dongsan.domains.walkway.dto.response.CreateReviewResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayRatingResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayReviewsResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
+import com.dongsan.domains.walkway.entity.WalkwayHistory;
 import com.dongsan.domains.walkway.enums.ReviewSort;
 import com.dongsan.domains.walkway.service.ReviewCommandService;
 import com.dongsan.domains.walkway.service.ReviewQueryService;
 import com.dongsan.domains.walkway.service.WalkwayCommandService;
+import com.dongsan.domains.walkway.service.WalkwayHistoryCommandService;
+import com.dongsan.domains.walkway.service.WalkwayHistoryQueryService;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
 import fixture.MemberFixture;
 import fixture.ReviewFixture;
 import fixture.WalkwayFixture;
+import fixture.WalkwayHistoryFixture;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -46,6 +50,10 @@ class WalkwayReviewUseCaseTest {
     ReviewQueryService reviewQueryService;
     @Mock
     WalkwayCommandService walkwayCommandService;
+    @Mock
+    WalkwayHistoryQueryService walkwayHistoryQueryService;
+    @Mock
+    WalkwayHistoryCommandService walkwayHistoryCommandService;
     @InjectMocks
     WalkwayReviewUseCase walkwayReviewUseCase;
 
@@ -59,15 +67,18 @@ class WalkwayReviewUseCaseTest {
             Long memberId = 1L;
             Long walkwayId = 1L;
             Long reviewId = 1L;
+            Long walkwayHistoryId = 1L;
             Integer rating = 5;
-            CreateReviewRequest createReviewRequest = new CreateReviewRequest(rating, "test content");
+            CreateReviewRequest createReviewRequest = new CreateReviewRequest(walkwayHistoryId, rating, "test content");
 
             Member member = MemberFixture.createMemberWithId(memberId);
             Walkway walkway = WalkwayFixture.createWalkwayWithId(walkwayId, member);
             Review review = ReviewFixture.createReviewWithId(reviewId, member, walkway);
+            WalkwayHistory walkwayHistory = WalkwayHistoryFixture.createWalkwayHistory(member, walkway, 10.0, 10);
 
             when(memberQueryService.getMember(member.getId())).thenReturn(member);
             when(walkwayQueryService.getWalkway(walkway.getId())).thenReturn(walkway);
+            when(walkwayHistoryQueryService.getById(walkwayHistoryId)).thenReturn(walkwayHistory);
             when(reviewCommandService.createReview(any())).thenReturn(review);
 
             // When

@@ -21,20 +21,24 @@ import com.dongsan.domains.image.usecase.ImageUseCase;
 import com.dongsan.domains.image.usecase.S3UseCase;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.walkway.dto.WalkwayCoordinate;
+import com.dongsan.domains.walkway.dto.request.CreateWalkwayHistoryRequest;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.request.UpdateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayWithLikedResponse;
 import com.dongsan.domains.walkway.dto.response.SearchWalkwayResponse;
 import com.dongsan.domains.walkway.dto.response.SearchWalkwayResult;
 import com.dongsan.domains.walkway.entity.Walkway;
+import com.dongsan.domains.walkway.entity.WalkwayHistory;
 import com.dongsan.domains.walkway.enums.ExposeLevel;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
 import com.dongsan.domains.walkway.usecase.HashtagUseCase;
 import com.dongsan.domains.walkway.usecase.LikedWalkwayUseCase;
+import com.dongsan.domains.walkway.usecase.WalkwayHistoryUseCase;
 import com.dongsan.domains.walkway.usecase.WalkwayUseCase;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fixture.ImageFixture;
 import fixture.WalkwayFixture;
+import fixture.WalkwayHistoryFixture;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -88,6 +92,9 @@ class WalkwayControllerTest {
 
     @MockBean
     ImageUseCase imageUseCase;
+
+    @MockBean
+    WalkwayHistoryUseCase walkwayHistoryUseCase;
 
     final Member member = createMemberWithId(1L);
     final CustomOAuth2User customOAuth2User = new CustomOAuth2User(member);
@@ -211,7 +218,7 @@ class WalkwayControllerTest {
             // Given
             Long walkwayId = 1L;
             Walkway walkway = WalkwayFixture.createWalkwayWithId(1L, null);
-            GetWalkwayWithLikedResponse getWalkwayWithLikedResponse = new GetWalkwayWithLikedResponse(walkway);
+            GetWalkwayWithLikedResponse getWalkwayWithLikedResponse = new GetWalkwayWithLikedResponse(walkway, true);
 
             when(walkwayUseCase.getWalkwayWithLiked(walkwayId, customOAuth2User.getMemberId()))
                     .thenReturn(walkway);
@@ -363,6 +370,61 @@ class WalkwayControllerTest {
                     .andExpect(jsonPath("$.data.walkways").isArray())
                     .andExpect(jsonPath("$.data.walkways").isNotEmpty())
                     .andExpect(jsonPath("$.data.walkways.size()").value(size));
+        }
+    }
+
+    @Nested
+    @DisplayName("createHistory 메서드는")
+    class Describe_createHistory {
+
+        @Test
+        @DisplayName("walkwayId와 request body를 받아 생성한 walkwayHistoryId를 반환한다.")
+        void it_returns_walkwayHistoryId() throws Exception {
+            // Given
+            Long walkwayId = 1L;
+            Long walkwayHistoryId = 100L;
+
+            CreateWalkwayHistoryRequest request = new CreateWalkwayHistoryRequest(600, 10.0);
+
+            when(walkwayHistoryUseCase.createWalkwayHistory(customOAuth2User.getMemberId(), walkwayId, request))
+                    .thenReturn(walkwayHistoryId);
+
+            // When
+            ResultActions response = mockMvc.perform(post("/walkways/{walkwayId}/history", walkwayId)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request)));
+
+            // Then
+            response.andExpect(status().isCreated())
+                    .andExpect(jsonPath("$.data.walkwayHistoryId").value(walkwayHistoryId));
+        }
+    }
+
+    @Nested
+    @DisplayName("getHistories 메서드는")
+    class Describe_getHistories {
+
+        @Test
+        @DisplayName("리뷰 가능한 산책로 이용 기록을 반환한다.")
+        void it_returns_walkway_histories() throws Exception {
+            // Given
+            Long walkwayId = 1L;
+            Long memberId = member.getId();
+
+            List<WalkwayHistory> histories = List.of(
+                    WalkwayHistoryFixture.createWalkwayHistoryWithId(1L, null, null),
+                    WalkwayHistoryFixture.createWalkwayHistoryWithId(2L, null, null)
+            );
+
+            when(walkwayHistoryUseCase.getWalkwayHistories(memberId, walkwayId)).thenReturn(histories);
+
+            // When
+            ResultActions response = mockMvc.perform(get("/walkways/{walkwayId}/history", walkwayId)
+                    .contentType(MediaType.APPLICATION_JSON));
+
+            // Then
+            response.andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data.walkwayHistories.size()").value(2));
         }
     }
 }

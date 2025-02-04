@@ -256,4 +256,27 @@ class WalkwayUseCaseTest {
                     .isInstanceOf(CustomException.class);
         }
     }
+
+    @Nested
+    @DisplayName("isMarkedWalkway 메서드는")
+    class Describe_isMarkedWalkway {
+
+        @Test
+        @DisplayName("walkwayId와 memberId가 존재하면 true를 반환한다.")
+        void it_returns_true_if_marked_walkway_exists() {
+            // given
+            Long walkwayId = 1L;
+            Long memberId = 1L;
+
+            // Mocking: 해당 산책로가 북마크 되어 있는 경우
+            when(walkwayQueryService.isMarkedWalkway(walkwayId, memberId))
+                    .thenReturn(true);
+
+            // when
+            boolean result = walkwayUseCase.isMarkedWalkway(walkwayId, memberId);
+
+            // then
+            assertThat(result).isTrue();
+        }
+    }
 }

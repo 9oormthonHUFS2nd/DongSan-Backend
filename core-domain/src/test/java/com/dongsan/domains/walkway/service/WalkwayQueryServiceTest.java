@@ -7,6 +7,7 @@ import static fixture.WalkwayFixture.createWalkwayWithId;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.dongsan.common.error.exception.CustomException;
@@ -35,7 +36,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -244,9 +244,32 @@ class WalkwayQueryServiceTest {
             List<SearchWalkwayResult> result = walkwayQueryService.searchWalkway(null, sort);
 
             // Then
-            Mockito.verify(serviceFactory).getService(sort);
-            Mockito.verify(searchWalkwayService).search(null);
+            verify(serviceFactory).getService(sort);
+            verify(searchWalkwayService).search(null);
             assertThat(result).isEqualTo(searchWalkwayResults);
         }
+    }
+
+    @Nested
+    @DisplayName("isMarkedWalkway 메서드는")
+    class Describe_isMarkedWalkway {
+
+        @Test
+        @DisplayName("walkwayId와 memberId가 존재하면 true를 반환한다.")
+        void it_returns_true_if_marked_walkway_exists() {
+            // given
+            Long walkwayId = 1L;
+            Long memberId = 1L;
+
+            when(markedWalkwayQueryDSLRepository.existsMarkedWalkwayByMemberAndWalkway(walkwayId, memberId))
+                    .thenReturn(true);
+
+            // when
+            boolean result = walkwayQueryService.isMarkedWalkway(walkwayId, memberId);
+
+            // then
+            assertThat(result).isTrue();
+        }
+
     }
 }
