@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.dongsan.domains.auth.AuthService;
+import com.dongsan.domains.auth.usecase.AuthUseCase;
 import com.dongsan.domains.dev.dto.request.GenerateTokenRequest;
 import com.dongsan.domains.dev.dto.response.GenerateTokenResponse;
 import com.dongsan.domains.dev.dto.response.GetMemberInfoResponse;
@@ -36,6 +37,8 @@ class DevControllerTest {
     DevUseCase devUseCase;
     @MockBean
     AuthService authService;
+    @MockBean
+    AuthUseCase authUseCase;
 
     @Nested
     @DisplayName("generateToken 메소드는")

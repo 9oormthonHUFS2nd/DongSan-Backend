@@ -3,9 +3,12 @@ package com.dongsan.domains.dev.controller;
 import com.dongsan.common.apiResponse.ResponseFactory;
 import com.dongsan.common.apiResponse.SuccessResponse;
 import com.dongsan.domains.auth.AuthService;
+import com.dongsan.domains.auth.usecase.AuthUseCase;
+import com.dongsan.domains.dev.dto.request.CheckTokenExpire;
 import com.dongsan.domains.dev.dto.request.GenerateTokenRequest;
 import com.dongsan.domains.dev.dto.response.GenerateTokenResponse;
 import com.dongsan.domains.dev.dto.response.GetMemberInfoResponse;
+import com.dongsan.domains.dev.dto.response.GetTokenRemaining;
 import com.dongsan.domains.dev.usecase.DevUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -35,6 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 public class DevController {
     private final DevUseCase devUseCase;
+    private final AuthUseCase authUseCase;
     private final AuthService authService;
 
     @Operation(summary = "개발용 토큰 발급")
@@ -58,11 +62,20 @@ public class DevController {
     @Operation(summary = "memberId로 서버에 저장된 refreshToken 확인하기")
     @GetMapping("/token/refresh")
     public ResponseEntity<SuccessResponse<Map<String, String>>> getRefreshToken(
-            @RequestParam @RequestBody Long memberId
+            @RequestParam Long memberId
     ){
         String refreshToken = authService.getRefreshToken(memberId);
         Map<String, String> response = new HashMap<>();
         response.put("refreshToken", refreshToken);
+        return ResponseFactory.ok(response);
+    }
+
+    @Operation(summary = "access token, refresh token의 만료기간 확인")
+    @PostMapping("/token/expired")
+    public ResponseEntity<SuccessResponse<GetTokenRemaining>> checkTokenExpire(
+            @RequestBody CheckTokenExpire tokens
+    ){
+        GetTokenRemaining response = authUseCase.checkTokenExpire(tokens.accessToken(), tokens.refreshToken());
         return ResponseFactory.ok(response);
     }
 
