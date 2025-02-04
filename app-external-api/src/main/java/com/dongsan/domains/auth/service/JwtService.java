@@ -93,7 +93,6 @@ public class JwtService {
         });
     }
 
-
     public boolean isAccessTokenExpired(String accessToken){
         return isTokenExpired(accessToken, accessTokenSecretKey, TokenType.ACCESS);
     }
@@ -103,17 +102,25 @@ public class JwtService {
     }
 
     private boolean isTokenExpired(String token, SecretKey secretKey, TokenType tokenType) {
-        try {
-            return extractAll(token, secretKey)
-                    .getExpiration()
-                    .before(new Date());
+        long remainingTime = getRemainingTimeMillis(token, secretKey);
+        if(remainingTime == 0){
+            switch (tokenType) {
+                case ACCESS -> throw new CustomException(AuthErrorCode.ACCESS_TOKEN_EXPIRED);
+                case REFRESH -> throw new CustomException(AuthErrorCode.REFRESH_TOKEN_EXPIRED);
+            }
+        }
+        return false;
+    }
+
+    public long getRemainingTimeMillis(String token, SecretKey secretKey){
+        try{
+            Date expiration = extractAll(token, secretKey).getExpiration();
+            long remainingTime = expiration.getTime() - System.currentTimeMillis();
+            return Math.max(remainingTime, 0);
         } catch (JwtException e) {
             if (e instanceof ExpiredJwtException) {
                 log.info("[AUTH_INFO] JWT 토큰이 만료: {}", e.getMessage());
-                switch (tokenType) {
-                    case ACCESS -> throw new CustomException(AuthErrorCode.ACCESS_TOKEN_EXPIRED);
-                    case REFRESH -> throw new CustomException(AuthErrorCode.REFRESH_TOKEN_EXPIRED);
-                }
+                return 0;
             }
             if (e instanceof MalformedJwtException) {
                 log.warn("[AUTH_WARNING] JWT 토큰 형식이 올바르지 않음: {}", e.getMessage());
@@ -129,6 +136,14 @@ public class JwtService {
                 throw new CustomException(SystemErrorCode.INTERNAL_SERVER_ERROR);
             }
         }
+    }
+
+    public long getAccessTokenRemainingTimeMillis(String token){
+        return getRemainingTimeMillis(token, accessTokenSecretKey);
+    }
+
+    public long getRefreshTokenRemainingTimeMillis(String token){
+        return getRemainingTimeMillis(token, refreshTokenSecretKey);
     }
 
     /**

@@ -6,6 +6,7 @@ import com.dongsan.common.error.exception.CustomException;
 import com.dongsan.domains.auth.AuthService;
 import com.dongsan.domains.auth.dto.RenewToken;
 import com.dongsan.domains.auth.service.JwtService;
+import com.dongsan.domains.dev.dto.response.GetTokenRemaining;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -43,5 +44,17 @@ public class AuthUseCase {
             return new RenewToken(newAccessToken, newRefreshToken);
         }
         throw new CustomException(AuthErrorCode.REFRESH_TOKEN_EXPIRED);
+    }
+
+    /**
+     * 토큰의 만료기간을 확인하는 로직
+     * @param accessToken
+     * @param refreshToken
+     */
+    public GetTokenRemaining checkTokenExpire(String accessToken, String refreshToken) {
+        long accessTokenRemaining = jwtService.getAccessTokenRemainingTimeMillis(accessToken);
+        long refreshTokenRemaining = jwtService.getRefreshTokenRemainingTimeMillis(refreshToken);
+
+        return new GetTokenRemaining(accessTokenRemaining, refreshTokenRemaining);
     }
 }
