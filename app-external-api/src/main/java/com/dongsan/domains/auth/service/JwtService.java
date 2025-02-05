@@ -31,8 +31,8 @@ public class JwtService {
     private final MemberRepository memberRepository;
     @Value("${jwt.access.secret}")
     private String accessTokenSecret;
-    @Value("${jwt.access.expires-in}")
-    private long accessTokenExpiresIn;
+    //@Value("${jwt.access.expires-in}")
+    private long accessTokenExpiresIn = 5 * 60 * 1000; // 테스트 위해 5분으로 설정
     @Value("${jwt.refresh.secret}")
     private String refreshTokenSecret;
     @Value("${jwt.refresh.expires-in}")
