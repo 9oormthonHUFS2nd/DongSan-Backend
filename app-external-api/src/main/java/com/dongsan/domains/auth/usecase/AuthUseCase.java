@@ -54,6 +54,12 @@ public class AuthUseCase {
     public GetTokenRemaining checkTokenExpire(String accessToken, String refreshToken) {
         long accessTokenRemaining = jwtService.getAccessTokenRemainingTimeMillis(accessToken);
         long refreshTokenRemaining = jwtService.getRefreshTokenRemainingTimeMillis(refreshToken);
+        if(refreshTokenRemaining > 0){
+            Long memberId = jwtService.getMemberFromRefreshToken(refreshToken).getId();
+            if(!authService.isRefreshTokenNotReplaced(memberId, refreshToken)){
+                refreshTokenRemaining = 0;
+            }
+        }
 
         return new GetTokenRemaining(accessTokenRemaining, refreshTokenRemaining);
     }
