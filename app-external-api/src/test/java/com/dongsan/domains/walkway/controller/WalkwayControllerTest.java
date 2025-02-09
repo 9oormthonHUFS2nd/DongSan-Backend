@@ -24,6 +24,7 @@ import com.dongsan.domains.walkway.dto.WalkwayCoordinate;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayHistoryRequest;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayRequest;
 import com.dongsan.domains.walkway.dto.request.UpdateWalkwayRequest;
+import com.dongsan.domains.walkway.dto.response.CreateWalkwayHistoryResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayWithLikedResponse;
 import com.dongsan.domains.walkway.dto.response.SearchWalkwayResponse;
 import com.dongsan.domains.walkway.dto.response.SearchWalkwayResult;
@@ -384,15 +385,18 @@ class WalkwayControllerTest {
             Long walkwayId = 1L;
             Long walkwayHistoryId = 100L;
 
-            CreateWalkwayHistoryRequest request = new CreateWalkwayHistoryRequest(600, 10.0);
+            CreateWalkwayHistoryRequest createWalkwayHistoryRequest
+                    = new CreateWalkwayHistoryRequest(600, 10.0);
+            CreateWalkwayHistoryResponse createWalkwayHistoryResponse
+                    = new CreateWalkwayHistoryResponse(walkwayHistoryId, true);
 
-            when(walkwayHistoryUseCase.createWalkwayHistory(customOAuth2User.getMemberId(), walkwayId, request))
-                    .thenReturn(walkwayHistoryId);
+            when(walkwayHistoryUseCase.createWalkwayHistory(customOAuth2User.getMemberId(), walkwayId, createWalkwayHistoryRequest))
+                    .thenReturn(createWalkwayHistoryResponse);
 
             // When
             ResultActions response = mockMvc.perform(post("/walkways/{walkwayId}/history", walkwayId)
                     .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)));
+                    .content(objectMapper.writeValueAsString(createWalkwayHistoryRequest)));
 
             // Then
             response.andExpect(status().isCreated())
