@@ -47,9 +47,9 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         // 주소 분기
         String redirectUrl;
-        String origin = request.getHeader("Origin");
-        log.info("[cookie : origin] " + origin);
-        if (origin != null && origin.contains("localhost")) {
+        String referer = request.getHeader("Referer");
+        log.info("[cookie : referer] " + referer);
+        if (referer.contains("localhost")) {
             redirectUrl = devRedirectUrl;
         } else {
             redirectUrl = prodRedirectUrl;
