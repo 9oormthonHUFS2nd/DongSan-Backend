@@ -123,8 +123,8 @@ class WalkwayControllerTest {
                     1L,
                     "testName",
                     "testMemo",
-                    4.2,
-                    20,
+                    10.0,
+                    600,
                     List.of("하나", "둘"),
                     ExposeLevel.PUBLIC,
                     course
