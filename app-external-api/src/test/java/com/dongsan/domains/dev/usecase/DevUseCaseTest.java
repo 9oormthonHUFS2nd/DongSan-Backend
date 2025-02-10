@@ -1,17 +1,18 @@
 package com.dongsan.domains.dev.usecase;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
-import com.dongsan.core.domains.auth.AuthService;
 import com.dongsan.api.domains.auth.service.JwtService;
 import com.dongsan.api.domains.dev.DevUseCase;
-import com.dongsan.api.domains.dev.GenerateTokenResponse;
 import com.dongsan.api.domains.dev.GetMemberInfoResponse;
-import com.dongsan.domains.member.entity.Member;
+import com.dongsan.core.domains.auth.AuthService;
 import com.dongsan.core.domains.member.MemberReader;
+import com.dongsan.domains.auth.service.CookieService;
+import com.dongsan.domains.member.entity.Member;
 import fixture.MemberFixture;
-import org.assertj.core.api.Assertions;
+import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("DevUseCaseTest Unit Test")
@@ -31,6 +34,8 @@ class DevUseCaseTest {
     JwtService jwtService;
     @Mock
     AuthService authService;
+    @Mock
+    CookieService cookieService;
 
 
     @Nested
@@ -46,13 +51,27 @@ class DevUseCaseTest {
             when(jwtService.createAccessToken(memberId)).thenReturn(accessToken);
             when(jwtService.createRefreshToken(memberId)).thenReturn(refreshToken);
             doNothing().when(authService).saveRefreshToken(memberId, refreshToken);
+            MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
+            MockHttpServletResponse httpServletResponse = new MockHttpServletResponse();
+            Cookie atCookie = new Cookie("accessToken", accessToken);
+            Cookie rtCookie = new Cookie("refreshToken", refreshToken);
+            when(cookieService.createAccessTokenCookie(accessToken, httpServletRequest)).thenReturn(atCookie);
+            when(cookieService.createRefreshTokenCookie(refreshToken, httpServletRequest)).thenReturn(rtCookie);
 
             // when
-            GenerateTokenResponse response = devUseCase.generateToken(memberId);
+            devUseCase.generateToken(memberId, httpServletRequest, httpServletResponse);
 
             // then
-            Assertions.assertThat(response.accessToken()).isEqualTo(accessToken);
-            Assertions.assertThat(response.refreshToken()).isEqualTo(refreshToken);
+            Cookie[] cookies = httpServletResponse.getCookies();
+            assertThat(cookies).hasSize(2);
+
+            Cookie storedAccessTokenCookie = cookies[0];
+            Cookie storedRefreshTokenCookie = cookies[1];
+
+            assertThat(storedAccessTokenCookie.getName()).isEqualTo("accessToken");
+            assertThat(storedAccessTokenCookie.getValue()).isEqualTo(accessToken);
+            assertThat(storedRefreshTokenCookie.getName()).isEqualTo("refreshToken");
+            assertThat(storedRefreshTokenCookie.getValue()).isEqualTo(refreshToken);
         }
     }
 
@@ -71,8 +90,8 @@ class DevUseCaseTest {
             GetMemberInfoResponse response = devUseCase.getMemberInfo(accessToken);
 
             // then
-            Assertions.assertThat(response.email()).isEqualTo(member.getEmail());
-            Assertions.assertThat(response.memberId()).isEqualTo(member.getId());
+            assertThat(response.email()).isEqualTo(member.getEmail());
+            assertThat(response.memberId()).isEqualTo(member.getId());
         }
     }
 

@@ -16,14 +16,26 @@ import com.dongsan.core.domains.walkway.dto.response.CreateReviewResponse;
 import com.dongsan.core.domains.walkway.dto.response.GetWalkwayRatingResponse;
 import com.dongsan.core.domains.walkway.dto.response.GetWalkwayReviewsResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
+<<<<<<< HEAD:core-domain/src/test/java/com/dongsan/domains/walkway/usecase/ReviewServiceTest.java
 import com.dongsan.core.domains.walkway.enums.ReviewSort;
 import com.dongsan.core.domains.review.ReviewWriter;
 import com.dongsan.core.domains.review.ReviewReader;
 import com.dongsan.core.domains.walkway.service.WalkwayWriter;
 import com.dongsan.core.domains.walkway.service.WalkwayReader;
+=======
+import com.dongsan.domains.walkway.entity.WalkwayHistory;
+import com.dongsan.domains.walkway.enums.ReviewSort;
+import com.dongsan.domains.walkway.service.ReviewCommandService;
+import com.dongsan.domains.walkway.service.ReviewQueryService;
+import com.dongsan.domains.walkway.service.WalkwayCommandService;
+import com.dongsan.domains.walkway.service.WalkwayHistoryCommandService;
+import com.dongsan.domains.walkway.service.WalkwayHistoryQueryService;
+import com.dongsan.domains.walkway.service.WalkwayQueryService;
+>>>>>>> 496a334bff8928cf4a3a20bc45dce34b0046eae7:core-domain/src/test/java/com/dongsan/domains/walkway/usecase/WalkwayReviewUseCaseTest.java
 import fixture.MemberFixture;
 import fixture.ReviewFixture;
 import fixture.WalkwayFixture;
+import fixture.WalkwayHistoryFixture;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -46,7 +58,15 @@ class ReviewServiceTest {
     @Mock
     ReviewReader reviewReader;
     @Mock
+<<<<<<< HEAD:core-domain/src/test/java/com/dongsan/domains/walkway/usecase/ReviewServiceTest.java
     WalkwayWriter walkwayCommandService;
+=======
+    WalkwayCommandService walkwayCommandService;
+    @Mock
+    WalkwayHistoryQueryService walkwayHistoryQueryService;
+    @Mock
+    WalkwayHistoryCommandService walkwayHistoryCommandService;
+>>>>>>> 496a334bff8928cf4a3a20bc45dce34b0046eae7:core-domain/src/test/java/com/dongsan/domains/walkway/usecase/WalkwayReviewUseCaseTest.java
     @InjectMocks
     ReviewService reviewService;
 
@@ -60,16 +80,23 @@ class ReviewServiceTest {
             Long memberId = 1L;
             Long walkwayId = 1L;
             Long reviewId = 1L;
+            Long walkwayHistoryId = 1L;
             Integer rating = 5;
-            CreateReviewRequest createReviewRequest = new CreateReviewRequest(rating, "test content");
+            CreateReviewRequest createReviewRequest = new CreateReviewRequest(walkwayHistoryId, rating, "test content");
 
             Member member = MemberFixture.createMemberWithId(memberId);
             Walkway walkway = WalkwayFixture.createWalkwayWithId(walkwayId, member);
             Review review = ReviewFixture.createReviewWithId(reviewId, member, walkway);
+            WalkwayHistory walkwayHistory = WalkwayHistoryFixture.createWalkwayHistory(member, walkway, 10.0, 10);
 
             when(memberReader.getMember(member.getId())).thenReturn(member);
             when(walkwayQueryService.getWalkway(walkway.getId())).thenReturn(walkway);
+<<<<<<< HEAD:core-domain/src/test/java/com/dongsan/domains/walkway/usecase/ReviewServiceTest.java
             when(reviewWriter.createReview(any())).thenReturn(review);
+=======
+            when(walkwayHistoryQueryService.getById(walkwayHistoryId)).thenReturn(walkwayHistory);
+            when(reviewCommandService.createReview(any())).thenReturn(review);
+>>>>>>> 496a334bff8928cf4a3a20bc45dce34b0046eae7:core-domain/src/test/java/com/dongsan/domains/walkway/usecase/WalkwayReviewUseCaseTest.java
 
             // When
             CreateReviewResponse result = reviewService.createReview(memberId, walkwayId, createReviewRequest);

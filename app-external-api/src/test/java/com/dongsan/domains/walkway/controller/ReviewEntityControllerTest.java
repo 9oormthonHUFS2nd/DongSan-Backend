@@ -74,7 +74,7 @@ class ReviewEntityControllerTest {
             // Given
             Long walkwayId = 1L;
             Integer rating = 5;
-            CreateReviewRequest createReviewRequest = new CreateReviewRequest(rating, "test content");
+            CreateReviewRequest createReviewRequest = new CreateReviewRequest(1L, rating, "test content");
 
             CreateReviewResponse createReviewResponse = CreateReviewResponse.builder()
                     .reviewId(1L)

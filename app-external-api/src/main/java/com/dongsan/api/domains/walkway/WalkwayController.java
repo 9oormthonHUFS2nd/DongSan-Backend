@@ -8,6 +8,7 @@ import com.dongsan.core.domains.bookmark.BookmarkService;
 import com.dongsan.domains.image.entity.Image;
 import com.dongsan.core.domains.image.ImageService;
 import com.dongsan.domains.image.usecase.S3UseCase;
+<<<<<<< HEAD:app-external-api/src/main/java/com/dongsan/api/domains/walkway/WalkwayController.java
 import com.dongsan.domains.walkway.controller.dto.request.CreateWalkwayRequest;
 import com.dongsan.domains.walkway.controller.dto.request.UpdateWalkwayRequest;
 import com.dongsan.domains.walkway.controller.dto.response.CreateWalkwayCourseImageRequest;
@@ -18,6 +19,23 @@ import com.dongsan.domains.walkway.dto.response.SearchWalkwayResult;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.core.domains.walkway.usecase.HashtagService;
 import com.dongsan.core.domains.walkway.usecase.WalkwayService;
+=======
+import com.dongsan.domains.walkway.dto.request.CreateWalkwayHistoryRequest;
+import com.dongsan.domains.walkway.dto.request.CreateWalkwayRequest;
+import com.dongsan.domains.walkway.dto.request.UpdateWalkwayRequest;
+import com.dongsan.domains.walkway.dto.response.CreateWalkwayCourseImageRequest;
+import com.dongsan.domains.walkway.dto.response.CreateWalkwayHistoryResponse;
+import com.dongsan.domains.walkway.dto.response.CreateWalkwayResponse;
+import com.dongsan.domains.walkway.dto.response.GetWalkwayHistoriesResponse;
+import com.dongsan.domains.walkway.dto.response.GetWalkwayWithLikedResponse;
+import com.dongsan.domains.walkway.dto.response.SearchWalkwayResponse;
+import com.dongsan.domains.walkway.dto.response.SearchWalkwayResult;
+import com.dongsan.domains.walkway.entity.Walkway;
+import com.dongsan.domains.walkway.entity.WalkwayHistory;
+import com.dongsan.domains.walkway.usecase.HashtagUseCase;
+import com.dongsan.domains.walkway.usecase.WalkwayHistoryUseCase;
+import com.dongsan.domains.walkway.usecase.WalkwayUseCase;
+>>>>>>> 496a334bff8928cf4a3a20bc45dce34b0046eae7:app-external-api/src/main/java/com/dongsan/domains/walkway/controller/WalkwayController.java
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
@@ -48,7 +66,12 @@ public class WalkwayController {
     private final BookmarkService bookmarkService;
     private final HashtagService hashtagUseCase;
     private final S3UseCase s3UseCase;
+<<<<<<< HEAD:app-external-api/src/main/java/com/dongsan/api/domains/walkway/WalkwayController.java
     private final ImageService imageService;
+=======
+    private final ImageUseCase imageUseCase;
+    private final WalkwayHistoryUseCase walkwayHistoryUseCase;
+>>>>>>> 496a334bff8928cf4a3a20bc45dce34b0046eae7:app-external-api/src/main/java/com/dongsan/domains/walkway/controller/WalkwayController.java
 
     @Operation(summary = "산책로 등록")
     @PostMapping("")
@@ -79,7 +102,8 @@ public class WalkwayController {
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {
         Walkway walkway = walkwayUseCase.getWalkwayWithLiked(walkwayId, customOAuth2User.getMemberId());
-        return ResponseFactory.ok(new GetWalkwayWithLikedResponse(walkway));
+        boolean isMarked = walkwayUseCase.isMarkedWalkway(walkwayId, customOAuth2User.getMemberId());
+        return ResponseFactory.ok(new GetWalkwayWithLikedResponse(walkway, isMarked));
     }
 
     @Operation(summary = "북마크 목록 보기(산책로 마크 여부 포함)")
@@ -118,5 +142,29 @@ public class WalkwayController {
         List<SearchWalkwayResult> searchWalkwayResults
                 = walkwayUseCase.searchWalkway(customOAuth2User.getMemberId(), sort, latitude, longitude, distance, lastId, size);
         return ResponseFactory.ok(new SearchWalkwayResponse(searchWalkwayResults, size));
+    }
+
+    @Operation(summary = "산책로 이용 기록")
+    @PostMapping("/{walkwayId}/history")
+    public ResponseEntity<SuccessResponse<CreateWalkwayHistoryResponse>> createHistory(
+            @PathVariable Long walkwayId,
+            @Validated @RequestBody CreateWalkwayHistoryRequest createWalkwayHistoryRequest,
+            @AuthenticationPrincipal CustomOAuth2User customOAuth2User
+    ) {
+        CreateWalkwayHistoryResponse createWalkwayHistoryResponse
+                = walkwayHistoryUseCase.createWalkwayHistory(customOAuth2User.getMemberId(), walkwayId, createWalkwayHistoryRequest);
+        return ResponseFactory.created(createWalkwayHistoryResponse);
+    }
+
+    @Operation(summary = "리뷰 작성 가능한 산책로 이용 기록 보기")
+    @GetMapping("/{walkwayId}/history")
+    public ResponseEntity<SuccessResponse<GetWalkwayHistoriesResponse>> getHistories(
+            @PathVariable Long walkwayId,
+            @AuthenticationPrincipal CustomOAuth2User customOAuth2User
+    ) {
+        List<WalkwayHistory> walkwayHistories
+                = walkwayHistoryUseCase.getWalkwayHistories(customOAuth2User.getMemberId(), walkwayId);
+
+        return ResponseFactory.ok(GetWalkwayHistoriesResponse.from(walkwayHistories));
     }
 }

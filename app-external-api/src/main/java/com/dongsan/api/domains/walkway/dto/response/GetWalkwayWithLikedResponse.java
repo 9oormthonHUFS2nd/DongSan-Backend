@@ -18,9 +18,11 @@ public record GetWalkwayWithLikedResponse(
         Integer reviewCount,
         List<String> hashtags,
         ExposeLevel accessLevel,
-        List<WalkwayCoordinate> course
+        List<WalkwayCoordinate> course,
+        Boolean marked,
+        Integer likeCount
 ) {
-    public GetWalkwayWithLikedResponse(Walkway walkway) {
+    public GetWalkwayWithLikedResponse(Walkway walkway, boolean isMarked) {
         this (
                 walkway.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy.MM.dd")),
                 walkway.getTime(),
@@ -34,7 +36,13 @@ public record GetWalkwayWithLikedResponse(
                         .map(hashtagWalkway -> "#" + hashtagWalkway.getHashtag().getName())
                         .toList(),
                 walkway.getExposeLevel(),
+<<<<<<< HEAD:app-external-api/src/main/java/com/dongsan/api/domains/walkway/dto/response/GetWalkwayWithLikedResponse.java
                 LineStringMapper.toList(walkway.getCourse())
+=======
+                toList(walkway.getCourse()),
+                isMarked,
+                walkway.getLikeCount()
+>>>>>>> 496a334bff8928cf4a3a20bc45dce34b0046eae7:core-domain/src/main/java/com/dongsan/domains/walkway/dto/response/GetWalkwayWithLikedResponse.java
         );
     }
 }

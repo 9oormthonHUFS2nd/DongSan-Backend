@@ -134,4 +134,55 @@ class MarkedWalkwayQueryDSLRepositoryTestEntity extends RepositoryTest {
             }
         }
     }
+
+    @Nested
+    @DisplayName("existsMarkedWalkwayByMemberAndWalkway 메서드는")
+    class Describe_existsMarkedWalkwayByMemberAndWalkway {
+        Member member;
+        Bookmark bookmark;
+        Walkway walkway;
+
+        @BeforeEach
+        void setUp() {
+            member = createMember();
+            em.persist(member);
+
+            bookmark = createBookmark(member);
+            em.persist(bookmark);
+
+            walkway = createWalkway(member);
+            em.persist(walkway);
+
+            MarkedWalkway markedWalkway = createMarkedWalkway(walkway, bookmark);
+            em.persist(markedWalkway);
+        }
+
+        @Test
+        @DisplayName("북마크된 산책로가 존재하면 true를 반환한다.")
+        void it_returns_true_if_marked_walkway_exists() {
+            // given
+            Long walkwayId = walkway.getId();
+            Long memberId = member.getId();
+
+            // when
+            boolean result = markedWalkwayQueryDSLRepository.existsMarkedWalkwayByMemberAndWalkway(walkwayId, memberId);
+
+            // then
+            assertThat(result).isTrue();
+        }
+
+        @Test
+        @DisplayName("북마크되지 않은 산책로인 경우 false를 반환한다.")
+        void it_returns_false_if_marked_walkway_does_not_exist() {
+            // given
+            Long nonExistingWalkwayId = -1L;
+            Long memberId = member.getId();
+
+            // when
+            boolean result = markedWalkwayQueryDSLRepository.existsMarkedWalkwayByMemberAndWalkway(nonExistingWalkwayId, memberId);
+
+            // then
+            assertThat(result).isFalse();
+        }
+    }
 }

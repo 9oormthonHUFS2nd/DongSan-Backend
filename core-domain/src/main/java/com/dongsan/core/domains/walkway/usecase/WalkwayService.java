@@ -48,6 +48,10 @@ public class WalkwayService {
         return walkway;
     }
 
+    public boolean isMarkedWalkway(Long walkwayId, Long memberId) {
+        return walkwayQueryService.isMarkedWalkway(walkwayId, memberId);
+    }
+
     @Transactional
     public void updateWalkway(UpdateWalkwayRequest updateWalkwayRequest, Long memberId, Long walkwayId) {
         // 산책로 불러오기
