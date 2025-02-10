@@ -1,6 +1,6 @@
 package com.dongsan.core.domains.walkway;
 
-import com.dongsan.domains.walkway.entity.Walkway;
+import com.dongsan.core.domains.walkway.domain.Walkway;
 import java.time.LocalDate;
 import java.util.List;
 

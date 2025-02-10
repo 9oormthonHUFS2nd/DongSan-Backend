@@ -1,23 +1,25 @@
 package com.dongsan.api.domains.walkway.dto.response;
 
 import com.dongsan.api.domains.walkway.dto.WalkwayCoordinate;
+import com.dongsan.core.domains.walkway.domain.Walkway;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 public record SearchWalkwayResponse(
-        List<Walkway> walkways,
+        List<WalkwayResponse> walkways,
         Boolean hasNext
 ) {
-    public SearchWalkwayResponse(List<SearchWalkwayResult> searchWalkwayResults, Integer size) {
+    public SearchWalkwayResponse(List<Walkway> walkways, Map<Long, Boolean> isLiked, Integer size) {
         this(
-                searchWalkwayResults.stream()
-                        .map(Walkway::new)
+                walkways.stream()
+                        .map(walkway -> new WalkwayResponse(walkway, isLiked.get(walkway.walkwayId())))
                         .toList(),
-                searchWalkwayResults.size() == size
+                walkways.size() == size
         );
     }
 
-    public record Walkway(
+    public record WalkwayResponse(
             Long walkwayId,
             String name,
             Double distance,
@@ -30,20 +32,20 @@ public record SearchWalkwayResponse(
             WalkwayCoordinate location,
             String registerDate
     ) {
-        public Walkway(SearchWalkwayResult walkway) {
+        public WalkwayResponse(Walkway walkway, Boolean isLiked) {
             this(
-                    walkway.id(),
+                    walkway.walkwayId(),
                     walkway.name(),
-                    walkway.distance(),
+                    walkway.courseInfo().distance(),
                     walkway.hashtags().stream()
                             .map(hashtag -> "#" + hashtag)
                             .toList(),
-                    walkway.isLike(),
+                    isLiked,
                     walkway.likeCount(),
                     walkway.reviewCount(),
                     walkway.rating(),
-                    walkway.courseImageUrl(),
-                    new WalkwayCoordinate(walkway.startLocation().getY(), walkway.startLocation().getX()),
+                    walkway.courseInfo().courseImageUrl(),
+                    new WalkwayCoordinate(walkway.courseInfo().startLocation().getY(), walkway.courseInfo().startLocation().getX()),
                     walkway.createdAt().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))
             );
         }

@@ -1,5 +1,6 @@
 package com.dongsan.core.domains.walkway;
 
+import com.dongsan.core.domains.walkway.domain.Walkway;
 import com.dongsan.core.domains.walkway.service.LikedWalkwayReader;
 import com.dongsan.core.domains.walkway.service.WalkwayReader;
 import com.dongsan.core.common.annotation.UseCase;

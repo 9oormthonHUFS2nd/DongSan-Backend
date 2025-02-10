@@ -1,6 +1,7 @@
 package com.dongsan.api.domains.walkway.dto.response;
 
-import com.dongsan.domains.walkway.entity.Walkway;
+
+import com.dongsan.core.domains.walkway.domain.Walkway;
 import lombok.Builder;
 
 @Builder
@@ -9,7 +10,7 @@ public record CreateWalkwayResponse(
 ) {
     public CreateWalkwayResponse(Walkway walkway) {
         this (
-                walkway.getId()
+                walkway.walkwayId()
         );
     }
 }

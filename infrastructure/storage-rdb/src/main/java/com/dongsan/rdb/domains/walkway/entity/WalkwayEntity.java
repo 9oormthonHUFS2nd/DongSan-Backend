@@ -1,20 +1,28 @@
 package com.dongsan.rdb.domains.walkway.entity;
 
+import com.dongsan.core.domains.walkway.enums.ExposeLevel;
 import com.dongsan.rdb.domains.common.entity.BaseEntity;
 import com.dongsan.rdb.domains.member.MemberEntity;
 import com.dongsan.rdb.domains.review.RatingCount;
-import com.dongsan.rdb.domains.walkway.enums.ExposeLevel;
-import com.dongsan.rdb.domains.walkway.repository.HashtagWalkway;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -63,16 +71,14 @@ public class WalkwayEntity extends BaseEntity {
 
     private String courseImageUrl;
 
-    @OneToMany(mappedBy = "walkway", fetch = FetchType.LAZY)
-    private List<HashtagWalkway> hashtagWalkways = new ArrayList<>();
-
-    @OneToMany(mappedBy = "walkway", fetch = FetchType.LAZY)
-    private List<LikedWalkway> likedWalkways = new ArrayList<>();
+    @Column(columnDefinition = "json")
+    @JdbcTypeCode(SqlTypes.JSON)
+    private List<String> hashtags;
 
     // 연관관계 매핑도 생성 시 매핑합니다.
     @Builder
     private WalkwayEntity(String name, Double distance, Integer time, ExposeLevel exposeLevel, Point startLocation,
-                          Point endLocation, String memo, LineString course, String courseImageUrl, MemberEntity memberEntity){
+                          Point endLocation, String memo, LineString course, String courseImageUrl, MemberEntity memberEntity, List<String> hashtags){
         this.name = name;
         this.distance = distance;
         this.time = time;
@@ -82,6 +88,7 @@ public class WalkwayEntity extends BaseEntity {
         this.memo = memo;
         this.course = course;
         this.courseImageUrl = courseImageUrl;
+        this.hashtags = hashtags;
 
         // 연관관계 매핑
         this.memberEntity = memberEntity;
@@ -105,22 +112,18 @@ public class WalkwayEntity extends BaseEntity {
         ) / 10.0;
     }
 
-    public void addHashtagWalkway(HashtagWalkway hashtagWalkway) {
-        this.hashtagWalkways.add(hashtagWalkway);
-    }
-    public void addLikedWalkway(LikedWalkway likedWalkway) {
-        this.likedWalkways.add(likedWalkway);
+    public void increaseLikeCount() {
         this.likeCount++;
     }
-    public void removeLikedWalkway() {
+
+    public void decreaseLikeCount() {
         this.likeCount--;
     }
-    public void removeAllHashtagWalkway() {
-        this.hashtagWalkways = new ArrayList<>();
-    }
-    public void updateWalkway(String name, String memo, ExposeLevel exposeLevel) {
+
+    public void updateWalkway(String name, String memo, ExposeLevel exposeLevel, List<String> hashtags) {
         this.name = name;
         this.memo = memo;
         this.exposeLevel = exposeLevel;
+        this.hashtags = hashtags;
     }
 }

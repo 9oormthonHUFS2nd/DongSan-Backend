@@ -1,4 +1,4 @@
-package com.dongsan.rdb.domains.image;
+package com.dongsan.rdb.domains.image.entity;
 
 import com.dongsan.rdb.domains.common.entity.BaseEntity;
 import jakarta.persistence.Column;

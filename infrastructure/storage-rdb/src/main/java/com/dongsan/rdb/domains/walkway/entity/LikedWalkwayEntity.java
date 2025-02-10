@@ -1,7 +1,7 @@
-package com.dongsan.rdb.domains.walkway.repository;
+package com.dongsan.rdb.domains.walkway.entity;
 
 import com.dongsan.rdb.domains.common.entity.BaseEntity;
-import com.dongsan.rdb.domains.walkway.entity.WalkwayEntity;
+import com.dongsan.rdb.domains.member.MemberEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -11,22 +11,24 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class HashtagWalkway extends BaseEntity {
+public class LikedWalkwayEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private MemberEntity memberEntity;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "walkway_id")
     private WalkwayEntity walkwayEntity;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "hashtag_id")
-    private HashtagEntity hashtagEntity;
-
+    // 생성 시 연관관계 매핑 진행
     @Builder
-    private HashtagWalkway(WalkwayEntity walkwayEntity, HashtagEntity hashtagEntity){
+    private LikedWalkwayEntity(MemberEntity memberEntity, WalkwayEntity walkwayEntity){
+        this.memberEntity = memberEntity;
         this.walkwayEntity = walkwayEntity;
-        this.hashtagEntity = hashtagEntity;
     }
+
 }

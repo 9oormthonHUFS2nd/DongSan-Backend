@@ -1,7 +1,7 @@
 package fixture;
 
 import com.dongsan.rdb.domains.common.entity.BaseEntity;
-import com.dongsan.rdb.domains.image.ImageEntity;
+import com.dongsan.rdb.domains.image.entity.ImageEntity;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 

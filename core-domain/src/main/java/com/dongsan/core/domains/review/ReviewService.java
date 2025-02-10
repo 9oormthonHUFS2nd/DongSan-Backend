@@ -40,7 +40,7 @@ public class ReviewService {
 
         List<RatingCount> ratingCounts = reviewReader.getWalkwaysRating(walkwayId);
         walkway.updateRatingAndReviewCount(ratingCounts);
-        walkwayCommandService.createWalkway(walkway);
+        walkwayCommandService.saveWalkway(walkway);
 
         return ReviewMapper.toCreateReviewResponse(review);
     }

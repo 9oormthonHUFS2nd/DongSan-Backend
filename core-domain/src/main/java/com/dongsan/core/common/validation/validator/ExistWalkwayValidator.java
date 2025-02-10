@@ -16,7 +16,7 @@ public class ExistWalkwayValidator implements ConstraintValidator<ExistWalkway, 
     public boolean isValid(Long value, ConstraintValidatorContext context) {
         boolean isValid = false;
         if(value != null){
-            isValid = walkwayQueryService.existsByWalkwayId(value);
+            isValid = walkwayQueryService.existsWalkway(value);
         }
         if(!isValid){
             context.disableDefaultConstraintViolation();

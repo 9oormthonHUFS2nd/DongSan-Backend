@@ -1,20 +1,15 @@
 package com.dongsan.rdb.domains.walkway.repository;
 
-import static com.dongsan.rdb.domains.hashtag.entity.QHashtagWalkway.hashtagWalkway;
-import static com.querydsl.core.group.GroupBy.groupBy;
 
-import com.dongsan.rdb.domains.hashtag.entity.QHashtag;
-import com.dongsan.rdb.domains.walkway.entity.QLikedWalkway;
-import com.dongsan.rdb.domains.walkway.entity.QWalkway;
-import com.dongsan.rdb.domains.walkway.enums.ExposeLevel;
-import com.dongsan.rdb.domains.walkway.dto.request.SearchWalkwayQuery;
-import com.dongsan.rdb.domains.walkway.dto.response.SearchWalkwayResult;
+import static com.dongsan.domains.walkway.entity.QLikedWalkway.likedWalkway;
+
+import com.dongsan.core.domains.walkway.enums.ExposeLevel;
+import com.dongsan.domains.hashtag.entity.QHashtag;
+import com.dongsan.domains.walkway.entity.QLikedWalkway;
+import com.dongsan.domains.walkway.entity.QWalkway;
 import com.dongsan.rdb.domains.walkway.entity.WalkwayEntity;
-import com.querydsl.core.group.GroupBy;
-import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -29,17 +24,19 @@ public class WalkwayQueryDSLRepository {
 
     private QWalkway walkway = QWalkway.walkway;
 
-    public WalkwayEntity getUserWalkwayWithHashtagAndLike(Long userId, Long walkwayId) {
+    public List<WalkwayEntity> getUserLikedWalkway(Long memberId, Integer size, LocalDateTime lastCreatedAt) {
         return queryFactory.selectFrom(walkway)
-                .leftJoin(walkway.hashtagWalkways, hashtagWalkway)
-                .leftJoin(hashtagWalkway.hashtag, QHashtag.hashtag)
-                .leftJoin(walkway.likedWalkways, QLikedWalkway.likedWalkway)
-                .on(QLikedWalkway.likedWalkway.member.id.eq(userId))
-                .where(walkway.id.eq(walkwayId),
+                .join(likedWalkway)
+                .on(likedWalkway.walkway.eq(walkway))
+                .where(
+                        likedWalkway.member.id.eq(memberId),
                         walkway.exposeLevel.eq(ExposeLevel.PUBLIC)
-                                .or(walkway.member.id.eq(userId))
+                                .or(walkway.member.id.eq(memberId)),
+                        createdAtLt(lastCreatedAt)
                 )
-                .fetchOne();
+                .orderBy(walkway.createdAt.desc())
+                .limit(size)
+                .fetch();
     }
 
     public List<WalkwayEntity> getUserWalkway(Long memberId, Integer size, LocalDateTime lastCreatedAt) {
@@ -71,105 +68,56 @@ public class WalkwayQueryDSLRepository {
     }
 
     // 검색 산책로 시작지점 거리 계산
-    private BooleanExpression searchFilterDistance(SearchWalkwayQuery searchWalkwayRequest) {
+    private BooleanExpression searchFilterDistance(Double longitude, Double latitude, Double distance) {
         return Expressions.booleanTemplate(
                 "ST_Distance_Sphere({0}, ST_GeomFromText(concat('POINT(', {1}, ' ', {2}, ')'), 4326)) <= {3}",
                 walkway.startLocation,
-                searchWalkwayRequest.latitude(),
-                searchWalkwayRequest.longitude(),
-                searchWalkwayRequest.distance() * 1000
-        );
-    }
-
-    // 검색 기본 쿼리 (조인, 기본 조건)
-    private JPAQuery<?> searchBaseQuery(SearchWalkwayQuery searchWalkwayRequest, List<Long> walkwayIds) {
-        return queryFactory
-                .from(walkway)
-                .leftJoin(hashtagWalkway)
-                .on(hashtagWalkway.walkway.eq(walkway))
-                .leftJoin(hashtagWalkway.hashtag, QHashtag.hashtag)
-                .leftJoin(QLikedWalkway.likedWalkway)
-                .on(QLikedWalkway.likedWalkway.member.id.eq(searchWalkwayRequest.userId()), QLikedWalkway.likedWalkway.walkway.eq(walkway))
-                .where(
-                        walkway.id.in(walkwayIds)
-                );
-    }
-
-    // 검색 DTO 변환
-    private List<SearchWalkwayResult> transformToSearchWalkwayResult(JPAQuery<?> query) {
-        return query.transform(groupBy(walkway.id).list(
-                        Projections.constructor(
-                                SearchWalkwayResult.class,
-                                walkway.id,
-                                walkway.name,
-                                walkway.distance,
-                                GroupBy.list(QHashtag.hashtag.name),
-                                QLikedWalkway.likedWalkway.isNotNull(),
-                                walkway.likeCount,
-                                walkway.reviewCount,
-                                walkway.rating,
-                                walkway.courseImageUrl,
-                                walkway.startLocation,
-                                walkway.createdAt
-                        )
-                )
+                latitude,
+                longitude,
+                distance * 1000
         );
     }
 
     // 좋아요 순 검색
-    public List<SearchWalkwayResult> searchWalkwaysLiked(
-            SearchWalkwayQuery searchWalkwayRequest
-    ) {
+    public List<WalkwayEntity> searchWalkwaysLiked(Long userId, WalkwayEntity walkwayEntity, Double longitude, Double latitude, Double distance, int size) {
 
-        List<Long> walkwayIds = queryFactory.select(walkway.id)
+        return queryFactory.select(walkway)
                 .from(walkway)
                 .where(
-                        this.searchFilterDistance(searchWalkwayRequest),
+                        this.searchFilterDistance(longitude, latitude, distance),
                         walkway.exposeLevel.eq(ExposeLevel.PUBLIC)
-                                .or(walkway.member.id.eq(searchWalkwayRequest.userId())),
-                        searchWalkwayRequest.walkwayEntity() == null
+                                .or(walkway.member.id.eq(userId)),
+                        walkwayEntity == null
                                 ? null
-                                : walkway.likeCount.lt(searchWalkwayRequest.walkwayEntity().getLikeCount())
-                                                .or(walkway.likeCount.eq(searchWalkwayRequest.walkwayEntity().getLikeCount())
-                                                        .and(createdAtLt(searchWalkwayRequest.walkwayEntity().getCreatedAt()))
-                                                )
+                                : walkway.likeCount.lt(walkwayEntity.getLikeCount())
+                                        .or(walkway.likeCount.eq(walkwayEntity.getLikeCount())
+                                                .and(createdAtLt(walkwayEntity.getCreatedAt()))
+                                        )
                 )
-                .limit(searchWalkwayRequest.size())
+                .limit(size)
                 .orderBy(walkway.likeCount.desc(), walkway.createdAt.desc())
                 .fetch();
-
-        JPAQuery<?> query = this.searchBaseQuery(searchWalkwayRequest, walkwayIds)
-                .orderBy(walkway.likeCount.desc(), walkway.createdAt.desc());
-
-        return this.transformToSearchWalkwayResult(query);
     }
 
     // 별점 순 검색
-    public List<SearchWalkwayResult> searchWalkwaysRating(
-            SearchWalkwayQuery searchWalkwayRequest
-    ) {
+    public List<WalkwayEntity> searchWalkwaysRating(Long userId, WalkwayEntity walkwayEntity, Double longitude, Double latitude, Double distance, int size) {
 
-        List<Long> walkwayIds = queryFactory.select(walkway.id)
+        return queryFactory.select(walkway)
                 .from(walkway)
                 .where(
-                        this.searchFilterDistance(searchWalkwayRequest),
+                        this.searchFilterDistance(longitude, latitude, distance),
                         walkway.exposeLevel.eq(ExposeLevel.PUBLIC)
-                                .or(walkway.member.id.eq(searchWalkwayRequest.userId())),
-                        searchWalkwayRequest.walkwayEntity() == null
+                                .or(walkway.member.id.eq(userId)),
+                        walkwayEntity == null
                                 ? null
-                                : walkway.rating.lt(searchWalkwayRequest.walkwayEntity().getRating())
-                                                .or(walkway.rating.eq(searchWalkwayRequest.walkwayEntity().getRating())
-                                                        .and(createdAtLt(searchWalkwayRequest.walkwayEntity().getCreatedAt()))
-                                                )
+                                : walkway.rating.lt(walkwayEntity.getRating())
+                                        .or(walkway.rating.eq(walkwayEntity.getRating())
+                                                .and(createdAtLt(walkwayEntity.getCreatedAt()))
+                                        )
                 )
-                .limit(searchWalkwayRequest.size())
+                .limit(size)
                 .orderBy(walkway.rating.desc(), walkway.createdAt.desc())
                 .fetch();
-
-        JPAQuery<?> query = this.searchBaseQuery(searchWalkwayRequest, walkwayIds)
-                .orderBy(walkway.rating.desc(), walkway.createdAt.desc());
-
-        return this.transformToSearchWalkwayResult(query);
     }
 
 }

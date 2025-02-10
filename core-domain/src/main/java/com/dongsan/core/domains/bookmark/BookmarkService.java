@@ -77,7 +77,7 @@ public class BookmarkService {
 
     @Transactional(readOnly = true)
     public BookmarksWithMarkedWalkwayResponse getBookmarksWithMarkedWalkway(Long memberId, Long walkwayId, Long lastId, Integer size) {
-        if (!walkwayQueryService.existsByWalkwayId(walkwayId)) {
+        if (!walkwayQueryService.existsWalkway(walkwayId)) {
             throw new CustomException(WalkwayErrorCode.WALKWAY_NOT_FOUND);
         }
 
