@@ -6,12 +6,13 @@ import com.dongsan.domains.auth.AuthService;
 import com.dongsan.domains.auth.usecase.AuthUseCase;
 import com.dongsan.domains.dev.dto.request.CheckTokenExpire;
 import com.dongsan.domains.dev.dto.request.GenerateTokenRequest;
-import com.dongsan.domains.dev.dto.response.GenerateTokenResponse;
 import com.dongsan.domains.dev.dto.response.GetMemberInfoResponse;
 import com.dongsan.domains.dev.dto.response.GetTokenRemaining;
 import com.dongsan.domains.dev.usecase.DevUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotBlank;
 import java.io.IOException;
 import java.util.HashMap;
@@ -43,11 +44,13 @@ public class DevController {
 
     @Operation(summary = "개발용 토큰 발급")
     @PostMapping("/token")
-    public ResponseEntity<SuccessResponse<GenerateTokenResponse>> generateToken(
-            @RequestBody GenerateTokenRequest request
+    public ResponseEntity<Void> generateToken(
+            @RequestBody GenerateTokenRequest request,
+            HttpServletRequest httpServletRequest,
+            HttpServletResponse httpServletResponse
     ){
-        GenerateTokenResponse response = devUseCase.generateToken(request.memberId());
-        return ResponseFactory.ok(response);
+        devUseCase.generateToken(request.memberId(), httpServletRequest, httpServletResponse);
+        return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "accessToken으로 member 정보 확인하기")
