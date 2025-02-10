@@ -48,9 +48,9 @@ public class CookieService {
         cookie.setSecure(true);
 
         // 로컬호스트와 배포 주소 분기
-        String origin = request.getHeader("Origin");
-        log.info("[cookie : origin] " + origin);
-        if (origin != null && origin.contains("localhost")) {
+        String referer = request.getHeader("Referer");
+        log.info("[cookie : referer] " + referer);
+        if (referer.contains("localhost")) {
             cookie.setDomain(devDomain); // 로컬호스트 도메인
         } else {
             cookie.setDomain(prodDomain); // 배포 도메인
