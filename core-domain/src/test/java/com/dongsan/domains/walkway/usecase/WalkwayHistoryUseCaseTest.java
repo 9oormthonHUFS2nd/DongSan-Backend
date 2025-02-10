@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.user.service.MemberQueryService;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayHistoryRequest;
+import com.dongsan.domains.walkway.dto.response.CreateWalkwayHistoryResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.entity.WalkwayHistory;
 import com.dongsan.domains.walkway.mapper.WalkwayHistoryMapper;
@@ -57,7 +58,7 @@ class WalkwayHistoryUseCaseTest {
 
             Walkway walkway = WalkwayFixture.createWalkway(null);
             Member member = MemberFixture.createMember();
-            CreateWalkwayHistoryRequest request = new CreateWalkwayHistoryRequest(600, 10.0);
+            CreateWalkwayHistoryRequest request = new CreateWalkwayHistoryRequest(600, 1.7);
             WalkwayHistory walkwayHistory = WalkwayHistoryFixture.createWalkwayHistoryWithId(walkwayHistoryId,null, null);
 
             when(walkwayQueryService.getWalkway(walkwayId)).thenReturn(walkway);
@@ -65,10 +66,11 @@ class WalkwayHistoryUseCaseTest {
             when(walkwayHistoryCommandService.createWalkwayHistory(any())).thenReturn(walkwayHistory);
 
             // when
-            Long result = walkwayHistoryUseCase.createWalkwayHistory(memberId, walkwayId, request);
+            CreateWalkwayHistoryResponse result = walkwayHistoryUseCase.createWalkwayHistory(memberId, walkwayId, request);
 
             // then
-            assertThat(result).isEqualTo(walkwayHistoryId);
+            assertThat(result.walkwayHistoryId()).isEqualTo(walkwayHistoryId);
+            assertThat(result.canReview()).isTrue();
         }
     }
 

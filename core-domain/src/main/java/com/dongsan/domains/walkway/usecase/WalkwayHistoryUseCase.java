@@ -6,6 +6,7 @@ import com.dongsan.common.error.exception.CustomException;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.user.service.MemberQueryService;
 import com.dongsan.domains.walkway.dto.request.CreateWalkwayHistoryRequest;
+import com.dongsan.domains.walkway.dto.response.CreateWalkwayHistoryResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.entity.WalkwayHistory;
 import com.dongsan.domains.walkway.enums.ExposeLevel;
@@ -26,13 +27,15 @@ public class WalkwayHistoryUseCase {
     private final WalkwayHistoryQueryService walkwayHistoryQueryService;
 
     @Transactional
-    public Long createWalkwayHistory(Long memberId, Long walkwayId, CreateWalkwayHistoryRequest createWalkwayHistoryRequest) {
+    public CreateWalkwayHistoryResponse createWalkwayHistory(Long memberId, Long walkwayId, CreateWalkwayHistoryRequest createWalkwayHistoryRequest) {
         Walkway walkway = walkwayQueryService.getWalkway(walkwayId);
         Member member = memberQueryService.getMember(memberId);
 
         WalkwayHistory walkwayHistory = WalkwayHistoryMapper.toWalkwayHistory(createWalkwayHistoryRequest, walkway, member);
 
-        return walkwayHistoryCommandService.createWalkwayHistory(walkwayHistory).getId();
+        Long walkwayHistoryId = walkwayHistoryCommandService.createWalkwayHistory(walkwayHistory).getId();
+        boolean canReview = walkway.getDistance() * 2/3 < walkwayHistory.getDistance();
+        return new CreateWalkwayHistoryResponse(walkwayHistoryId, canReview);
     }
 
     public List<WalkwayHistory> getWalkwayHistories(Long memberId, Long walkwayId) {

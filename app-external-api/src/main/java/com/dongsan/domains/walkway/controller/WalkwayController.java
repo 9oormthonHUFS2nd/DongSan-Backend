@@ -133,9 +133,9 @@ public class WalkwayController {
             @Validated @RequestBody CreateWalkwayHistoryRequest createWalkwayHistoryRequest,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {
-        Long walkwayHistoryId
+        CreateWalkwayHistoryResponse createWalkwayHistoryResponse
                 = walkwayHistoryUseCase.createWalkwayHistory(customOAuth2User.getMemberId(), walkwayId, createWalkwayHistoryRequest);
-        return ResponseFactory.created(new CreateWalkwayHistoryResponse(walkwayHistoryId));
+        return ResponseFactory.created(createWalkwayHistoryResponse);
     }
 
     @Operation(summary = "리뷰 작성 가능한 산책로 이용 기록 보기")

@@ -1,6 +1,7 @@
 package com.dongsan.domains.walkway.dto.response;
 
 public record CreateWalkwayHistoryResponse(
-        Long walkwayHistoryId
+        Long walkwayHistoryId,
+        Boolean canReview
 ) {
 }
