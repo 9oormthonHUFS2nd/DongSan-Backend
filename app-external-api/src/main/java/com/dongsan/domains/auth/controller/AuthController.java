@@ -37,9 +37,10 @@ public class AuthController {
     @Operation(summary = "로그 아웃")
     @DeleteMapping("/logout")
     public ResponseEntity<Void> logout(
-            @AuthenticationPrincipal CustomOAuth2User customOAuth2User
+            @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
+            HttpServletResponse response
     ){
-        authUseCase.logout(customOAuth2User.getMemberId());
+        authUseCase.logout(customOAuth2User.getMemberId(), response);
         return ResponseFactory.noContent();
     }
 }

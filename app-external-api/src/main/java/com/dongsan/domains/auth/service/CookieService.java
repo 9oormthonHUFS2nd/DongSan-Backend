@@ -32,7 +32,14 @@ public class CookieService {
         return createTokenCookie(refreshTokenName, token, refreshTokenMaxAge);
     }
 
-    // 로그인 직후 로컬스토리지로 이동시키기 때문에 만료시간을 짧게 설정
+    public Cookie deleteAccessTokenCookie(){
+        return createTokenCookie(accessTokenName, "", 0);
+    }
+
+    public Cookie deleteRefreshTokenCookie(){
+        return createTokenCookie(refreshTokenName, "", 0);
+    }
+
     private Cookie createTokenCookie(String cookieName, String token, int maxAge) {
         Cookie cookie = new Cookie(cookieName, token);
         cookie.setMaxAge(maxAge);
@@ -46,4 +53,5 @@ public class CookieService {
 
         return cookie;
     }
+
 }

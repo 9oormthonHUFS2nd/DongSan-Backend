@@ -19,7 +19,9 @@ public class AuthUseCase {
     private final JwtService jwtService;
     private final CookieService cookieService;
 
-    public void logout(Long memberId) {
+    public void logout(Long memberId, HttpServletResponse response) {
+        response.addCookie(cookieService.deleteAccessTokenCookie());
+        response.addCookie(cookieService.deleteRefreshTokenCookie());
         authService.logout(memberId);
     }
 
@@ -34,6 +36,8 @@ public class AuthUseCase {
      */
     public void renewToken(String refreshToken, HttpServletResponse response) {
         if(jwtService.isRefreshTokenExpired(refreshToken)){
+            response.addCookie(cookieService.deleteAccessTokenCookie());
+            response.addCookie(cookieService.deleteRefreshTokenCookie());
             throw new CustomException(AuthErrorCode.REFRESH_TOKEN_EXPIRED);
         }
         Long memberId = jwtService.getMemberFromRefreshToken(refreshToken).getId();
@@ -44,7 +48,10 @@ public class AuthUseCase {
             authService.saveRefreshToken(memberId, newRefreshToken);
             response.addCookie(cookieService.createAccessTokenCookie(newAccessToken));
             response.addCookie(cookieService.createRefreshTokenCookie(newRefreshToken));
+            return;
         }
+        response.addCookie(cookieService.deleteAccessTokenCookie());
+        response.addCookie(cookieService.deleteRefreshTokenCookie());
         throw new CustomException(AuthErrorCode.REFRESH_TOKEN_EXPIRED);
     }
 
