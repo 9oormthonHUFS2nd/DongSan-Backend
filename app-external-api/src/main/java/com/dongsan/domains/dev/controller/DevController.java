@@ -11,7 +11,6 @@ import com.dongsan.domains.dev.dto.response.GetTokenRemaining;
 import com.dongsan.domains.dev.usecase.DevUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotBlank;
 import java.io.IOException;
@@ -45,11 +44,10 @@ public class DevController {
     @Operation(summary = "개발용 토큰 발급")
     @PostMapping("/token")
     public ResponseEntity<Void> generateToken(
-            @RequestBody GenerateTokenRequest request,
-            HttpServletRequest httpServletRequest,
+            @RequestBody GenerateTokenRequest dto,
             HttpServletResponse httpServletResponse
     ){
-        devUseCase.generateToken(request.memberId(), httpServletRequest, httpServletResponse);
+        devUseCase.generateToken(dto.memberId(), httpServletResponse);
         return ResponseEntity.ok().build();
     }
 

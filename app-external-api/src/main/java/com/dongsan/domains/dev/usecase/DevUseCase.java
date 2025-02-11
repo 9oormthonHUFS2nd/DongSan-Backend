@@ -9,7 +9,6 @@ import com.dongsan.domains.dev.mapper.DevMapper;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.user.service.MemberQueryService;
 import com.dongsan.service.S3FileService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
@@ -26,13 +25,13 @@ public class DevUseCase {
     private final S3FileService s3FileService;
 
     @Transactional
-    public void generateToken(Long memberId, HttpServletRequest httpServletRequest, HttpServletResponse response){
+    public void generateToken(Long memberId, HttpServletResponse response){
         memberQueryService.getMember(memberId);
         String accessToken = jwtService.createAccessToken(memberId);
         String refreshToken = jwtService.createRefreshToken(memberId);
         authService.saveRefreshToken(memberId, refreshToken);
-        response.addCookie(cookieService.createAccessTokenCookie(accessToken, httpServletRequest));
-        response.addCookie(cookieService.createRefreshTokenCookie(refreshToken, httpServletRequest));
+        response.addCookie(cookieService.createAccessTokenCookie(accessToken));
+        response.addCookie(cookieService.createRefreshTokenCookie(refreshToken));
     }
 
     @Transactional
