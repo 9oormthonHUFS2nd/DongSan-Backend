@@ -4,6 +4,7 @@ import com.dongsan.common.annotation.UseCase;
 import com.dongsan.domains.user.response.WalkwayListResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.service.LikedWalkwayQueryService;
+import com.dongsan.domains.walkway.service.WalkwayHistoryQueryService;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserWalkwayUseCase {
     private final WalkwayQueryService walkwayQueryService;
     private final LikedWalkwayQueryService likedWalkwayQueryService;
+    private final WalkwayHistoryQueryService walkwayHistoryQueryService;
 
     public WalkwayListResponse getUserUploadWalkway(Long memberId, Integer size, Long walkwayId) {
         LocalDateTime lastCreated = null;

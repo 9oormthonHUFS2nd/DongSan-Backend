@@ -2,7 +2,10 @@ package com.dongsan.domains.walkway.repository;
 
 import com.dongsan.domains.walkway.entity.QWalkwayHistory;
 import com.dongsan.domains.walkway.entity.WalkwayHistory;
+import com.dongsan.domains.walkway.enums.ExposeLevel;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -24,5 +27,23 @@ public class WalkwayHistoryQueryDSLRepository {
                 )
                 .orderBy(walkwayHistory.createdAt.desc())
                 .fetch();
+    }
+
+    public List<WalkwayHistory> getUserCanReviewWalkwayHistories(Long memberId, int size, LocalDateTime lastCreatedAt) {
+        return queryFactory.selectFrom(walkwayHistory)
+                .where(
+                        walkwayHistory.member.id.eq(memberId),
+                        walkwayHistory.distance.goe(walkwayHistory.walkway.distance.multiply(2.0/3.0)),
+                        walkwayHistory.isReviewed.eq(false),
+                        walkwayHistory.walkway.exposeLevel.eq(ExposeLevel.PUBLIC),
+                        createdAtLt(lastCreatedAt)
+                )
+                .limit(size)
+                .orderBy(walkwayHistory.createdAt.desc())
+                .fetch();
+    }
+
+    private BooleanExpression createdAtLt(LocalDateTime lastCreatedAt){
+        return lastCreatedAt != null ? walkwayHistory.createdAt.lt(lastCreatedAt) : null;
     }
 }
