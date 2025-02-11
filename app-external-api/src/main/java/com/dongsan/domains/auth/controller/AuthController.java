@@ -6,7 +6,6 @@ import com.dongsan.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.domains.auth.usecase.AuthUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -29,19 +28,19 @@ public class AuthController {
     @PostMapping("/refresh")
     public ResponseEntity<Void> renewToken(
             @RequestBody RefreshToken dto,
-            HttpServletRequest request,
             HttpServletResponse response
     ){
-        authUseCase.renewToken(dto.refreshToken(), request, response);
+        authUseCase.renewToken(dto.refreshToken(), response);
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "로그 아웃")
     @DeleteMapping("/logout")
     public ResponseEntity<Void> logout(
-            @AuthenticationPrincipal CustomOAuth2User customOAuth2User
+            @AuthenticationPrincipal CustomOAuth2User customOAuth2User,
+            HttpServletResponse response
     ){
-        authUseCase.logout(customOAuth2User.getMemberId());
+        authUseCase.logout(customOAuth2User.getMemberId(), response);
         return ResponseFactory.noContent();
     }
 }

@@ -1,7 +1,6 @@
 package com.dongsan.domains.auth.service;
 
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -10,11 +9,8 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class CookieService {
 
-    @Value("${cookie.dev-domain}")
-    private String devDomain;
-
-    @Value("${cookie.prod-domain}")
-    private String prodDomain;
+    @Value("${cookie.domain}")
+    private String domain;
 
     @Value("${cookie.access-name}")
     private String accessTokenName;
@@ -28,18 +24,26 @@ public class CookieService {
     @Value("${cookie.rt-max-age}")
     private int refreshTokenMaxAge;
 
-    public Cookie createAccessTokenCookie(String token, HttpServletRequest request) {
-        return createTokenCookie(accessTokenName, token, accessTokenMaxAge, request);
+    public Cookie createAccessTokenCookie(String token) {
+        return createTokenCookie(accessTokenName, token, accessTokenMaxAge);
     }
 
-    public Cookie createRefreshTokenCookie(String token, HttpServletRequest request) {
-        return createTokenCookie(refreshTokenName, token, refreshTokenMaxAge, request);
+    public Cookie createRefreshTokenCookie(String token) {
+        return createTokenCookie(refreshTokenName, token, refreshTokenMaxAge);
     }
 
-    // 로그인 직후 로컬스토리지로 이동시키기 때문에 만료시간을 짧게 설정
-    private Cookie createTokenCookie(String cookieName, String token, int maxAge, HttpServletRequest request) {
+    public Cookie deleteAccessTokenCookie(){
+        return createTokenCookie(accessTokenName, "", 0);
+    }
+
+    public Cookie deleteRefreshTokenCookie(){
+        return createTokenCookie(refreshTokenName, "", 0);
+    }
+
+    private Cookie createTokenCookie(String cookieName, String token, int maxAge) {
         Cookie cookie = new Cookie(cookieName, token);
         cookie.setMaxAge(maxAge);
+        cookie.setDomain(domain);
         cookie.setPath("/");
         cookie.setHttpOnly(false);
 
@@ -47,14 +51,7 @@ public class CookieService {
         cookie.setAttribute("SameSite", "None");
         cookie.setSecure(true);
 
-        // 로컬호스트와 배포 주소 분기
-        String referer = request.getHeader("Referer");
-        log.info("[cookie : referer] " + referer);
-        if (referer.contains("localhost")) {
-            cookie.setDomain(devDomain); // 로컬호스트 도메인
-        } else {
-            cookie.setDomain(prodDomain); // 배포 도메인
-        }
         return cookie;
     }
+
 }

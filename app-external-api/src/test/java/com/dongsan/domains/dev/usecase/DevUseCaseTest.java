@@ -19,7 +19,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 @ExtendWith(MockitoExtension.class)
@@ -50,15 +49,14 @@ class DevUseCaseTest {
             when(jwtService.createAccessToken(memberId)).thenReturn(accessToken);
             when(jwtService.createRefreshToken(memberId)).thenReturn(refreshToken);
             doNothing().when(authService).saveRefreshToken(memberId, refreshToken);
-            MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
             MockHttpServletResponse httpServletResponse = new MockHttpServletResponse();
             Cookie atCookie = new Cookie("accessToken", accessToken);
             Cookie rtCookie = new Cookie("refreshToken", refreshToken);
-            when(cookieService.createAccessTokenCookie(accessToken, httpServletRequest)).thenReturn(atCookie);
-            when(cookieService.createRefreshTokenCookie(refreshToken, httpServletRequest)).thenReturn(rtCookie);
+            when(cookieService.createAccessTokenCookie(accessToken)).thenReturn(atCookie);
+            when(cookieService.createRefreshTokenCookie(refreshToken)).thenReturn(rtCookie);
 
             // when
-            devUseCase.generateToken(memberId, httpServletRequest, httpServletResponse);
+            devUseCase.generateToken(memberId, httpServletResponse);
 
             // then
             Cookie[] cookies = httpServletResponse.getCookies();

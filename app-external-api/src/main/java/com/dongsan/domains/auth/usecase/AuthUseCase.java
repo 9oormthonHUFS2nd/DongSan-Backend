@@ -7,7 +7,6 @@ import com.dongsan.domains.auth.AuthService;
 import com.dongsan.domains.auth.service.CookieService;
 import com.dongsan.domains.auth.service.JwtService;
 import com.dongsan.domains.dev.dto.response.GetTokenRemaining;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +19,9 @@ public class AuthUseCase {
     private final JwtService jwtService;
     private final CookieService cookieService;
 
-    public void logout(Long memberId) {
+    public void logout(Long memberId, HttpServletResponse response) {
+        response.addCookie(cookieService.deleteAccessTokenCookie());
+        response.addCookie(cookieService.deleteRefreshTokenCookie());
         authService.logout(memberId);
     }
 
@@ -30,12 +31,13 @@ public class AuthUseCase {
      * 시도 하라고 에러 반환 -> value 와 동일한 토큰 : 토큰 갱신
      *
      * @param refreshToken 기존에 발급 받은 refresh token
-     * @param request
      * @param response
      * @return 새로 갱신한 access token & refresh token
      */
-    public void renewToken(String refreshToken, HttpServletRequest request, HttpServletResponse response) {
+    public void renewToken(String refreshToken, HttpServletResponse response) {
         if(jwtService.isRefreshTokenExpired(refreshToken)){
+            response.addCookie(cookieService.deleteAccessTokenCookie());
+            response.addCookie(cookieService.deleteRefreshTokenCookie());
             throw new CustomException(AuthErrorCode.REFRESH_TOKEN_EXPIRED);
         }
         Long memberId = jwtService.getMemberFromRefreshToken(refreshToken).getId();
@@ -44,9 +46,12 @@ public class AuthUseCase {
             String newAccessToken = jwtService.createAccessToken(memberId);
             String newRefreshToken = jwtService.createRefreshToken(memberId);
             authService.saveRefreshToken(memberId, newRefreshToken);
-            response.addCookie(cookieService.createAccessTokenCookie(newAccessToken, request));
-            response.addCookie(cookieService.createRefreshTokenCookie(newRefreshToken, request));
+            response.addCookie(cookieService.createAccessTokenCookie(newAccessToken));
+            response.addCookie(cookieService.createRefreshTokenCookie(newRefreshToken));
+            return;
         }
+        response.addCookie(cookieService.deleteAccessTokenCookie());
+        response.addCookie(cookieService.deleteRefreshTokenCookie());
         throw new CustomException(AuthErrorCode.REFRESH_TOKEN_EXPIRED);
     }
 
