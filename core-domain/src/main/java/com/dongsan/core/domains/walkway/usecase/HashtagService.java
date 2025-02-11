@@ -3,7 +3,6 @@ package com.dongsan.core.domains.walkway.usecase;
 import com.dongsan.core.domains.walkway.service.HashtagWriter;
 import com.dongsan.core.domains.walkway.service.HashtagReader;
 import com.dongsan.core.domains.walkway.service.HashtagWalkwayWriter;
-import com.dongsan.core.common.annotation.UseCase;
 import com.dongsan.domains.hashtag.entity.Hashtag;
 import com.dongsan.domains.hashtag.entity.HashtagWalkway;
 import com.dongsan.domains.walkway.entity.Walkway;
@@ -14,7 +13,6 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
-@UseCase
 @RequiredArgsConstructor
 public class HashtagService {
 

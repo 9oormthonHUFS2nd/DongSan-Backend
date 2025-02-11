@@ -1,8 +1,6 @@
 package com.dongsan.api.domains.walkway;
 
 import com.dongsan.api.domains.auth.security.oauth2.dto.CustomOAuth2User;
-import com.dongsan.core.common.apiResponse.ResponseFactory;
-import com.dongsan.core.common.apiResponse.SuccessResponse;
 import com.dongsan.core.domains.walkway.usecase.LikedWalkwayService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -1,6 +1,6 @@
-package com.dongsan.core.common.validation.annotation;
+package com.dongsan.api.support.validation.annotation;
 
-import com.dongsan.core.common.validation.validator.NotEmptyCourseValidator;
+import com.dongsan.api.support.validation.validator.NotEmptyCourseValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 

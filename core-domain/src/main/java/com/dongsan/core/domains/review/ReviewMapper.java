@@ -1,6 +1,6 @@
 package com.dongsan.core.domains.review;
 
-import com.dongsan.core.common.format.TimeFormat;
+import com.dongsan.core.support.format.TimeFormat;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.review.dto.RatingCount;
 import com.dongsan.domains.review.entity.Review;

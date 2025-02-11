@@ -2,7 +2,6 @@ package com.dongsan.api.domains.dev;
 
 <<<<<<< HEAD:app-external-api/src/main/java/com/dongsan/api/domains/dev/DevUseCase.java
 import com.dongsan.api.domains.auth.service.JwtService;
-import com.dongsan.core.common.annotation.UseCase;
 import com.dongsan.core.domains.auth.AuthService;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.core.domains.member.MemberReader;
@@ -14,18 +13,12 @@ import com.dongsan.domains.auth.service.CookieService;
 import com.dongsan.domains.auth.service.JwtService;
 import com.dongsan.domains.dev.dto.response.GetMemberInfoResponse;
 import com.dongsan.domains.dev.mapper.DevMapper;
-import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.user.service.MemberQueryService;
 import com.dongsan.service.S3FileService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 >>>>>>> 496a334bff8928cf4a3a20bc45dce34b0046eae7:app-external-api/src/main/java/com/dongsan/domains/dev/usecase/DevUseCase.java
-import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-@UseCase
 @RequiredArgsConstructor
 public class DevUseCase {
     private final MemberReader memberReader;

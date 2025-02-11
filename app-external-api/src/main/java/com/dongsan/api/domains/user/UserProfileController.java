@@ -1,8 +1,6 @@
 package com.dongsan.api.domains.user;
 
 import com.dongsan.api.domains.auth.security.oauth2.dto.CustomOAuth2User;
-import com.dongsan.core.common.apiResponse.ResponseFactory;
-import com.dongsan.core.common.apiResponse.SuccessResponse;
 import com.dongsan.domains.bookmark.controller.GetBookmarksResponse;
 import com.dongsan.core.domains.member.MemberService;
 import io.swagger.v3.oas.annotations.Operation;

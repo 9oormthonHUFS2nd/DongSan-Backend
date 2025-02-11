@@ -1,6 +1,6 @@
-package com.dongsan.core.common.validation.validator;
+package com.dongsan.api.support.validation.validator;
 
-import com.dongsan.core.common.validation.annotation.ExistWalkway;
+import com.dongsan.api.support.validation.annotation.ExistWalkway;
 import com.dongsan.core.domains.walkway.service.WalkwayReader;
 import com.dongsan.common.error.code.WalkwayErrorCode;
 import jakarta.validation.ConstraintValidator;

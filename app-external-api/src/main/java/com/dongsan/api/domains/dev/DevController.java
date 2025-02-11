@@ -1,7 +1,5 @@
 package com.dongsan.api.domains.dev;
 
-import com.dongsan.core.common.apiResponse.ResponseFactory;
-import com.dongsan.core.common.apiResponse.SuccessResponse;
 import com.dongsan.core.domains.auth.AuthService;
 import com.dongsan.domains.auth.usecase.AuthUseCase;
 import com.dongsan.domains.dev.dto.request.CheckTokenExpire;

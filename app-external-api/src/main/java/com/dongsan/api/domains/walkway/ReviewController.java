@@ -1,8 +1,6 @@
 package com.dongsan.api.domains.walkway;
 
 import com.dongsan.api.domains.auth.security.oauth2.dto.CustomOAuth2User;
-import com.dongsan.core.common.apiResponse.ResponseFactory;
-import com.dongsan.core.common.apiResponse.SuccessResponse;
 import com.dongsan.domains.walkway.controller.dto.request.CreateReviewRequest;
 import com.dongsan.domains.walkway.controller.dto.response.CreateReviewResponse;
 import com.dongsan.domains.walkway.controller.dto.response.GetWalkwayRatingResponse;

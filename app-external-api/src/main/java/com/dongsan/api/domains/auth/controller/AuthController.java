@@ -2,7 +2,6 @@ package com.dongsan.api.domains.auth.controller;
 
 import com.dongsan.api.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.api.domains.auth.usecase.AuthUseCase;
-import com.dongsan.core.common.apiResponse.ResponseFactory;
 import com.dongsan.core.domains.auth.dto.RefreshToken;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

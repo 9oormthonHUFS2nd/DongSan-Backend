@@ -1,11 +1,9 @@
 package com.dongsan.core.domains.image;
 
-import com.dongsan.core.common.annotation.UseCase;
 import com.dongsan.domains.image.entity.Image;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
-@UseCase
 @RequiredArgsConstructor
 public class ImageService {
     private final ImageWriter imageWriter;
