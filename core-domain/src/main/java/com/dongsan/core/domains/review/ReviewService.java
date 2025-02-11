@@ -3,7 +3,6 @@ package com.dongsan.core.domains.review;
 import com.dongsan.core.domains.member.MemberReader;
 import com.dongsan.core.domains.walkway.service.WalkwayWriter;
 import com.dongsan.core.domains.walkway.service.WalkwayReader;
-import com.dongsan.core.common.annotation.UseCase;
 import com.dongsan.common.error.code.WalkwayErrorCode;
 import com.dongsan.common.error.code.WalkwayHistoryErrorCode;
 import com.dongsan.common.error.exception.CustomException;
@@ -33,7 +32,6 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
-@UseCase
 @RequiredArgsConstructor
 public class ReviewService {
 

@@ -1,7 +1,5 @@
-package com.dongsan.api.common.controller;
+package com.dongsan.api.support.controller;
 
-import com.dongsan.core.common.apiResponse.ResponseFactory;
-import com.dongsan.core.common.apiResponse.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;

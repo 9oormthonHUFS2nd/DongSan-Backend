@@ -2,10 +2,8 @@ package com.dongsan.api.domains.auth.usecase;
 
 <<<<<<< HEAD:app-external-api/src/main/java/com/dongsan/api/domains/auth/usecase/AuthUseCase.java
 import com.dongsan.api.domains.auth.service.JwtService;
-import com.dongsan.core.common.annotation.UseCase;
-import com.dongsan.core.common.error.CoreException;
+import com.dongsan.core.support.error.CoreException;
 import com.dongsan.core.domains.auth.AuthService;
-import com.dongsan.core.domains.auth.dto.RenewToken;
 =======
 import com.dongsan.common.annotation.UseCase;
 import com.dongsan.common.error.code.AuthErrorCode;
@@ -20,7 +18,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
-@UseCase
 @Transactional
 @RequiredArgsConstructor
 public class AuthUseCase {

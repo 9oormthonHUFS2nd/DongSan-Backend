@@ -1,6 +1,6 @@
-package com.dongsan.core.common.validation.validator;
+package com.dongsan.api.support.validation.validator;
 
-import com.dongsan.core.common.validation.annotation.NotEmptyWalkwayCourse;
+import com.dongsan.api.support.validation.annotation.NotEmptyWalkwayCourse;
 import com.dongsan.common.error.code.WalkwayErrorCode;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

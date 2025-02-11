@@ -2,14 +2,12 @@ package com.dongsan.core.domains.walkway;
 
 import com.dongsan.core.domains.walkway.service.LikedWalkwayReader;
 import com.dongsan.core.domains.walkway.service.WalkwayReader;
-import com.dongsan.core.common.annotation.UseCase;
 import com.dongsan.domains.walkway.entity.Walkway;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
-@UseCase
 @RequiredArgsConstructor
 @Transactional
 public class UserWalkwayUseCase {

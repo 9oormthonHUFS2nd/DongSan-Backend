@@ -4,7 +4,6 @@ import com.dongsan.core.domains.member.MemberReader;
 import com.dongsan.core.domains.walkway.service.LikedWalkwayWriter;
 import com.dongsan.core.domains.walkway.service.LikedWalkwayReader;
 import com.dongsan.core.domains.walkway.service.WalkwayReader;
-import com.dongsan.core.common.annotation.UseCase;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.walkway.entity.LikedWalkway;
 import com.dongsan.domains.walkway.entity.Walkway;
@@ -14,7 +13,6 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
-@UseCase
 @RequiredArgsConstructor
 public class LikedWalkwayService {
     private final LikedWalkwayWriter likedWalkwayWriter;

@@ -3,7 +3,7 @@ package com.dongsan.api.domains.auth.security.filter;
 import com.dongsan.api.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.api.domains.auth.service.JwtService;
 import com.dongsan.domains.member.entity.Member;
-import com.dongsan.core.common.error.CoreException;
+import com.dongsan.core.support.error.CoreException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

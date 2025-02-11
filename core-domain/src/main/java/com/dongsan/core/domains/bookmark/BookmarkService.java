@@ -1,7 +1,6 @@
 package com.dongsan.core.domains.bookmark;
 
 import com.dongsan.core.domains.member.MemberReader;
-import com.dongsan.core.common.annotation.UseCase;
 import com.dongsan.common.error.code.BookmarkErrorCode;
 import com.dongsan.common.error.code.WalkwayErrorCode;
 import com.dongsan.common.error.exception.CustomException;
@@ -15,7 +14,6 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
-@UseCase
 @RequiredArgsConstructor
 public class BookmarkService {
     private final MemberReader memberReader;

@@ -1,7 +1,5 @@
 package com.dongsan.api.domains.auth.security.handler;
 
-import com.dongsan.core.common.apiResponse.ErrorResponse;
-import com.dongsan.core.common.apiResponse.ResponseFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,4 +1,4 @@
-package com.dongsan.core.common.format;
+package com.dongsan.core.support.format;
 
 import java.time.Duration;
 import java.time.LocalDateTime;

@@ -1,6 +1,6 @@
-package com.dongsan.core.common.validation.validator;
+package com.dongsan.api.support.validation.validator;
 
-import com.dongsan.core.common.validation.annotation.ExistBookmark;
+import com.dongsan.api.support.validation.annotation.ExistBookmark;
 import com.dongsan.core.domains.bookmark.BookmarkReader;
 import com.dongsan.common.error.code.BookmarkErrorCode;
 import jakarta.validation.ConstraintValidator;

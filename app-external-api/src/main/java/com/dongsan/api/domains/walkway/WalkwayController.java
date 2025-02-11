@@ -1,8 +1,6 @@
 package com.dongsan.api.domains.walkway;
 
 import com.dongsan.api.domains.auth.security.oauth2.dto.CustomOAuth2User;
-import com.dongsan.core.common.apiResponse.ResponseFactory;
-import com.dongsan.core.common.apiResponse.SuccessResponse;
 import com.dongsan.domains.bookmark.controller.BookmarksWithMarkedWalkwayResponse;
 import com.dongsan.core.domains.bookmark.BookmarkService;
 import com.dongsan.domains.image.entity.Image;
@@ -15,7 +13,6 @@ import com.dongsan.domains.walkway.controller.dto.response.CreateWalkwayCourseIm
 import com.dongsan.domains.walkway.controller.dto.response.CreateWalkwayResponse;
 import com.dongsan.domains.walkway.controller.dto.response.GetWalkwayWithLikedResponse;
 import com.dongsan.domains.walkway.controller.dto.response.SearchWalkwayResponse;
-import com.dongsan.domains.walkway.dto.response.SearchWalkwayResult;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.core.domains.walkway.usecase.HashtagService;
 import com.dongsan.core.domains.walkway.usecase.WalkwayService;
@@ -30,7 +27,6 @@ import com.dongsan.domains.walkway.dto.response.GetWalkwayHistoriesResponse;
 import com.dongsan.domains.walkway.dto.response.GetWalkwayWithLikedResponse;
 import com.dongsan.domains.walkway.dto.response.SearchWalkwayResponse;
 import com.dongsan.domains.walkway.dto.response.SearchWalkwayResult;
-import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.entity.WalkwayHistory;
 import com.dongsan.domains.walkway.usecase.HashtagUseCase;
 import com.dongsan.domains.walkway.usecase.WalkwayHistoryUseCase;

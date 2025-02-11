@@ -1,6 +1,6 @@
-package com.dongsan.core.common.validation.annotation;
+package com.dongsan.api.support.validation.annotation;
 
-import com.dongsan.core.common.validation.validator.ExistReviewValidator;
+import com.dongsan.api.support.validation.validator.ExistWalkwayValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 import java.lang.annotation.Documented;
@@ -10,11 +10,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Documented
-@Constraint(validatedBy = ExistReviewValidator.class)
+@Constraint(validatedBy = ExistWalkwayValidator.class)
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ExistReview {
-    String message() default "해당 리뷰 ID가 존재하지 않습니다.";
+public @interface ExistWalkway {
+    String message() default "해당 산책로 ID가 존재하지 않습니다.";
 
     Class<?>[] groups() default {};
 
