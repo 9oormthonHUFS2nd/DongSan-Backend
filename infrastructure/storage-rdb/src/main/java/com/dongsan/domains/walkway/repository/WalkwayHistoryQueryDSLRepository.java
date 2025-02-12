@@ -19,6 +19,7 @@ public class WalkwayHistoryQueryDSLRepository {
 
     public List<WalkwayHistory> getCanReviewWalkwayHistories(Long walkwayId, Long memberId) {
         return queryFactory.selectFrom(walkwayHistory)
+                .join(walkwayHistory.walkway).fetchJoin()
                 .where(
                         walkwayHistory.member.id.eq(memberId),
                         walkwayHistory.walkway.id.eq(walkwayId),
@@ -31,6 +32,7 @@ public class WalkwayHistoryQueryDSLRepository {
 
     public List<WalkwayHistory> getUserCanReviewWalkwayHistories(Long memberId, int size, LocalDateTime lastCreatedAt) {
         return queryFactory.selectFrom(walkwayHistory)
+                .join(walkwayHistory.walkway).fetchJoin()
                 .where(
                         walkwayHistory.member.id.eq(memberId),
                         walkwayHistory.distance.goe(walkwayHistory.walkway.distance.multiply(2.0/3.0)),
