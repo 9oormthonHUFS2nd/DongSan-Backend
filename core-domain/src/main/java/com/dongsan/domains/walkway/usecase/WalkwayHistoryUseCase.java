@@ -14,6 +14,7 @@ import com.dongsan.domains.walkway.mapper.WalkwayHistoryMapper;
 import com.dongsan.domains.walkway.service.WalkwayHistoryCommandService;
 import com.dongsan.domains.walkway.service.WalkwayHistoryQueryService;
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,5 +47,16 @@ public class WalkwayHistoryUseCase {
         }
 
         return walkwayHistoryQueryService.getCanReviewWalkwayHistories(walkwayId, memberId);
+    }
+
+    public List<WalkwayHistory> getUserWalkwayHistories(Long memberId, Long lastId, int size) {
+        LocalDateTime lastCreatedAt = null;
+
+        if (lastId != null) {
+            WalkwayHistory walkwayHistory = walkwayHistoryQueryService.getById(lastId);
+            lastCreatedAt = walkwayHistory.getCreatedAt();
+        }
+
+        return walkwayHistoryQueryService.getUserCanReviewWalkwayHistories(memberId, size, lastCreatedAt);
     }
 }

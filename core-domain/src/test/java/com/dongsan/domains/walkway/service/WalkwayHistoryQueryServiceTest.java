@@ -9,6 +9,7 @@ import com.dongsan.domains.walkway.entity.WalkwayHistory;
 import com.dongsan.domains.walkway.repository.WalkwayHistoryQueryDSLRepository;
 import com.dongsan.domains.walkway.repository.WalkwayHistoryRepository;
 import fixture.WalkwayHistoryFixture;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -92,6 +93,34 @@ class WalkwayHistoryQueryServiceTest {
             // when & then
             assertThatThrownBy(() -> walkwayHistoryQueryService.getById(walkwayHistoryId))
                     .isInstanceOf(CustomException.class);
+        }
+    }
+
+    @Nested
+    @DisplayName("getUserCanReviewWalkwayHistories 메서드는")
+    class Describe_getUserCanReviewWalkwayHistories {
+
+        @Test
+        @DisplayName("리뷰 가능한 산책로 이용 기록 목록을 반환한다.")
+        void it_returns_can_review_walkway_histories() {
+            // given
+            Long memberId = 1L;
+            int size = 10;
+            LocalDateTime lastCreatedAt = LocalDateTime.now();
+
+            List<WalkwayHistory> histories = new ArrayList<>();
+            for (int i = 0; i < 3; i++) {
+                histories.add(WalkwayHistoryFixture.createWalkwayHistory(null, null));
+            }
+
+            when(walkwayHistoryQueryDSLRepository.getUserCanReviewWalkwayHistories(memberId, size, lastCreatedAt))
+                    .thenReturn(histories);
+
+            // when
+            List<WalkwayHistory> result = walkwayHistoryQueryService.getUserCanReviewWalkwayHistories(memberId, size, lastCreatedAt);
+
+            // then
+            assertThat(result).hasSize(3);
         }
     }
 }

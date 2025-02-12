@@ -5,6 +5,7 @@ import com.dongsan.common.error.exception.CustomException;
 import com.dongsan.domains.walkway.entity.WalkwayHistory;
 import com.dongsan.domains.walkway.repository.WalkwayHistoryQueryDSLRepository;
 import com.dongsan.domains.walkway.repository.WalkwayHistoryRepository;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,10 @@ public class WalkwayHistoryQueryService {
 
     public List<WalkwayHistory> getCanReviewWalkwayHistories(Long walkwayId, Long memberId) {
         return walkwayHistoryQueryDSLRepository.getCanReviewWalkwayHistories(walkwayId, memberId);
+    }
+
+    public List<WalkwayHistory> getUserCanReviewWalkwayHistories(Long memberId, int size, LocalDateTime lastCreatedAt) {
+        return walkwayHistoryQueryDSLRepository.getUserCanReviewWalkwayHistories(memberId, size, lastCreatedAt);
     }
 
     public WalkwayHistory getById(Long walkwayHistoryId) {
