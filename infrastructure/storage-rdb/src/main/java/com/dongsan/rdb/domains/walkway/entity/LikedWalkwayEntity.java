@@ -2,15 +2,15 @@ package com.dongsan.rdb.domains.walkway.entity;
 
 import com.dongsan.rdb.domains.common.entity.BaseEntity;
 import com.dongsan.rdb.domains.member.MemberEntity;
-import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class LikedWalkwayEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,11 +24,15 @@ public class LikedWalkwayEntity extends BaseEntity {
     @JoinColumn(name = "walkway_id")
     private WalkwayEntity walkwayEntity;
 
+    protected LikedWalkwayEntity(){}
+
     // 생성 시 연관관계 매핑 진행
-    @Builder
-    private LikedWalkwayEntity(MemberEntity memberEntity, WalkwayEntity walkwayEntity){
+    public LikedWalkwayEntity(MemberEntity memberEntity, WalkwayEntity walkwayEntity){
         this.memberEntity = memberEntity;
         this.walkwayEntity = walkwayEntity;
     }
 
+    public Long getId() {
+        return id;
+    }
 }

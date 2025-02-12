@@ -1,16 +1,14 @@
 package com.dongsan.rdb.domains.walkway;
 
-import com.dongsan.core.common.error.CoreErrorCode;
-import com.dongsan.core.common.error.CoreException;
+import com.dongsan.core.domains.walkway.CreateWalkway;
+import com.dongsan.core.domains.walkway.SearchWalkwayQuery;
+import com.dongsan.core.domains.walkway.UpdateWalkway;
+import com.dongsan.core.domains.walkway.Walkway;
 import com.dongsan.core.domains.walkway.WalkwayRepository;
-import com.dongsan.core.domains.walkway.domain.LikedWalkway;
-import com.dongsan.core.domains.walkway.domain.Walkway;
 import com.dongsan.rdb.domains.member.MemberEntity;
 import com.dongsan.rdb.domains.member.MemberJpaRepository;
 import com.dongsan.rdb.domains.walkway.entity.LikedWalkwayEntity;
 import com.dongsan.rdb.domains.walkway.entity.WalkwayEntity;
-import com.dongsan.rdb.domains.walkway.mapper.LikedWalkwayMapper;
-import com.dongsan.rdb.domains.walkway.mapper.WalkwayMapper;
 import com.dongsan.rdb.domains.walkway.repository.LikedWalkwayJpaRepository;
 import com.dongsan.rdb.domains.walkway.repository.LikedWalkwayQueryDSLRepository;
 import com.dongsan.rdb.domains.walkway.repository.WalkwayJpaRepository;
@@ -19,41 +17,51 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
-@RequiredArgsConstructor
 public class WalkwayCoreJpaRepository implements WalkwayRepository {
     private final MemberJpaRepository memberJpaRepository;
     private final LikedWalkwayJpaRepository likedWalkwayJpaRepository;
     private final LikedWalkwayQueryDSLRepository likedWalkwayQueryDSLRepository;
     private final WalkwayJpaRepository walkwayJpaRepository;
     private final WalkwayQueryDSLRepository walkwayQueryDSLRepository;
+    @Autowired
+    public WalkwayCoreJpaRepository(
+            MemberJpaRepository memberJpaRepository,
+            LikedWalkwayJpaRepository likedWalkwayJpaRepository,
+            LikedWalkwayQueryDSLRepository likedWalkwayQueryDSLRepository,
+            WalkwayJpaRepository walkwayJpaRepository,
+            WalkwayQueryDSLRepository walkwayQueryDSLRepository
+    ) {
+        this.memberJpaRepository = memberJpaRepository;
+        this.likedWalkwayJpaRepository = likedWalkwayJpaRepository;
+        this.likedWalkwayQueryDSLRepository = likedWalkwayQueryDSLRepository;
+        this.walkwayJpaRepository = walkwayJpaRepository;
+        this.walkwayQueryDSLRepository = walkwayQueryDSLRepository;
+    }
 
-
+    // 생성용 dto만들기
     @Override
-    public Walkway saveWalkway(Walkway walkway) {
-        MemberEntity memberEntity = memberJpaRepository.findById(walkway.author().authorId())
-                .orElseThrow(() -> new CoreException(CoreErrorCode.MEMBER_NOT_FOUND));
+    public Long saveWalkway(CreateWalkway createWalkway) {
+        MemberEntity memberEntity = memberJpaRepository.findById(createWalkway.memberId()).get();
 
-        WalkwayEntity walkwayEntity = WalkwayMapper.toWalkwayEntity(walkway, memberEntity);
+        WalkwayEntity walkwayEntity = new WalkwayEntity(createWalkway, memberEntity);
         walkwayJpaRepository.save(walkwayEntity);
 
-        return WalkwayMapper.toWalkway(walkwayEntity);
+        return walkwayEntity.getId();
     }
 
     @Override
     public Walkway getWalkway(Long walkwayId) {
-        WalkwayEntity walkwayEntity = walkwayJpaRepository.findById(walkwayId)
-                .orElseThrow(() -> new CoreException(CoreErrorCode.WALKWAY_NOT_FOUND));
-        return WalkwayMapper.toWalkway(walkwayEntity);
+        WalkwayEntity walkwayEntity = walkwayJpaRepository.findById(walkwayId).get();
+        return walkwayEntity.toWalkway();
     }
 
     @Override
-    public void updateWalkway(Walkway updateWalkway) {
-        WalkwayEntity walkwayEntity = walkwayJpaRepository.findById(updateWalkway.walkwayId())
-                .orElseThrow(() -> new CoreException(CoreErrorCode.WALKWAY_NOT_FOUND));
+    public void updateWalkway(UpdateWalkway updateWalkway) {
+        WalkwayEntity walkwayEntity = walkwayJpaRepository.findById(updateWalkway.walkwayId()).get();
 
         walkwayEntity.updateWalkway(updateWalkway.name(), updateWalkway.memo(), updateWalkway.exposeLevel(), updateWalkway.hashtags());
         walkwayJpaRepository.save(walkwayEntity);
@@ -75,22 +83,18 @@ public class WalkwayCoreJpaRepository implements WalkwayRepository {
     }
 
     @Override
-    public List<Walkway> searchWalkwaysLiked(Long userId, Long walkwayId, Double longitude, Double latitude, Double distance, int size) {
-        WalkwayEntity lastWalkwayEntity = walkwayJpaRepository.findById(walkwayId)
-                .orElseThrow(() -> new CoreException(CoreErrorCode.WALKWAY_NOT_FOUND));
-        List<WalkwayEntity> walkwayEntities = walkwayQueryDSLRepository.searchWalkwaysLiked(userId, lastWalkwayEntity, longitude, latitude, distance, size);
+    public List<Walkway> searchWalkwaysLiked(SearchWalkwayQuery searchWalkwayQuery) {
+        List<WalkwayEntity> walkwayEntities = walkwayQueryDSLRepository.searchWalkwaysLiked(searchWalkwayQuery);
         return walkwayEntities.stream()
-                .map(WalkwayMapper::toWalkway)
+                .map(WalkwayEntity::toWalkway)
                 .toList();
     }
 
     @Override
-    public List<Walkway> searchWalkwaysRating(Long userId, Long walkwayId, Double longitude, Double latitude, Double distance, int size) {
-        WalkwayEntity lastWalkwayEntity = walkwayJpaRepository.findById(walkwayId)
-                .orElseThrow(() -> new CoreException(CoreErrorCode.WALKWAY_NOT_FOUND));
-        List<WalkwayEntity> walkwayEntities = walkwayQueryDSLRepository.searchWalkwaysRating(userId, lastWalkwayEntity, longitude, latitude, distance, size);
+    public List<Walkway> searchWalkwaysRating(SearchWalkwayQuery searchWalkwayQuery) {
+        List<WalkwayEntity> walkwayEntities = walkwayQueryDSLRepository.searchWalkwaysRating(searchWalkwayQuery);
         return walkwayEntities.stream()
-                .map(WalkwayMapper::toWalkway)
+                .map(WalkwayEntity::toWalkway)
                 .toList();
     }
 
@@ -98,7 +102,7 @@ public class WalkwayCoreJpaRepository implements WalkwayRepository {
     public List<Walkway> getUserLikedWalkway(Long memberId, Integer size, LocalDateTime lastCreatedAt) {
         List<WalkwayEntity> walkwayEntities = walkwayQueryDSLRepository.getUserLikedWalkway(memberId, size, lastCreatedAt);
         return walkwayEntities.stream()
-                .map(WalkwayMapper::toWalkway)
+                .map(WalkwayEntity::toWalkway)
                 .collect(Collectors.toList());
     }
 
@@ -106,7 +110,7 @@ public class WalkwayCoreJpaRepository implements WalkwayRepository {
     public List<Walkway> getUserWalkway(Long memberId, Integer size, LocalDateTime lastCreatedAt) {
         List<WalkwayEntity> walkwayEntities = walkwayQueryDSLRepository.getUserWalkway(memberId, size, lastCreatedAt);
         return walkwayEntities.stream()
-                .map(WalkwayMapper::toWalkway)
+                .map(WalkwayEntity::toWalkway)
                 .collect(Collectors.toList());
     }
 
@@ -116,35 +120,31 @@ public class WalkwayCoreJpaRepository implements WalkwayRepository {
     }
 
     @Override
-    public LikedWalkway saveLikedWalkway(LikedWalkway likedWalkway) {
-        MemberEntity memberEntity = memberJpaRepository.findById(likedWalkway.memberId())
-                .orElseThrow(() -> new CoreException(CoreErrorCode.MEMBER_NOT_FOUND));
+    public Long saveLikedWalkway(Long memberId, Long walkwayId) {
+        MemberEntity memberEntity = memberJpaRepository.findById(memberId).get();
+        WalkwayEntity walkwayEntity = walkwayJpaRepository.findById(walkwayId).get();
 
-        WalkwayEntity lastWalkwayEntity = walkwayJpaRepository.findById(likedWalkway.walkwayId())
-                .orElseThrow(() -> new CoreException(CoreErrorCode.WALKWAY_NOT_FOUND));
+        walkwayEntity.increaseLikeCount();
+        walkwayJpaRepository.save(walkwayEntity);
 
-        lastWalkwayEntity.increaseLikeCount();
-        walkwayJpaRepository.save(lastWalkwayEntity);
-
-        LikedWalkwayEntity likedWalkwayEntity = likedWalkwayJpaRepository.save(LikedWalkwayMapper.toLikedWalkwayEntity(memberEntity, lastWalkwayEntity));
-        return LikedWalkwayMapper.toLikedWalkway(likedWalkwayEntity);
+        LikedWalkwayEntity likedWalkwayEntity = likedWalkwayJpaRepository.save(new LikedWalkwayEntity(memberEntity, walkwayEntity));
+        return likedWalkwayEntity.getId();
     }
 
     @Override
-    public void deleteLikedWalkway(LikedWalkway likedWalkway) {
-        WalkwayEntity lastWalkwayEntity = walkwayJpaRepository.findById(likedWalkway.walkwayId())
-                .orElseThrow(() -> new CoreException(CoreErrorCode.WALKWAY_NOT_FOUND));
+    public void deleteLikedWalkway(Long memberId, Long walkwayId) {
+        WalkwayEntity lastWalkwayEntity = walkwayJpaRepository.findById(walkwayId).get();
 
         lastWalkwayEntity.decreaseLikeCount();
         walkwayJpaRepository.save(lastWalkwayEntity);
 
-        likedWalkwayJpaRepository.deleteByMemberIdAndWalkwayId(likedWalkway.memberId(), likedWalkway.walkwayId());
+        likedWalkwayJpaRepository.deleteByMemberIdAndWalkwayId(memberId, walkwayId);
     }
 
-    @Override
-    public LikedWalkway getLikedWalkway(Long memberId, Long walkwayId) {
-        LikedWalkwayEntity likedWalkwayEntity = likedWalkwayJpaRepository.findByMemberIdAndWalkwayId(memberId, walkwayId)
-                .orElseThrow(() -> new CoreException(CoreErrorCode.LIKED_WALKWAY_NOT_FOUND));
-        return LikedWalkwayMapper.toLikedWalkway(likedWalkwayEntity);
-    }
+//    @Override
+//    public LikedWalkway getLikedWalkway(Long memberId, Long walkwayId) {
+//        LikedWalkwayEntity likedWalkwayEntity = likedWalkwayJpaRepository.findByMemberIdAndWalkwayId(memberId, walkwayId)
+//                .orElseThrow(() -> new CoreException(CoreErrorCode.LIKED_WALKWAY_NOT_FOUND));
+//        return LikedWalkwayMapper.toLikedWalkway(likedWalkwayEntity);
+//    }
 }

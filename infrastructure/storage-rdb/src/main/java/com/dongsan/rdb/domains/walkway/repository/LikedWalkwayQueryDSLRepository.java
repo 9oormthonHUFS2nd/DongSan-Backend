@@ -10,16 +10,19 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
-@RequiredArgsConstructor
 public class LikedWalkwayQueryDSLRepository {
-
     private final JPAQueryFactory queryFactory;
 
-    private QLikedWalkway likedWalkway = QLikedWalkway.likedWalkway;
+    @Autowired
+    public LikedWalkwayQueryDSLRepository(JPAQueryFactory queryFactory) {
+        this.queryFactory = queryFactory;
+    }
+
+    private QLikedWalkway likedWalkway = QLikedWalkway.likedWalkwayEntity;
 
     /**
      * 사용자가 좋아요한 산책로를 좋아요를 누른 시점을 기준으로 내림차순 정렬한다.

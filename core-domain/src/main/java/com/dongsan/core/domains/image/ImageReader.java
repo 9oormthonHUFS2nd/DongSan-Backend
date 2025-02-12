@@ -1,13 +1,17 @@
 package com.dongsan.core.domains.image;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
-@RequiredArgsConstructor
+@Component
 @Transactional(readOnly = true)
 public class ImageReader {
+    @Autowired
+    public ImageReader(ImageRepository imageRepository) {
+        this.imageRepository = imageRepository;
+    }
+
     private final ImageRepository imageRepository;
 
     public Image getImage(Long id) {

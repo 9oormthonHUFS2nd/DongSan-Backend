@@ -52,7 +52,7 @@ jobs:
             sudo docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} -p ${{ secrets.DOCKER_HUB_PASSWORD }}
             sudo docker ps
             if [ "$(sudo docker ps -qa)" ]; then
-            sudo docker rm -f $(sudo docker ps -qa)
+            sudo docker rm -f $(sudo docker ps -qa | grep -v $(sudo docker ps -q -f name=dongsan-redis))
             fi
             sudo docker pull ${{ secrets.DOCKER_REPO }}:latest
             sudo docker run -d --network dongsan-network -p 8080:8080 ${{secrets.DOCKER_REPO}}:latest

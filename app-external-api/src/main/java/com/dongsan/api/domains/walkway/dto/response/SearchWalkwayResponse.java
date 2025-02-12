@@ -1,7 +1,7 @@
 package com.dongsan.api.domains.walkway.dto.response;
 
 import com.dongsan.api.domains.walkway.dto.WalkwayCoordinate;
-import com.dongsan.core.domains.walkway.domain.Walkway;
+import com.dongsan.core.domains.walkway.Walkway;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
@@ -41,9 +41,9 @@ public record SearchWalkwayResponse(
                             .map(hashtag -> "#" + hashtag)
                             .toList(),
                     isLiked,
-                    walkway.likeCount(),
-                    walkway.reviewCount(),
-                    walkway.rating(),
+                    walkway.stat().likeCount(),
+                    walkway.stat().reviewCount(),
+                    walkway.stat().rating(),
                     walkway.courseInfo().courseImageUrl(),
                     new WalkwayCoordinate(walkway.courseInfo().startLocation().getY(), walkway.courseInfo().startLocation().getX()),
                     walkway.createdAt().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))

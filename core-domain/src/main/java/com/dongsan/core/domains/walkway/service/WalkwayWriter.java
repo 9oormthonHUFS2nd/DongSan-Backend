@@ -1,33 +1,37 @@
 package com.dongsan.core.domains.walkway.service;
 
 
+import com.dongsan.core.domains.walkway.CreateWalkway;
+import com.dongsan.core.domains.walkway.UpdateWalkway;
 import com.dongsan.core.domains.walkway.WalkwayRepository;
-import com.dongsan.core.domains.walkway.domain.LikedWalkway;
-import com.dongsan.core.domains.walkway.domain.Walkway;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
 public class WalkwayWriter {
 
-    private final WalkwayRepository walkwayRepository;
-
-    public Walkway saveWalkway(Walkway walkway) {
-        return walkwayRepository.saveWalkway(walkway);
+    @Autowired
+    public WalkwayWriter(WalkwayRepository walkwayRepository) {
+        this.walkwayRepository = walkwayRepository;
     }
 
-    public void updateWalkway(Walkway updateWalkway) {
+    private final WalkwayRepository walkwayRepository;
+
+    public Long saveWalkway(CreateWalkway createWalkway) {
+        return walkwayRepository.saveWalkway(createWalkway);
+    }
+
+    public void updateWalkway(UpdateWalkway updateWalkway) {
         walkwayRepository.updateWalkway(updateWalkway);
     }
 
-    public LikedWalkway saveLikedWalkway(LikedWalkway likedWalkway) {
-        return walkwayRepository.saveLikedWalkway(likedWalkway);
+    public Long saveLikedWalkway(Long memberId, Long walkwayId) {
+        return walkwayRepository.saveLikedWalkway(memberId, walkwayId);
     }
 
-    public void deleteLikedWalkway(LikedWalkway likedWalkway) {
-        walkwayRepository.deleteLikedWalkway(likedWalkway);
+    public void deleteLikedWalkway(Long memberId, Long walkwayId) {
+        walkwayRepository.deleteLikedWalkway(memberId, walkwayId);
     }
 }

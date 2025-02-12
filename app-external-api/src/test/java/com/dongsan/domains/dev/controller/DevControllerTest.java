@@ -1,43 +1,43 @@
-//package com.dongsan.domains.dev.controller;
-//
-//import static org.mockito.Mockito.when;
-//import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-//import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-//import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-//import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-//
-//import com.dongsan.core.domains.auth.AuthService;
-//import com.dongsan.api.domains.dev.DevController;
-//import com.dongsan.api.domains.dev.GenerateTokenRequest;
-//import com.dongsan.api.domains.dev.GenerateTokenResponse;
-//import com.dongsan.api.domains.dev.GetMemberInfoResponse;
-//import com.dongsan.api.domains.dev.DevUseCase;
-//import com.fasterxml.jackson.databind.ObjectMapper;
-//import org.junit.jupiter.api.DisplayName;
-//import org.junit.jupiter.api.Nested;
-//import org.junit.jupiter.api.Test;
-//import org.junit.jupiter.api.extension.ExtendWith;
-//import org.mockito.junit.jupiter.MockitoExtension;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-//import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-//import org.springframework.boot.test.mock.mockito.MockBean;
-//import org.springframework.test.web.servlet.MockMvc;
-//
-//@WebMvcTest(DevController.class)
-//@AutoConfigureMockMvc(addFilters = false)
-//@ExtendWith(MockitoExtension.class)
-//@DisplayName("DevTokenController Unit Test")
-//class DevControllerTest {
-//    @Autowired
-//    MockMvc mockMvc;
-//    @Autowired
-//    ObjectMapper objectMapper;
-//    @MockBean
-//    DevUseCase devUseCase;
-//    @MockBean
-//    AuthService authService;
-//
+package com.dongsan.domains.dev.controller;
+
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.dongsan.api.domains.dev.DevController;
+import com.dongsan.api.domains.dev.DevUseCase;
+import com.dongsan.api.domains.dev.GetMemberInfoResponse;
+import com.dongsan.core.domains.auth.AuthService;
+import com.dongsan.domains.auth.usecase.AuthUseCase;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.web.servlet.MockMvc;
+
+@WebMvcTest(DevController.class)
+@AutoConfigureMockMvc(addFilters = false)
+@ExtendWith(MockitoExtension.class)
+@DisplayName("DevTokenController Unit Test")
+class DevControllerTest {
+    @Autowired
+    MockMvc mockMvc;
+    @Autowired
+    ObjectMapper objectMapper;
+    @MockBean
+    DevUseCase devUseCase;
+    @MockBean
+    AuthService authService;
+    @MockBean
+    AuthUseCase authUseCase;
+
 //    @Nested
 //    @DisplayName("generateToken 메소드는")
 //    class Describe_generateToken{
@@ -53,7 +53,9 @@
 //                    .accessToken("ac_t")
 //                    .refreshToken("rf_t")
 //                    .build();
-//            when(devUseCase.generateToken(request.memberId())).thenReturn(response);
+//            MockHttpServletRequest httpServletRequest = new MockHttpServletRequest();
+//            MockHttpServletResponse httpServletResponse = new MockHttpServletResponse();
+//            when(devUseCase.generateToken(request.memberId(), httpServletRequest, httpServletResponse)).thenReturn(response);
 //
 //            // when & then
 //            mockMvc.perform(post("/dev/token")
@@ -65,30 +67,30 @@
 //                    .andReturn();
 //        }
 //    }
-//
-//    @Nested
-//    @DisplayName("getMemberInfo 메소드는")
-//    class Describe_getMemberInfoEntity {
-//        @Test
-//        @DisplayName("사용자가 존재하면 사용자 정보를 반환한다.")
-//        void it_returns_memberInfo() throws Exception{
-//            // given
-//            String accessToken = "ac_t";
-//            GetMemberInfoResponse response = GetMemberInfoResponse.builder()
-//                    .memberId(1L)
-//                    .email("abc@naver.com")
-//                    .build();
-//            when(devUseCase.getMemberInfo(accessToken)).thenReturn(response);
-//
-//            // when & then
-//            mockMvc.perform(get("/dev/members")
-//                            .param("accessToken", accessToken)
-//                            .contentType("application/json;charset=UTF-8"))
-//                    .andExpect(status().isOk())
-//                    .andExpect(jsonPath("$.data.memberId").value(response.memberId()))
-//                    .andExpect(jsonPath("$.data.email").value(response.email()))
-//                    .andReturn();
-//        }
-//
-//    }
-//}
+
+    @Nested
+    @DisplayName("getMemberInfo 메소드는")
+    class Describe_getMemberInfoEntity {
+        @Test
+        @DisplayName("사용자가 존재하면 사용자 정보를 반환한다.")
+        void it_returns_memberInfo() throws Exception{
+            // given
+            String accessToken = "ac_t";
+            GetMemberInfoResponse response = GetMemberInfoResponse.builder()
+                    .memberId(1L)
+                    .email("abc@naver.com")
+                    .build();
+            when(devUseCase.getMemberInfo(accessToken)).thenReturn(response);
+
+            // when & then
+            mockMvc.perform(get("/dev/members")
+                            .param("accessToken", accessToken)
+                            .contentType("application/json;charset=UTF-8"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.data.memberId").value(response.memberId()))
+                    .andExpect(jsonPath("$.data.email").value(response.email()))
+                    .andReturn();
+        }
+
+    }
+}

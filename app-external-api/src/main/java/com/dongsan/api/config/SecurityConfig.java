@@ -117,7 +117,7 @@ public class SecurityConfig {
                         UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         // Admin 경로에 있어야 하는 role
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        //.requestMatchers("/admin/**").hasRole("ADMIN")
                         // 인증 없이 접근 가능
                         .requestMatchers(
                                 "/",

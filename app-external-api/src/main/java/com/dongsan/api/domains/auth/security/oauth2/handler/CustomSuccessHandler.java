@@ -46,18 +46,14 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         response.addCookie(cookieService.createRefreshTokenCookie(refreshToken, request));
 
         // 주소 분기
-        String requestUrl = request.getRequestURL().toString();
         String redirectUrl;
-
-        // 로컬호스트와 배포 주소 분기
-        if (requestUrl.contains("localhost")) {
+        String origin = request.getHeader("Origin");
+        log.info("[cookie : origin] " + origin);
+        if (origin != null && origin.contains("localhost")) {
             redirectUrl = devRedirectUrl;
         } else {
             redirectUrl = prodRedirectUrl;
         }
-        log.info("[Cookie] requestUrl : " + requestUrl);
-        log.info("[Cookie] redirectUrl : " + redirectUrl);
-
         response.sendRedirect(redirectUrl);
     }
 }

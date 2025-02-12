@@ -1,7 +1,6 @@
 package com.dongsan.core.domains.member;
 
 import com.dongsan.core.domains.bookmark.BookmarkReader;
-import com.dongsan.core.common.annotation.UseCase;
 import com.dongsan.domains.bookmark.entity.Bookmark;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.core.domains.bookmark.GetBookmarksResponse;
@@ -10,7 +9,6 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
-@UseCase
 @RequiredArgsConstructor
 public class MemberService {
 
