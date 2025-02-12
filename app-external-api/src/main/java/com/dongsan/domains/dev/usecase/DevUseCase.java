@@ -2,6 +2,7 @@ package com.dongsan.domains.dev.usecase;
 
 import com.dongsan.common.annotation.UseCase;
 import com.dongsan.domains.auth.AuthService;
+import com.dongsan.domains.auth.dto.RenewToken;
 import com.dongsan.domains.auth.service.CookieService;
 import com.dongsan.domains.auth.service.JwtService;
 import com.dongsan.domains.dev.dto.response.GetMemberInfoResponse;
@@ -25,13 +26,14 @@ public class DevUseCase {
     private final S3FileService s3FileService;
 
     @Transactional
-    public void generateToken(Long memberId, HttpServletResponse response){
+    public RenewToken generateToken(Long memberId, HttpServletResponse response){
         memberQueryService.getMember(memberId);
         String accessToken = jwtService.createAccessToken(memberId);
         String refreshToken = jwtService.createRefreshToken(memberId);
         authService.saveRefreshToken(memberId, refreshToken);
         response.addCookie(cookieService.createAccessTokenCookie(accessToken));
         response.addCookie(cookieService.createRefreshTokenCookie(refreshToken));
+        return new RenewToken(accessToken, refreshToken);
     }
 
     @Transactional

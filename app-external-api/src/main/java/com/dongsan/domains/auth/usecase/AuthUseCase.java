@@ -4,6 +4,7 @@ import com.dongsan.common.annotation.UseCase;
 import com.dongsan.common.error.code.AuthErrorCode;
 import com.dongsan.common.error.exception.CustomException;
 import com.dongsan.domains.auth.AuthService;
+import com.dongsan.domains.auth.dto.RenewToken;
 import com.dongsan.domains.auth.service.CookieService;
 import com.dongsan.domains.auth.service.JwtService;
 import com.dongsan.domains.dev.dto.response.GetTokenRemaining;
@@ -34,7 +35,7 @@ public class AuthUseCase {
      * @param response
      * @return 새로 갱신한 access token & refresh token
      */
-    public void renewToken(String refreshToken, HttpServletResponse response) {
+    public RenewToken renewToken(String refreshToken, HttpServletResponse response) {
         if(jwtService.isRefreshTokenExpired(refreshToken)){
             response.addCookie(cookieService.deleteAccessTokenCookie());
             response.addCookie(cookieService.deleteRefreshTokenCookie());
@@ -48,7 +49,7 @@ public class AuthUseCase {
             authService.saveRefreshToken(memberId, newRefreshToken);
             response.addCookie(cookieService.createAccessTokenCookie(newAccessToken));
             response.addCookie(cookieService.createRefreshTokenCookie(newRefreshToken));
-            return;
+            return new RenewToken(newAccessToken, newRefreshToken);
         }
         response.addCookie(cookieService.deleteAccessTokenCookie());
         response.addCookie(cookieService.deleteRefreshTokenCookie());
