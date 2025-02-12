@@ -2,6 +2,7 @@ package com.dongsan.domains.auth.controller;
 
 import com.dongsan.common.apiResponse.ResponseFactory;
 import com.dongsan.domains.auth.dto.RefreshToken;
+import com.dongsan.domains.auth.dto.RenewToken;
 import com.dongsan.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.domains.auth.usecase.AuthUseCase;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,12 +27,12 @@ public class AuthController {
     // Access token 재발급 (Refresh Token을 받으면 재발급)
     @Operation(summary = "Access token 재발급 (Refresh Token을 받으면 Access token & Refresh Token 재발급, Refresh Token 만료 시 다시 로그인 진행해야 함)")
     @PostMapping("/refresh")
-    public ResponseEntity<Void> renewToken(
+    public ResponseEntity<RenewToken> renewToken(
             @RequestBody RefreshToken dto,
             HttpServletResponse response
     ){
-        authUseCase.renewToken(dto.refreshToken(), response);
-        return ResponseEntity.ok().build();
+        RenewToken renewed = authUseCase.renewToken(dto.refreshToken(), response);
+        return ResponseEntity.ok(renewed);
     }
 
     @Operation(summary = "로그 아웃")
