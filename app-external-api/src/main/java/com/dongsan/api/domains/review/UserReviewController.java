@@ -1,4 +1,4 @@
-package com.dongsan.api.domains.member;
+package com.dongsan.api.domains.review;
 
 import com.dongsan.api.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.api.domains.review.GetReviewResponse;

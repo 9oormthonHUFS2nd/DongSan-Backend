@@ -2,15 +2,15 @@ package com.dongsan.rdb.domains.bookmark;
 
 import com.dongsan.rdb.domains.common.entity.BaseEntity;
 import com.dongsan.rdb.domains.walkway.entity.WalkwayEntity;
-import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MarkedWalkway extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,8 +24,9 @@ public class MarkedWalkway extends BaseEntity {
     @JoinColumn(name = "walkway_id")
     private WalkwayEntity walkwayEntity;
 
-    @Builder
-    private MarkedWalkway(BookmarkEntity bookmarkEntity, WalkwayEntity walkwayEntity){
+    protected MarkedWalkway(){}
+
+    public MarkedWalkway(BookmarkEntity bookmarkEntity, WalkwayEntity walkwayEntity){
         this.bookmarkEntity = bookmarkEntity;
         this.walkwayEntity = walkwayEntity;
     }

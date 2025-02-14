@@ -1,5 +1,7 @@
 package com.dongsan.rdb.domains.bookmark;
 
+import com.dongsan.core.domains.bookmark.Bookmark;
+import com.dongsan.core.domains.common.Author;
 import com.dongsan.rdb.domains.common.entity.BaseEntity;
 import com.dongsan.rdb.domains.member.MemberEntity;
 import jakarta.persistence.Column;
@@ -10,14 +12,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Entity
-@Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BookmarkEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,15 +26,24 @@ public class BookmarkEntity extends BaseEntity {
     @Column(nullable = false)
     private String name;
 
-    @Builder
-    private BookmarkEntity(String name, MemberEntity memberEntity){
-        this.name = name;
+    protected BookmarkEntity() {
+    }
 
+    public BookmarkEntity(String name, MemberEntity memberEntity){
+        this.name = name;
         // 연관관계 매핑
         this.memberEntity = memberEntity;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public void rename(String name){
         this.name = name;
+    }
+
+    public Bookmark toBookmark(){
+        return new Bookmark(id, name, new Author(memberEntity.getId()));
     }
 }

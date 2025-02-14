@@ -1,6 +1,6 @@
 package com.dongsan.rdb.domains.walkway.entity;
 
-import com.dongsan.core.domains.walkway.Author;
+import com.dongsan.core.domains.common.Author;
 import com.dongsan.core.domains.walkway.CourseInfo;
 import com.dongsan.core.domains.walkway.CreateWalkway;
 import com.dongsan.core.domains.walkway.Stat;
