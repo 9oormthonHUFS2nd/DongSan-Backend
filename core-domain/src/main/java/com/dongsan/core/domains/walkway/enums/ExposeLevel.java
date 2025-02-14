@@ -1,9 +1,8 @@
-package com.dongsan.rdb.domains.walkway.enums;
-
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+package com.dongsan.core.domains.walkway.enums;
 
 import java.util.Arrays;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter

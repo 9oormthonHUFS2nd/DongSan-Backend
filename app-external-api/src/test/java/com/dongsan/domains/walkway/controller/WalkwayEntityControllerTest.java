@@ -42,7 +42,7 @@ import com.dongsan.domains.walkway.enums.ExposeLevel;
 import com.dongsan.core.domains.walkway.service.WalkwayReader;
 import com.dongsan.core.domains.walkway.usecase.HashtagService;
 import com.dongsan.core.domains.walkway.usecase.LikedWalkwayService;
-import com.dongsan.core.domains.walkway.usecase.WalkwayService;
+import com.dongsan.core.domains.walkway.WalkwayService;
 =======
 import com.dongsan.domains.walkway.service.WalkwayQueryService;
 import com.dongsan.domains.walkway.usecase.HashtagUseCase;

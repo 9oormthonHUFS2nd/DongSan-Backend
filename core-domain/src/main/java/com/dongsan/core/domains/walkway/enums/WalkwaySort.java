@@ -1,7 +1,7 @@
 package com.dongsan.core.domains.walkway.enums;
 
-import com.dongsan.common.error.code.WalkwayErrorCode;
-import com.dongsan.common.error.exception.CustomException;
+import com.dongsan.core.common.error.CoreErrorCode;
+import com.dongsan.core.common.error.CoreException;
 import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 
@@ -17,6 +17,6 @@ public enum WalkwaySort {
         return Arrays.stream(WalkwaySort.values())
                 .filter(sort -> sort.type.equals(type))
                 .findFirst()
-                .orElseThrow(() -> new CustomException(WalkwayErrorCode.INVALID_SEARCH_TYPE));
+                .orElseThrow(() -> new CoreException(CoreErrorCode.INVALID_SEARCH_TYPE));
     }
 }

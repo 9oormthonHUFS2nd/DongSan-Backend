@@ -1,6 +1,6 @@
-package com.dongsan.core.domains.walkway.mapper;
+package com.dongsan.api.domains.walkway.mapper;
 
-import com.dongsan.core.domains.walkway.dto.WalkwayCoordinate;
+import com.dongsan.api.domains.walkway.dto.WalkwayCoordinate;
 import java.util.ArrayList;
 import java.util.List;
 import org.locationtech.jts.geom.Coordinate;

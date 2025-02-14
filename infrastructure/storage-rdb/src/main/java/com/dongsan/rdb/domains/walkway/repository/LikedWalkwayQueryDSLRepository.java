@@ -1,22 +1,28 @@
 package com.dongsan.rdb.domains.walkway.repository;
 
-import com.dongsan.rdb.domains.walkway.entity.QLikedWalkway;
-import com.dongsan.rdb.domains.walkway.enums.ExposeLevel;
-import com.dongsan.rdb.domains.walkway.entity.LikedWalkway;
+import static com.querydsl.core.group.GroupBy.groupBy;
+
+import com.dongsan.core.domains.walkway.enums.ExposeLevel;
+import com.dongsan.domains.walkway.entity.QLikedWalkway;
+import com.dongsan.rdb.domains.walkway.entity.LikedWalkwayEntity;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDateTime;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
+import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository
-@RequiredArgsConstructor
 public class LikedWalkwayQueryDSLRepository {
-
     private final JPAQueryFactory queryFactory;
 
-    private QLikedWalkway likedWalkway = QLikedWalkway.likedWalkway;
+    @Autowired
+    public LikedWalkwayQueryDSLRepository(JPAQueryFactory queryFactory) {
+        this.queryFactory = queryFactory;
+    }
+
+    private QLikedWalkway likedWalkway = QLikedWalkway.likedWalkwayEntity;
 
     /**
      * 사용자가 좋아요한 산책로를 좋아요를 누른 시점을 기준으로 내림차순 정렬한다.
@@ -30,7 +36,7 @@ public class LikedWalkwayQueryDSLRepository {
      * @param lastCreatedAt 마지막으로 조회된 산책로의 좋아요 시각
      * @return              사용자가 좋아요를 누른 산책로
      */
-    public List<LikedWalkway> getUserLikedWalkway(Long memberId, Integer size, LocalDateTime lastCreatedAt){
+    public List<LikedWalkwayEntity> getUserLikedWalkway(Long memberId, Integer size, LocalDateTime lastCreatedAt){
         return queryFactory
                 .selectFrom(likedWalkway)
                 .join(likedWalkway.walkway).fetchJoin()
@@ -50,4 +56,12 @@ public class LikedWalkwayQueryDSLRepository {
         return lastCreatedAt != null ? likedWalkway.createdAt.lt(lastCreatedAt) : null;
     }
 
+    public Map<Long, Boolean> existsLikedWalkways(Long memberId, List<Long> walkwayIds) {
+        return queryFactory.from(likedWalkway)
+                .where(
+                        likedWalkway.member.id.eq(memberId),
+                        likedWalkway.walkway.id.in(walkwayIds)
+                )
+                .transform(groupBy(likedWalkway.walkway.id).as(likedWalkway.isNotNull()));
+    }
 }

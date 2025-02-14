@@ -7,7 +7,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.dongsan.core.domains.walkway.usecase.HashtagService;
-import com.dongsan.core.domains.walkway.usecase.WalkwayService;
+import com.dongsan.core.domains.walkway.WalkwayService;
 import com.dongsan.common.error.exception.CustomException;
 import com.dongsan.domains.image.entity.Image;
 import com.dongsan.core.domains.image.ImageReader;

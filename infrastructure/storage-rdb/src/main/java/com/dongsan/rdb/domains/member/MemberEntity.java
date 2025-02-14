@@ -1,5 +1,6 @@
 package com.dongsan.rdb.domains.member;
 
+import com.dongsan.core.domains.walkway.Author;
 import com.dongsan.rdb.domains.common.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -34,6 +35,10 @@ public class MemberEntity extends BaseEntity {
         this.nickname = nickname;
         this.profileImageUrl = profileImageUrl;
         this.role = role;
+    }
+
+    public Author toAuthor() {
+        return new Author(id);
     }
 
 }
