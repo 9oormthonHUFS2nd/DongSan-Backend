@@ -7,20 +7,22 @@ import com.dongsan.core.domains.bookmark.GetBookmarksResponse;
 import com.dongsan.core.domains.bookmark.UserBookmarkMapper;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@RequiredArgsConstructor
+@Service
 public class MemberService {
 
     private final MemberReader memberReader;
     private final BookmarkReader bookmarkReader;
 
-    @Transactional(readOnly = true)
-    public GetProfileResponse getUserProfile(Long userId) {
+    public MemberService(MemberReader memberReader, BookmarkReader bookmarkReader) {
+        this.memberReader = memberReader;
+        this.bookmarkReader = bookmarkReader;
+    }
 
-        Member member = memberReader.getMember(userId);
-
-        return UserProfileMapper.toGetProfileResponse(member);
+    public Member getMember(Long memberId) {
+        return memberReader.readMember(memberId);
     }
 
 

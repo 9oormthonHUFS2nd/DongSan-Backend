@@ -1,4 +1,4 @@
-package com.dongsan.api.domains.user;
+package com.dongsan.api.domains.member;
 
 import com.dongsan.api.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.core.domains.walkway.WalkwayListResponse;

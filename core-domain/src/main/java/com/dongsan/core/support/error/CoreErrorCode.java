@@ -24,6 +24,10 @@ public enum CoreErrorCode {
     INVALID_COURSE_IMAGE(BAD_REQUEST, "WALKWAY-05", "유효하지 않은 산책 경로 이미지입니다."),
     WALKWAY_PRIVATE(FORBIDDEN, "WALKWAY-06", "비공개 산책로 입니다."),
     LIKED_WALKWAY_NOT_FOUND(NOT_FOUND, "WALKWAY-07", "좋아하는 산책로로 저장하지 않은 산책로 입니다."),
+    HISTORY_NOT_FOUND(NOT_FOUND, "WALKWAY-08", "산책로를 이용한 기록이 없습니다."),
+    NOT_ENOUGH_DISTANCE(FORBIDDEN, "WALKWAY-09", "충분히 산책하지 않았습니다."),
+    ALREADY_REVIEWED(CONFLICT, "WALKWAY-10", "이미 리뷰를 작성하였습니다."),
+    INVALID_ACCESS(FORBIDDEN, "WALKWAY-11", "기록의 산책로와 유저가 다릅니다."),
 
     // member
     MEMBER_NOT_FOUND(NOT_FOUND, "MEMBER-01", "해당 회원이 존재하지 않습니다."),

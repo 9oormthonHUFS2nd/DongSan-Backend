@@ -131,7 +131,7 @@ public class WalkwayEntity extends BaseEntity {
 
     public Walkway toWalkway() {
         CourseInfo courseInfo = new CourseInfo(distance, time, startLocation, endLocation, course, courseImageUrl);
-        Author author = memberEntity.toAuthor();
+        Author author = new Author(memberEntity.getId());
         Stat stat = new Stat(likeCount, reviewCount, rating);
         return new Walkway(id, name, getCreatedAt(), memo, stat, hashtags, courseInfo, author, exposeLevel);
     }

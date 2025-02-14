@@ -1,20 +1,12 @@
 package com.dongsan.core.domains.bookmark;
 
 import com.dongsan.core.domains.member.MemberReader;
-import com.dongsan.common.error.code.BookmarkErrorCode;
-import com.dongsan.common.error.code.WalkwayErrorCode;
-import com.dongsan.common.error.exception.CustomException;
-import com.dongsan.domains.bookmark.dto.BookmarksWithMarkedWalkwayDTO;
-import com.dongsan.domains.bookmark.entity.Bookmark;
-import com.dongsan.domains.member.entity.Member;
-import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.core.domains.walkway.service.WalkwayReader;
 import java.time.LocalDateTime;
-import java.util.List;
-import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@RequiredArgsConstructor
+@Service
 public class BookmarkService {
     private final MemberReader memberReader;
     private final BookmarkReader bookmarkReader;
@@ -22,9 +14,18 @@ public class BookmarkService {
     private final WalkwayReader walkwayQueryService;
     private final MarkedWalkwayReader markedWalkwayReader;
 
+    public BookmarkService(MemberReader memberReader, BookmarkReader bookmarkReader, BookmarkWriter bookmarkWriter,
+                           WalkwayReader walkwayQueryService, MarkedWalkwayReader markedWalkwayReader) {
+        this.memberReader = memberReader;
+        this.bookmarkReader = bookmarkReader;
+        this.bookmarkWriter = bookmarkWriter;
+        this.walkwayQueryService = walkwayQueryService;
+        this.markedWalkwayReader = markedWalkwayReader;
+    }
+
     @Transactional
     public BookmarkIdResponse createBookmark(Long memberId, BookmarkNameRequest request) {
-        Member member = memberReader.getMember(memberId);
+        Member member = memberReader.readMember(memberId);
         // 내가 만든 북마크 중 이미 존재하는 이름인지 확인
         bookmarkReader.hasSameBookmarkName(member.getId(), request.name());
         Long bookmarkId = bookmarkWriter.createBookmark(member, request.name());
@@ -33,7 +34,7 @@ public class BookmarkService {
 
     @Transactional
     public void renameBookmark(Long memberId, Long bookmarkId, BookmarkNameRequest request) {
-        Member member = memberReader.getMember(memberId);
+        Member member = memberReader.readMember(memberId);
         Bookmark bookmark = bookmarkReader.getBookmark(bookmarkId);
         // 내 소유의 북마크인지 확인
         bookmarkReader.isOwnerOfBookmark(member, bookmark);
@@ -45,7 +46,7 @@ public class BookmarkService {
 
     @Transactional
     public void addWalkway(Long memberId, Long bookmarkId, WalkwayIdRequest request) {
-        Member member = memberReader.getMember(memberId);
+        Member member = memberReader.readMember(memberId);
         Bookmark bookmark = bookmarkReader.getBookmark(bookmarkId);
         Walkway walkway = walkwayQueryService.getWalkway(request.walkwayId());
         // 내 소유의 북마크인지 화인
@@ -60,7 +61,7 @@ public class BookmarkService {
 
     @Transactional
     public void deleteWalkway(Long memberId, Long bookmarkId, Long walkwayId) {
-        Member member = memberReader.getMember(memberId);
+        Member member = memberReader.readMember(memberId);
         Bookmark bookmark = bookmarkReader.getBookmark(bookmarkId);
         Walkway walkway = walkwayQueryService.getWalkway(walkwayId);
         // 내 소유의 북마크인지 확인
@@ -90,7 +91,7 @@ public class BookmarkService {
 
     @Transactional
     public void deleteBookmark(Long memberId, Long bookmarkId) {
-        Member member = memberReader.getMember(memberId);
+        Member member = memberReader.readMember(memberId);
         Bookmark bookmark = bookmarkReader.getBookmark(bookmarkId);
         // 내 소유의 북마크인지 확인
         bookmarkReader.isOwnerOfBookmark(member, bookmark);
@@ -100,7 +101,7 @@ public class BookmarkService {
 
     @Transactional(readOnly = true)
     public GetBookmarkDetailResponse getBookmarkDetails(GetBookmarkDetailParam param) {
-        Member member = memberReader.getMember(param.memberId());
+        Member member = memberReader.readMember(param.memberId());
         Bookmark bookmark = bookmarkReader.getBookmark(param.bookmarkId());
         // 내 소유의 북마크인지 확인
         bookmarkReader.isOwnerOfBookmark(member, bookmark);

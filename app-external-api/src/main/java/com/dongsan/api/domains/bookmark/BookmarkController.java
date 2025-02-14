@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -23,14 +24,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequiredArgsConstructor
-@RequestMapping("/bookmarks")
 @Tag(name = "북마크")
 @Validated
 public class BookmarkController {
     private final BookmarkService bookmarkService;
 
-    @PostMapping()
+    @Autowired
+    public BookmarkController(BookmarkService bookmarkService) {
+        this.bookmarkService = bookmarkService;
+    }
+
+    @PostMapping("/bookmarks")
     @Operation(summary = "북마크 생성")
     public ResponseEntity<SuccessResponse<BookmarkIdResponse>> createBookmark(
             @Valid @RequestBody BookmarkNameRequest request,
@@ -40,7 +44,7 @@ public class BookmarkController {
         return ResponseFactory.created(response);
     }
 
-    @PutMapping("/{bookmarkId}")
+    @PutMapping("/bookmarks/{bookmarkId}")
     @Operation(summary = "북마크 이름 변경")
     public ResponseEntity<Void> renameBookmark(
             @ExistBookmark @PathVariable Long bookmarkId,
@@ -51,7 +55,7 @@ public class BookmarkController {
         return ResponseFactory.noContent();
     }
 
-    @PostMapping("/{bookmarkId}/walkways")
+    @PostMapping("/bookmarks/{bookmarkId}/walkways")
     @Operation(summary = "북마크에 산책로를 추가")
     public ResponseEntity<Void> addWalkway(
             @ExistBookmark @PathVariable Long bookmarkId,
@@ -62,7 +66,7 @@ public class BookmarkController {
         return ResponseFactory.noContent();
     }
 
-    @DeleteMapping("/{bookmarkId}/walkways/{walkwayId}")
+    @DeleteMapping("/bookmarks/{bookmarkId}/walkways/{walkwayId}")
     @Operation(summary = "북마크에 산책로를 제거")
     public ResponseEntity<Void> deleteWalkway(
             @ExistBookmark @PathVariable Long bookmarkId,
@@ -73,7 +77,7 @@ public class BookmarkController {
         return ResponseFactory.noContent();
     }
 
-    @DeleteMapping("/{bookmarkId}")
+    @DeleteMapping("/bookmarks/{bookmarkId}")
     @Operation(summary = "북마크 삭제")
     public ResponseEntity<Void> deleteBookmark(
             @ExistBookmark @PathVariable Long bookmarkId,
@@ -86,7 +90,7 @@ public class BookmarkController {
     /**
      * 북마크에 추가된 시간을 기준으로 내림차순 조회
      */
-    @GetMapping("/{bookmarkId}/walkways")
+    @GetMapping("/bookmarks/{bookmarkId}/walkways")
     @Operation(summary = "북마크 상세 조회")
     public ResponseEntity<SuccessResponse<GetBookmarkDetailResponse>> getBookmarkDetail(
             @ExistBookmark @PathVariable Long bookmarkId,
@@ -96,6 +100,20 @@ public class BookmarkController {
     ){
         GetBookmarkDetailResponse response = bookmarkService.getBookmarkDetails(new GetBookmarkDetailParam(
                 customOAuth2User.getMemberId(), bookmarkId, size, lastId));
+        return ResponseFactory.ok(response);
+    }
+
+    /**
+     * 유저 북마크 리스트 조회
+     */
+    @Operation(summary = "북마크한 산책로 제목 리스트 보기")
+    @GetMapping("/users/bookmarks/title")
+    public ResponseEntity<SuccessResponse<GetBookmarksResponse>> getBookmarks(
+            @RequestParam(required = false) Long lastId,
+            @RequestParam(defaultValue = "10") Integer size,
+            @AuthenticationPrincipal CustomOAuth2User customOAuth2User
+    ) {
+        GetBookmarksResponse response = userProfileUsecase.getUserBookmarks(customOAuth2User.getMemberId(), lastId, size);
         return ResponseFactory.ok(response);
     }
 }

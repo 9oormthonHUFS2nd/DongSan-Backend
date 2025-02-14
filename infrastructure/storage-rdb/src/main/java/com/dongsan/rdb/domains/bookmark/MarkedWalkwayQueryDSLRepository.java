@@ -1,4 +1,4 @@
-package com.dongsan.domains.bookmark.repository;
+package com.dongsan.rdb.domains.bookmark;
 
 import com.dongsan.domains.bookmark.entity.MarkedWalkway;
 import com.dongsan.domains.bookmark.entity.QMarkedWalkway;
