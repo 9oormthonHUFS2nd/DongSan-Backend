@@ -24,6 +24,9 @@ public enum CoreErrorCode {
     INVALID_COURSE_IMAGE(BAD_REQUEST, "WALKWAY-05", "유효하지 않은 산책 경로 이미지입니다."),
     WALKWAY_PRIVATE(FORBIDDEN, "WALKWAY-06", "비공개 산책로 입니다."),
     LIKED_WALKWAY_NOT_FOUND(NOT_FOUND, "WALKWAY-07", "좋아하는 산책로로 저장하지 않은 산책로 입니다."),
+    CANT_CREATE_WALKWAY(BAD_REQUEST, "WALKWAY-08", "산책로를 생성할 수 없습니다."),
+    CANT_CREATE_LIKED_WALKWAY(BAD_REQUEST, "WALKWAY-09", "산책로 좋아요를 생성할 수 없습니다."),
+    CANT_DELETE_LIKED_WALKWAY(BAD_REQUEST, "WALKWAY-09", "산책로 좋아요를 삭제할 수 없습니다."),
 
     // member
     MEMBER_NOT_FOUND(NOT_FOUND, "MEMBER-01", "해당 회원이 존재하지 않습니다."),

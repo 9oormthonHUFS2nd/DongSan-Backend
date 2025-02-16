@@ -6,6 +6,8 @@ import com.dongsan.core.domains.walkway.Walkway;
 import com.dongsan.core.domains.walkway.WalkwayRepository;
 import com.dongsan.core.domains.walkway.enums.WalkwaySort;
 import com.dongsan.core.domains.walkway.service.factory.SearchWalkwayFactory;
+import com.dongsan.core.support.error.CoreErrorCode;
+import com.dongsan.core.support.error.CoreException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +27,8 @@ public class WalkwayReader {
     private final SearchWalkwayFactory searchWalkwayFactory;
 
     public Walkway getWalkway(Long walkwayId) {
-        return walkwayRepository.getWalkway(walkwayId);
+        return walkwayRepository.getWalkway(walkwayId)
+                .orElseThrow(() -> new CoreException(CoreErrorCode.WALKWAY_NOT_FOUND));
     }
 
     public List<Walkway> getUserWalkWay(Long memberId, Integer size, LocalDateTime lastCreatedAt){

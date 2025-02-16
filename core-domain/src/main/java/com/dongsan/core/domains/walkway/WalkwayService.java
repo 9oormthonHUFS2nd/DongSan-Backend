@@ -31,6 +31,7 @@ public class WalkwayService {
     }
 
     public Walkway getWalkway(Long walkwayId) {
+        walkwayValidator.validateWalkwayExists(walkwayId);
         return walkwayReader.getWalkway(walkwayId);
     }
 
