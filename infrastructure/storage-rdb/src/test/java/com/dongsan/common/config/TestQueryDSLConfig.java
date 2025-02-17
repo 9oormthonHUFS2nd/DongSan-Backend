@@ -1,7 +1,7 @@
 package com.dongsan.common.config;
 
 import com.dongsan.domains.bookmark.repository.BookmarkQueryDSLRepository;
-import com.dongsan.domains.bookmark.repository.MarkedWalkwayQueryDSLRepository;
+import com.dongsan.rdb.domains.bookmark.MarkedWalkwayQueryDSLRepository;
 import com.dongsan.domains.review.repository.ReviewQueryDSLRepository;
 import com.dongsan.domains.walkway.repository.WalkwayHistoryQueryDSLRepository;
 import com.dongsan.rdb.domains.walkway.repository.HashtagDSLRepository;

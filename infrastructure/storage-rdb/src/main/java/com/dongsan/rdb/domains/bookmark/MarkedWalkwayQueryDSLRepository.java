@@ -1,4 +1,4 @@
-package com.dongsan.domains.bookmark.repository;
+package com.dongsan.rdb.domains.bookmark;
 
 import com.dongsan.domains.bookmark.entity.MarkedWalkway;
 import com.dongsan.domains.bookmark.entity.QMarkedWalkway;
@@ -17,7 +17,7 @@ public class MarkedWalkwayQueryDSLRepository {
 
     private QMarkedWalkway markedWalkway = QMarkedWalkway.markedWalkway;
 
-    public List<MarkedWalkway> getBookmarkWalkway(Long bookmarkId, Integer size, LocalDateTime lastCreatedAt, Long memberId) {
+    public List<MarkedWalkwayEntity> getBookmarkWalkway(Long bookmarkId, Integer size, LocalDateTime lastCreatedAt, Long memberId) {
         return queryFactory.select(markedWalkway)
                 .from(markedWalkway)
                 .join(markedWalkway.walkway).fetchJoin()

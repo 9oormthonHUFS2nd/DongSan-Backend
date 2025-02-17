@@ -89,7 +89,7 @@ class ReviewServiceTest {
             Review review = ReviewFixture.createReviewWithId(reviewId, member, walkway);
             WalkwayHistory walkwayHistory = WalkwayHistoryFixture.createWalkwayHistory(member, walkway, 10.0, 10);
 
-            when(memberReader.getMember(member.getId())).thenReturn(member);
+            when(memberReader.readMember(member.getId())).thenReturn(member);
             when(walkwayQueryService.getWalkway(walkway.getId())).thenReturn(walkway);
 <<<<<<< HEAD:core-domain/src/test/java/com/dongsan/domains/walkway/usecase/ReviewServiceTest.java
             when(reviewWriter.createReview(any())).thenReturn(review);

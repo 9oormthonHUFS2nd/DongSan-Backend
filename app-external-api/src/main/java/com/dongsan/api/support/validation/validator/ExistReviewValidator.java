@@ -2,7 +2,6 @@ package com.dongsan.api.support.validation.validator;
 
 import com.dongsan.api.support.validation.annotation.ExistReview;
 import com.dongsan.core.domains.review.ReviewReader;
-import com.dongsan.common.error.code.ReviewErrorCode;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.RequiredArgsConstructor;
