@@ -25,4 +25,10 @@ public interface WalkwayRepository {
     Optional<Long> saveLikedWalkway(Long memberId, Long walkwayId);
     Optional<Long> deleteLikedWalkway(Long memberId, Long walkwayId);
 //    LikedWalkway getLikedWalkway(Long memberId, Long walkwayId);
+
+    // 산책 기록
+    Optional<Long> saveWalkwayHistory(CreateWalkwayHistory createWalkwayHistory);
+    List<WalkwayHistory> getCanReviewWalkwayHistory(Long walkwayId, Long memberId);
+    List<WalkwayHistory> getUserCanReviewWalkwayHistory(Long memberId, int size, LocalDateTime lastCreatedAt);
+    Optional<WalkwayHistory> getWalkwayHistory(Long walkwayHistoryId);
 }

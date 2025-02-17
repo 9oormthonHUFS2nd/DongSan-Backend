@@ -115,4 +115,24 @@ public class WalkwayService {
         }
         return walkways;
     }
+
+    @Transactional
+    public Long createWalkwayHistory(CreateWalkwayHistory createWalkwayHistory) {
+        return walkwayWriter.saveWalkwayHistory(createWalkwayHistory);
+    }
+
+    public List<WalkwayHistory> getCanReviewWalkwayHistory(Long walkwayId, Long memberId) {
+        walkwayValidator.validateWalkwayPrivate(walkwayId);
+        return walkwayReader.getCanReviewWalkwayHistory(walkwayId, memberId);
+    }
+
+    public List<WalkwayHistory> getUserCanReviewWalkwayHistory(Long lastWalkwayHistoryId, Long memberId, int size) {
+        WalkwayHistory walkwayHistory = walkwayReader.getWalkwayHistory(lastWalkwayHistoryId);
+        return walkwayReader.getUserCanReviewWalkwayHistory(memberId, size, walkwayHistory.createdAt());
+    }
+
+    public boolean isCanReview(Long walkwayHistoryId) {
+        WalkwayHistory walkwayHistory = walkwayReader.getWalkwayHistory(walkwayHistoryId);
+        return walkwayHistory.distance() >= walkwayHistory.walkway().courseInfo().distance();
+    }
 }

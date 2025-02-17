@@ -41,4 +41,7 @@ public class MemberEntity extends BaseEntity {
         return new Author(id);
     }
 
+    public Long getId()  {
+        return id;
+    }
 }

@@ -2,6 +2,7 @@ package com.dongsan.core.domains.walkway.service;
 
 
 import com.dongsan.core.domains.walkway.CreateWalkway;
+import com.dongsan.core.domains.walkway.CreateWalkwayHistory;
 import com.dongsan.core.domains.walkway.UpdateWalkway;
 import com.dongsan.core.domains.walkway.WalkwayRepository;
 import com.dongsan.core.support.error.CoreErrorCode;
@@ -40,5 +41,10 @@ public class WalkwayWriter {
     public void deleteLikedWalkway(Long memberId, Long walkwayId) {
         walkwayRepository.deleteLikedWalkway(memberId, walkwayId)
                 .orElseThrow(() -> new CoreException(CoreErrorCode.CANT_DELETE_LIKED_WALKWAY));
+    }
+
+    public Long saveWalkwayHistory(CreateWalkwayHistory createWalkwayHistory) {
+        return walkwayRepository.saveWalkwayHistory(createWalkwayHistory)
+                .orElseThrow(() -> new CoreException(CoreErrorCode.CANT_CREATE_WALKWAY_HISTORY));
     }
 }

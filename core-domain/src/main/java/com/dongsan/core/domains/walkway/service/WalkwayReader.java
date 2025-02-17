@@ -3,6 +3,7 @@ package com.dongsan.core.domains.walkway.service;
 
 import com.dongsan.core.domains.walkway.SearchWalkwayQuery;
 import com.dongsan.core.domains.walkway.Walkway;
+import com.dongsan.core.domains.walkway.WalkwayHistory;
 import com.dongsan.core.domains.walkway.WalkwayRepository;
 import com.dongsan.core.domains.walkway.enums.WalkwaySort;
 import com.dongsan.core.domains.walkway.service.factory.SearchWalkwayFactory;
@@ -67,4 +68,17 @@ public class WalkwayReader {
 //    public boolean isMarkedWalkway(Long walkwayId, Long memberId) {
 //        return markedWalkwayQueryDSLRepository.existsMarkedWalkwayByMemberAndWalkway(walkwayId, memberId);
 //    }
+
+    public WalkwayHistory getWalkwayHistory(Long walkwayHistoryId) {
+        return walkwayRepository.getWalkwayHistory(walkwayHistoryId)
+                .orElseThrow(() -> new CoreException(CoreErrorCode.WALKWAY_HISTORY_NOT_FOUND));
+    }
+
+    public List<WalkwayHistory> getCanReviewWalkwayHistory(Long walkwayId, Long memberId) {
+        return walkwayRepository.getCanReviewWalkwayHistory(walkwayId, memberId);
+    }
+
+    public List<WalkwayHistory> getUserCanReviewWalkwayHistory(Long memberId, int size, LocalDateTime lastCreatedAt) {
+        return walkwayRepository.getUserCanReviewWalkwayHistory(memberId, size, lastCreatedAt);
+    }
 }

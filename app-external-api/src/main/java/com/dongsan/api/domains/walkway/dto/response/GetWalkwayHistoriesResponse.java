@@ -1,12 +1,13 @@
-package com.dongsan.domains.walkway.dto.response;
+package com.dongsan.api.domains.walkway.dto.response;
 
-import com.dongsan.domains.walkway.entity.WalkwayHistory;
+import com.dongsan.core.domains.walkway.WalkwayHistory;
 import java.time.LocalDateTime;
 import java.util.List;
 
 public record GetWalkwayHistoriesResponse(
         List<CanReviewWalkwayHistory> walkwayHistories
 ) {
+
     public static GetWalkwayHistoriesResponse from(List<WalkwayHistory> walkwayHistories) {
         return new GetWalkwayHistoriesResponse(
                 walkwayHistories.stream()
@@ -23,10 +24,10 @@ public record GetWalkwayHistoriesResponse(
     ) {
         public CanReviewWalkwayHistory(WalkwayHistory walkwayHistory) {
             this(
-                    walkwayHistory.getId(),
-                    walkwayHistory.getCreatedAt(),
-                    walkwayHistory.getTime(),
-                    walkwayHistory.getDistance()
+                    walkwayHistory.id(),
+                    walkwayHistory.createdAt(),
+                    walkwayHistory.time(),
+                    walkwayHistory.distance()
             );
         }
     }
