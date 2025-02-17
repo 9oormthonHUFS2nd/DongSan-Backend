@@ -1,26 +1,21 @@
 package com.dongsan.api.domains.bookmark;
 
-import com.dongsan.domains.bookmark.entity.Bookmark;
-import com.dongsan.domains.walkway.entity.Walkway;
+import com.dongsan.core.domains.bookmark.MarkedWalkway;
+import com.dongsan.core.support.util.CursorPagingResponse;
 import java.time.LocalDateTime;
 import java.util.List;
-import lombok.Builder;
 
-@Builder
 public record GetBookmarkDetailResponse(
-        String name,
         List<WalkwayInfo> walkways,
         boolean hasNext
 ) {
-    public GetBookmarkDetailResponse(Bookmark bookmark, List<Walkway> walkways, boolean hasNext){
+    public GetBookmarkDetailResponse(CursorPagingResponse<MarkedWalkway> response){
         this(
-                bookmark.getName(),
-                walkways.stream().map(WalkwayInfo::new).toList(),
-                hasNext
+                response.data().stream().map(WalkwayInfo::new).toList(),
+                response.hasNext()
         );
     }
 
-    @Builder
     public record WalkwayInfo(
             Long walkwayId,
             String name,
@@ -29,14 +24,14 @@ public record GetBookmarkDetailResponse(
             List<String> hashtags,
             String courseImageUrl
     ){
-        WalkwayInfo(Walkway walkway){
+        WalkwayInfo(MarkedWalkway walkway){
             this(
-                    walkway.getId(),
-                    walkway.getName(),
-                    walkway.getCreatedAt(),
-                    walkway.getDistance(),
-                    walkway.getHashtagWalkways().stream().map(h->h.getHashtag().getName()).toList(),
-                    walkway.getCourseImageUrl()
+                    walkway.walkwayId(),
+                    walkway.name(),
+                    walkway.includedAt(),  // 북마크 추가 시간
+                    walkway.distance(),
+                    walkway.hashtags(),
+                    walkway.courseImageUrl()
             );
         }
     }

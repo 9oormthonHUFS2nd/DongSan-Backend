@@ -2,9 +2,11 @@ package com.dongsan.rdb.domains.bookmark;
 
 import com.dongsan.core.domains.bookmark.Bookmark;
 import com.dongsan.core.domains.bookmark.BookmarkRepository;
+import com.dongsan.core.domains.bookmark.MarkedWalkway;
 import com.dongsan.core.domains.walkway.enums.ExposeLevel;
 import com.dongsan.rdb.domains.bookmark.entity.QBookmark;
 import com.dongsan.rdb.domains.bookmark.entity.QMarkedWalkway;
+import com.dongsan.rdb.domains.common.entity.BaseEntity;
 import com.dongsan.rdb.domains.member.MemberEntity;
 import com.dongsan.rdb.domains.member.MemberJpaRepository;
 import com.dongsan.rdb.domains.walkway.entity.WalkwayEntity;
@@ -41,6 +43,18 @@ public class BookmarkCoreRepository implements BookmarkRepository {
     }
 
     @Override
+    public Long save(Long memberId, String name) {
+        MemberEntity memberEntity = memberJpaRepository.getReferenceById(memberId);
+        BookmarkEntity bookmarkEntity = new BookmarkEntity(name, memberEntity);
+        return bookmarkJpaRepository.save(bookmarkEntity).getId();
+    }
+
+    @Override
+    public boolean existsById(Long bookmarkId) {
+        return bookmarkJpaRepository.existsById(bookmarkId);
+    }
+
+    @Override
     public Optional<Bookmark> findById(Long bookmarkId) {
         return bookmarkJpaRepository.findById(bookmarkId)
                 .map(BookmarkEntity::toBookmark);
@@ -66,7 +80,7 @@ public class BookmarkCoreRepository implements BookmarkRepository {
     public void includeWalkway(Long bookmarkId, Long walkwayId) {
         BookmarkEntity bookmarkEntity = bookmarkJpaRepository.getReferenceById(bookmarkId);
         WalkwayEntity walkwayEntity = walkwayJpaRepository.getReferenceById(walkwayId);
-        MarkedWalkway markedWalkway = new MarkedWalkway(bookmarkEntity, walkwayEntity);
+        MarkedWalkwayEntity markedWalkway = new MarkedWalkwayEntity(bookmarkEntity, walkwayEntity);
         markedWalkwayJpaRepository.save(markedWalkway);
     }
 
@@ -82,31 +96,48 @@ public class BookmarkCoreRepository implements BookmarkRepository {
     }
 
     @Override
-    public Long save(Long memberId, String name) {
-        MemberEntity memberEntity = memberJpaRepository.getReferenceById(memberId);
-        BookmarkEntity bookmarkEntity = new BookmarkEntity(name, memberEntity);
-        return bookmarkJpaRepository.save(bookmarkEntity).getId();
+    public Optional<LocalDateTime> getBookmarkedDate(Long bookmarkId, Long walkwayId) {
+        return markedWalkwayJpaRepository.findByBookmarkIdAndWalkwayId(bookmarkId, walkwayId).map(
+                BaseEntity::getCreatedAt);
     }
 
     @Override
-    public boolean existsById(Long bookmarkId) {
-        return bookmarkJpaRepository.existsById(bookmarkId);
+    public List<MarkedWalkway> getBookmarkWalkways(Long bookmarkId, int size,
+                                                   LocalDateTime lastCreatedAt, Long memberId) {
+        List<MarkedWalkwayEntity> markedWalkwayEntities = queryFactory.select(markedWalkway)
+                .from(markedWalkway)
+                .join(markedWalkway.walkway).fetchJoin()
+                .where(markedWalkway.bookmark.id.eq(bookmarkId), markedBookmarkCreatedAtLt(lastCreatedAt),
+                        markedWalkway.walkway.member.id.eq(memberId)
+                                .or(markedWalkway.walkway.exposeLevel.eq(ExposeLevel.PUBLIC)))
+                .orderBy(markedWalkway.createdAt.desc())
+                .limit(size)
+                .fetch();
+        return markedWalkwayEntities.stream().map(MarkedWalkwayEntity::toMarkedWalkway).toList();
     }
 
+    /**
+     * 북마크에 추가된 시간이 walkwayId가 북마크에 추가된 시간보다 작아야 한다. (markedBookmark의 createdAt이 더 작은 markedWalkay를 조회)
+     * @param lastCreatedAt 마지막으로 가져온 markedBookmark의 createdAt
+     * @return 조건 만족 안하면 null 반환, where 절에서 null은 무시된다.
+     */
+    private BooleanExpression markedBookmarkCreatedAtLt(LocalDateTime lastCreatedAt){
+        return lastCreatedAt != null ? markedWalkway.createdAt.lt(lastCreatedAt) : null;
+    }
 
-    public List<BookmarkEntity> getBookmarks(BookmarkEntity lastBookmarkEntity, Long memberId, Integer size) {
-        return queryFactory.selectFrom(bookmark)
+    @Override
+    public List<Bookmark> getUserBookmarks(Integer size, LocalDateTime lastCreatedAt, Long memberId) {
+        List<BookmarkEntity> bookmarkEntities = queryFactory.selectFrom(bookmark)
                 .where(bookmark.member.id.eq(memberId),
-                        lastBookmarkEntity == null
-                                ? null
-                                : bookmarkCreatedAtLt(lastBookmarkEntity.getCreatedAt()))
+                        bookmarkCreatedAtLt(lastCreatedAt))
                 .limit(size)
                 .orderBy(bookmark.createdAt.desc())
                 .fetch();
+        return bookmarkEntities.stream().map(BookmarkEntity::toBookmark).toList();
     }
 
-    private BooleanExpression bookmarkCreatedAtLt(LocalDateTime createdAt){
-        return createdAt != null ? bookmark.createdAt.lt(createdAt) : null;
+    private BooleanExpression bookmarkCreatedAtLt(LocalDateTime lastCreatedAt){
+        return lastCreatedAt != null ? bookmark.createdAt.lt(lastCreatedAt) : null;
     }
 
     public List<BookmarksWithMarkedWalkwayDTO> getBookmarksWithMarkedWalkway(Long walkwayId, Long memberId, BookmarkEntity lastBookmarkEntity, Integer size) {
@@ -128,29 +159,6 @@ public class BookmarkCoreRepository implements BookmarkRepository {
                 .limit(size)
                 .orderBy(bookmark.createdAt.desc())
                 .fetch();
-    }
-
-
-
-    public List<MarkedWalkway> getBookmarkWalkway(Long bookmarkId, Integer size, LocalDateTime lastCreatedAt, Long memberId) {
-        return queryFactory.select(markedWalkway)
-                .from(markedWalkway)
-                .join(markedWalkway.walkway).fetchJoin()
-                .where(markedWalkway.bookmark.id.eq(bookmarkId), markedBookmarkCreatedAtLt(lastCreatedAt),
-                        markedWalkway.walkway.member.id.eq(memberId)
-                                .or(markedWalkway.walkway.exposeLevel.eq(ExposeLevel.PUBLIC)))
-                .orderBy(markedWalkway.createdAt.desc())
-                .limit(size)
-                .fetch();
-    }
-
-    /**
-     * 북마크에 추가된 시간이 walkwayId가 북마크에 추가된 시간보다 작아야 한다. (markedBookmark의 createdAt이 더 작은 markedWalkay를 조회)
-     * @param lastCreatedAt 마지막으로 가져온 markedBookmark의 createdAt
-     * @return 조건 만족 안하면 null 반환, where 절에서 null은 무시된다.
-     */
-    private BooleanExpression markedBookmarkCreatedAtLt(LocalDateTime lastCreatedAt){
-        return lastCreatedAt != null ? markedWalkway.createdAt.lt(lastCreatedAt) : null;
     }
 
 

@@ -1,5 +1,6 @@
 package com.dongsan.rdb.domains.bookmark;
 
+import com.dongsan.core.domains.bookmark.MarkedWalkway;
 import com.dongsan.rdb.domains.common.entity.BaseEntity;
 import com.dongsan.rdb.domains.walkway.entity.WalkwayEntity;
 import jakarta.persistence.Entity;
@@ -11,24 +12,29 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 @Entity
-public class MarkedWalkway extends BaseEntity {
+public class MarkedWalkwayEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bookmark_id")
-    private BookmarkEntity bookmarkEntity;
+    private BookmarkEntity bookmark;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "walkway_id")
-    private WalkwayEntity walkwayEntity;
+    private WalkwayEntity walkway;
 
-    protected MarkedWalkway(){}
+    protected MarkedWalkwayEntity(){}
 
-    public MarkedWalkway(BookmarkEntity bookmarkEntity, WalkwayEntity walkwayEntity){
-        this.bookmarkEntity = bookmarkEntity;
-        this.walkwayEntity = walkwayEntity;
+    public MarkedWalkwayEntity(BookmarkEntity bookmark, WalkwayEntity walkway){
+        this.bookmark = bookmark;
+        this.walkway = walkway;
+    }
+
+    public MarkedWalkway toMarkedWalkway(){
+        return new MarkedWalkway(walkway.getId(), walkway.getName(), getCreatedAt(), walkway.getDistance(), walkway.getHashtags(),
+                walkway.getCourseImageUrl());
     }
 
 }

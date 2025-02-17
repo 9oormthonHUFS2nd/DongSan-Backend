@@ -1,7 +1,7 @@
 package fixture;
 
 import com.dongsan.rdb.domains.bookmark.BookmarkEntity;
-import com.dongsan.rdb.domains.bookmark.MarkedWalkway;
+import com.dongsan.rdb.domains.bookmark.MarkedWalkwayEntity;
 import com.dongsan.rdb.domains.common.entity.BaseEntity;
 import com.dongsan.rdb.domains.walkway.entity.WalkwayEntity;
 import java.lang.reflect.Field;
@@ -9,25 +9,25 @@ import java.time.LocalDateTime;
 
 public class MarkedWalkwayFixture {
 
-    public static MarkedWalkway createMarkedWalkway(WalkwayEntity walkwayEntity, BookmarkEntity bookmarkEntity){
-        return MarkedWalkway.builder()
+    public static MarkedWalkwayEntity createMarkedWalkway(WalkwayEntity walkwayEntity, BookmarkEntity bookmarkEntity){
+        return MarkedWalkwayEntity.builder()
                 .walkway(walkwayEntity)
                 .bookmark(bookmarkEntity)
                 .build();
     }
 
 
-    public static MarkedWalkway createMarkedWalkwayWithId(WalkwayEntity walkwayEntity, BookmarkEntity bookmarkEntity, Long id){
-        MarkedWalkway markedWalkway = createMarkedWalkway(walkwayEntity, bookmarkEntity);
+    public static MarkedWalkwayEntity createMarkedWalkwayWithId(WalkwayEntity walkwayEntity, BookmarkEntity bookmarkEntity, Long id){
+        MarkedWalkwayEntity markedWalkway = createMarkedWalkway(walkwayEntity, bookmarkEntity);
         reflectId(id, markedWalkway);
         reflectCreatedAt(LocalDateTime.now(), markedWalkway);
         return markedWalkway;
     }
 
 
-    private static void reflectId(Long id, MarkedWalkway markedWalkway){
+    private static void reflectId(Long id, MarkedWalkwayEntity markedWalkway){
         try {
-            Field idField = MarkedWalkway.class.getDeclaredField("id");
+            Field idField = MarkedWalkwayEntity.class.getDeclaredField("id");
             idField.setAccessible(true);
             idField.set(markedWalkway, id);
         } catch (NoSuchFieldException | IllegalAccessException e) {
@@ -35,7 +35,7 @@ public class MarkedWalkwayFixture {
         }
     }
 
-    private static void reflectCreatedAt(LocalDateTime createdAt, MarkedWalkway markedWalkway){
+    private static void reflectCreatedAt(LocalDateTime createdAt, MarkedWalkwayEntity markedWalkway){
         try {
             Field createdAtField = BaseEntity.class.getDeclaredField("createdAt");
             createdAtField.setAccessible(true);

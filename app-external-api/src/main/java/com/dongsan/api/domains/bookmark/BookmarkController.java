@@ -4,14 +4,14 @@ import com.dongsan.api.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.api.support.response.ApiResponse;
 import com.dongsan.api.support.validation.annotation.ExistBookmark;
 import com.dongsan.api.support.validation.annotation.ExistWalkway;
+import com.dongsan.core.domains.bookmark.Bookmark;
 import com.dongsan.core.domains.bookmark.BookmarkService;
-import com.dongsan.core.domains.common.CursorPagingRequest;
-import com.dongsan.core.domains.common.CursorPagingResponse;
-import com.dongsan.core.domains.walkway.Walkway;
+import com.dongsan.core.domains.bookmark.MarkedWalkway;
+import com.dongsan.core.support.util.CursorPagingRequest;
+import com.dongsan.core.support.util.CursorPagingResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -58,7 +58,7 @@ public class BookmarkController {
 
     @PostMapping("/bookmarks/{bookmarkId}/walkways")
     @Operation(summary = "북마크에 산책로를 추가")
-    public ApiResponse<Void> addWalkway(
+    public ApiResponse<Void> includeWalkway(
             @PathVariable Long bookmarkId,
             @Valid @RequestBody WalkwayIdRequest request,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
@@ -69,7 +69,7 @@ public class BookmarkController {
 
     @DeleteMapping("/bookmarks/{bookmarkId}/walkways/{walkwayId}")
     @Operation(summary = "북마크에 산책로를 제거")
-    public ApiResponse<Void> deleteWalkway(
+    public ApiResponse<Void> excludeWalkway(
             @ExistBookmark @PathVariable Long bookmarkId,
             @ExistWalkway @PathVariable Long walkwayId,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
@@ -88,29 +88,26 @@ public class BookmarkController {
         return ApiResponse.success();
     }
 
-
-    // TODO : 이거 머지되면, name 필드 제외하도록 수정 요청
     @GetMapping("/bookmarks/{bookmarkId}/walkways")
-    @Operation(summary = "북마크 상세 조회")
-    public ApiResponse<GetBookmarkDetailResponse> getBookmarkDetail(
+    @Operation(summary = "북마크에 저장된 산책로 조회")
+    public ApiResponse<GetBookmarkDetailResponse> getBookmarkWalkways(
             @ExistBookmark @PathVariable Long bookmarkId,
             @RequestParam(defaultValue = "10") Integer size,
             @RequestParam(required = false) Long lastId,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ){
-        CursorPagingResponse<Walkway> pagingResponse = bookmarkService.getBookmarkDetails(customOAuth2User.getMemberId(), bookmarkId, new CursorPagingRequest(lastId, size)));
+        CursorPagingResponse<MarkedWalkway> pagingResponse = bookmarkService.getBookmarkWalkways(customOAuth2User.getMemberId(), bookmarkId, new CursorPagingRequest(lastId, size));
         return ApiResponse.success(new GetBookmarkDetailResponse(pagingResponse));
     }
 
-
     @Operation(summary = "사용자가 북마크한 산책로 제목 리스트 보기")
     @GetMapping("/users/bookmarks/title")
-    public ApiResponse<GetBookmarksResponse> getBookmarks(
+    public ApiResponse<GetBookmarksNameResponse> getBookmarksName(
             @RequestParam(required = false) Long lastId,
             @RequestParam(defaultValue = "10") Integer size,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {
-        GetBookmarksResponse response = bookmarkService.getUserBookmarks(customOAuth2User.getMemberId(), new CursorPagingRequest(lastId, size));
-        return ApiResponse.success(response);
+        CursorPagingResponse<Bookmark> pagingResponse = bookmarkService.getUserBookmarksName(customOAuth2User.getMemberId(), new CursorPagingRequest(lastId, size));
+        return ApiResponse.success(new GetBookmarksNameResponse(pagingResponse));
     }
 }

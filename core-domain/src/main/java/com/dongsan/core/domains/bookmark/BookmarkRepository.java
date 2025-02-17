@@ -1,5 +1,7 @@
 package com.dongsan.core.domains.bookmark;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
@@ -22,4 +24,10 @@ public interface BookmarkRepository {
     void excludeWalkway(Long bookmarkId, Long walkwayId);
 
     void deleteById(Long bookmarkId);
+
+    Optional<LocalDateTime> getBookmarkedDate(Long bookmarkId, Long walkwayId);
+
+    List<MarkedWalkway> getBookmarkWalkways(Long bookmarkId, int size, LocalDateTime lastCreatedAt, Long memberId);
+
+    List<Bookmark> getUserBookmarks(Integer size, LocalDateTime lastCreatedAt, Long memberId);
 }

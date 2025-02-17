@@ -1,6 +1,6 @@
 package com.dongsan.rdb.domains.walkway.entity;
 
-import com.dongsan.core.domains.common.Author;
+import com.dongsan.core.support.util.Author;
 import com.dongsan.core.domains.walkway.CourseInfo;
 import com.dongsan.core.domains.walkway.CreateWalkway;
 import com.dongsan.core.domains.walkway.Stat;
@@ -174,5 +174,21 @@ public class WalkwayEntity extends BaseEntity {
 
     public Double getRating() {
         return rating;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Double getDistance() {
+        return distance;
+    }
+
+    public String getCourseImageUrl() {
+        return courseImageUrl;
+    }
+
+    public List<String> getHashtags() {
+        return hashtags;
     }
 }

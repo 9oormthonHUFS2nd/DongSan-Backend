@@ -61,6 +61,7 @@ public class WalkwayReader {
         return walkwayRepository.getUserLikedWalkway(memberId, size, lastCreatedAt);
     }
 
+
 //    public boolean isMarkedWalkway(Long walkwayId, Long memberId) {
 //        return markedWalkwayQueryDSLRepository.existsMarkedWalkwayByMemberAndWalkway(walkwayId, memberId);
 //    }

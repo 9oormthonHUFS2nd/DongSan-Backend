@@ -1,4 +1,4 @@
-package com.dongsan.core.domains.common;
+package com.dongsan.core.support.util;
 
 public record Author(
         Long authorId

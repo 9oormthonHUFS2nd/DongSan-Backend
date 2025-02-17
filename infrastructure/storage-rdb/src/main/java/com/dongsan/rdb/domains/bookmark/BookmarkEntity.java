@@ -1,7 +1,7 @@
 package com.dongsan.rdb.domains.bookmark;
 
 import com.dongsan.core.domains.bookmark.Bookmark;
-import com.dongsan.core.domains.common.Author;
+import com.dongsan.core.support.util.Author;
 import com.dongsan.rdb.domains.common.entity.BaseEntity;
 import com.dongsan.rdb.domains.member.MemberEntity;
 import jakarta.persistence.Column;
@@ -44,6 +44,6 @@ public class BookmarkEntity extends BaseEntity {
     }
 
     public Bookmark toBookmark(){
-        return new Bookmark(id, name, new Author(memberEntity.getId()));
+        return new Bookmark(id, name, new Author(memberEntity.getId()), getCreatedAt());
     }
 }
