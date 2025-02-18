@@ -3,7 +3,6 @@ package com.dongsan.domains.dev.controller;
 import com.dongsan.common.apiResponse.ResponseFactory;
 import com.dongsan.common.apiResponse.SuccessResponse;
 import com.dongsan.domains.auth.AuthService;
-import com.dongsan.domains.auth.dto.RenewToken;
 import com.dongsan.domains.auth.usecase.AuthUseCase;
 import com.dongsan.domains.dev.dto.request.CheckTokenExpire;
 import com.dongsan.domains.dev.dto.request.GenerateTokenRequest;
@@ -44,12 +43,12 @@ public class DevController {
 
     @Operation(summary = "개발용 토큰 발급")
     @PostMapping("/token")
-    public ResponseEntity<RenewToken> generateToken(
+    public ResponseEntity<Void> generateToken(
             @RequestBody GenerateTokenRequest dto,
             HttpServletResponse httpServletResponse
     ){
-        RenewToken response = devUseCase.generateToken(dto.memberId(), httpServletResponse);
-        return ResponseEntity.ok(response);
+        devUseCase.generateToken(dto.memberId(), httpServletResponse);
+        return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "accessToken으로 member 정보 확인하기")

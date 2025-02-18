@@ -3,24 +3,29 @@ package com.dongsan.domains.auth.service;
 import com.dongsan.common.error.code.AuthErrorCode;
 import com.dongsan.common.error.code.SystemErrorCode;
 import com.dongsan.common.error.exception.CustomException;
+import com.dongsan.domains.auth.AuthService;
 import com.dongsan.domains.auth.enums.TokenType;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.member.repository.MemberRepository;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.Jwts.SIG;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.Date;
+import javax.crypto.SecretKey;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-
-import javax.crypto.SecretKey;
-import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
@@ -29,10 +34,11 @@ public class JwtService {
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
     private final MemberRepository memberRepository;
+    private final AuthService authService;
     @Value("${jwt.access.secret}")
     private String accessTokenSecret;
     //@Value("${jwt.access.expires-in}")
-    private long accessTokenExpiresIn = 5 * 60 * 1000; // 테스트 위해 5분으로 설정
+    private long accessTokenExpiresIn = 1 * 60 * 1000; // 테스트 위해 1분으로 설정
     @Value("${jwt.refresh.secret}")
     private String refreshTokenSecret;
     @Value("${jwt.refresh.expires-in}")
@@ -45,19 +51,6 @@ public class JwtService {
         accessTokenSecretKey = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(accessTokenSecret));
         refreshTokenSecretKey = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(refreshTokenSecret));
     }
-
-    /**
-     * 헤더에서 Access Token 추출
-     */
-    public String getAccessTokenFromHeader(HttpServletRequest request){
-        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
-        if(StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)){
-            return bearerToken.substring(BEARER_PREFIX.length());
-        }
-        log.info("[AUTH] 헤더에서 access token을 찾을 수 없다.");
-        throw new CustomException(AuthErrorCode.ACCESS_TOKEN_NOT_FOUND);
-    }
-
 
     public String createAccessToken(Long memberId){
         return createToken(memberId, accessTokenExpiresIn, accessTokenSecretKey);
@@ -102,14 +95,9 @@ public class JwtService {
     }
 
     private boolean isTokenExpired(String token, SecretKey secretKey, TokenType tokenType) {
+        if(token == null) return true;
         long remainingTime = getRemainingTimeMillis(token, secretKey);
-        if(remainingTime == 0){
-            switch (tokenType) {
-                case ACCESS -> throw new CustomException(AuthErrorCode.ACCESS_TOKEN_EXPIRED);
-                case REFRESH -> throw new CustomException(AuthErrorCode.REFRESH_TOKEN_EXPIRED);
-            }
-        }
-        return false;
+        return remainingTime == 0;
     }
 
     public long getRemainingTimeMillis(String token, SecretKey secretKey){
@@ -159,6 +147,18 @@ public class JwtService {
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
+    }
+
+    /**
+     * 헤더에서 Access Token 추출 (Bearer + token)
+     */
+    public String getAccessTokenFromHeader(HttpServletRequest request){
+        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
+        if(StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)){
+            return bearerToken.substring(BEARER_PREFIX.length());
+        }
+        log.info("[AUTH] 헤더에서 access token을 찾을 수 없다.");
+        throw new CustomException(AuthErrorCode.ACCESS_TOKEN_NOT_FOUND);
     }
 
 

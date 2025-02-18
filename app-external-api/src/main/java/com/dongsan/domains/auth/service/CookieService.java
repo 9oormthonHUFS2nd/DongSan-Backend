@@ -1,6 +1,8 @@
 package com.dongsan.domains.auth.service;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -32,6 +34,11 @@ public class CookieService {
         return createTokenCookie(refreshTokenName, token, refreshTokenMaxAge);
     }
 
+    public void deleteAllTokenCookie(HttpServletResponse response){
+        response.addCookie(deleteAccessTokenCookie());
+        response.addCookie(deleteRefreshTokenCookie());
+    }
+
     public Cookie deleteAccessTokenCookie(){
         return createTokenCookie(accessTokenName, "", 0);
     }
@@ -47,11 +54,29 @@ public class CookieService {
         cookie.setPath("/");
         cookie.setHttpOnly(false);
 
-        // localhost 쿠키 전송을 위해
+        // http 쿠키 전송을 위해
         cookie.setAttribute("SameSite", "None");
         cookie.setSecure(true);
 
         return cookie;
     }
 
+    public String getAccessTokenFromCookie(HttpServletRequest request) {
+        return getTokenFromCookie(request, accessTokenName);
+    }
+
+    public String getRefreshTokenFromCookie(HttpServletRequest request){
+        return getTokenFromCookie(request, refreshTokenName);
+    }
+
+    private String getTokenFromCookie(HttpServletRequest request, String cookieName){
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if (cookie.getName().equals(cookieName)) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
 }

@@ -24,8 +24,11 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private final CookieService cookieService;
     private final AuthService authService;
 
-    @Value("${frontend.redirect-url}")
-    private String redirectUrl;
+    @Value("${frontend.prod-redirect-url}")
+    private String devRedirectUrl;
+
+    @Value("${frontend.dev-redirect-url}")
+    private String prodRedirectUrl;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -35,11 +38,18 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         String accessToken = jwtService.createAccessToken(memberId);
         String refreshToken = jwtService.createRefreshToken(memberId);
-
-        authService.saveRefreshToken(memberId, refreshToken);
-
         response.addCookie(cookieService.createAccessTokenCookie(accessToken));
         response.addCookie(cookieService.createRefreshTokenCookie(refreshToken));
+        authService.saveRefreshToken(memberId, refreshToken);
+
+        String redirectUrl;
+        String referer = request.getHeader("Referer");
+        log.info("[cookie : referer] " + referer);
+        if (referer.contains("front.dongsanwalk.site")) {
+            redirectUrl = devRedirectUrl;
+        } else {
+            redirectUrl = prodRedirectUrl;
+        }
 
         response.sendRedirect(redirectUrl);
     }

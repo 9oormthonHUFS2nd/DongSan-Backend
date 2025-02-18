@@ -4,10 +4,11 @@ import com.dongsan.common.annotation.UseCase;
 import com.dongsan.common.error.code.AuthErrorCode;
 import com.dongsan.common.error.exception.CustomException;
 import com.dongsan.domains.auth.AuthService;
-import com.dongsan.domains.auth.dto.RenewToken;
 import com.dongsan.domains.auth.service.CookieService;
 import com.dongsan.domains.auth.service.JwtService;
 import com.dongsan.domains.dev.dto.response.GetTokenRemaining;
+import com.dongsan.domains.member.entity.Member;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -21,9 +22,8 @@ public class AuthUseCase {
     private final CookieService cookieService;
 
     public void logout(Long memberId, HttpServletResponse response) {
-        response.addCookie(cookieService.deleteAccessTokenCookie());
-        response.addCookie(cookieService.deleteRefreshTokenCookie());
-        authService.logout(memberId);
+        cookieService.deleteAllTokenCookie(response);
+        authService.deleteRefreshToken(memberId);
     }
 
     /**
@@ -31,29 +31,30 @@ public class AuthUseCase {
      * 하라고 에러 반환 만약 refresh token 기간 만료 안됨 -> Id(Key) 확인 후 value 와 동일한 토큰 인지 확인 (갱신 전 토큰 일 수도) -> value 와 다른 토큰 : 다시 로그인
      * 시도 하라고 에러 반환 -> value 와 동일한 토큰 : 토큰 갱신
      *
-     * @param refreshToken 기존에 발급 받은 refresh token
+     * @param request
      * @param response
      * @return 새로 갱신한 access token & refresh token
      */
-    public RenewToken renewToken(String refreshToken, HttpServletResponse response) {
-        if(jwtService.isRefreshTokenExpired(refreshToken)){
-            response.addCookie(cookieService.deleteAccessTokenCookie());
-            response.addCookie(cookieService.deleteRefreshTokenCookie());
-            throw new CustomException(AuthErrorCode.REFRESH_TOKEN_EXPIRED);
+    public void renewToken(HttpServletRequest request, HttpServletResponse response) {
+        String refreshToken = cookieService.getRefreshTokenFromCookie(request);
+        if (!jwtService.isRefreshTokenExpired(refreshToken)) {
+            Member member = jwtService.getMemberFromRefreshToken(refreshToken);
+            if (authService.isRefreshTokenNotReplaced(member.getId(), refreshToken)) {
+                String newAccessToken = jwtService.createAccessToken(member.getId());
+                String newRefreshToken = jwtService.createRefreshToken(member.getId());
+                response.addCookie(cookieService.createAccessTokenCookie(newAccessToken));
+                response.addCookie(cookieService.createRefreshTokenCookie(newRefreshToken));
+                authService.saveRefreshToken(member.getId(), newRefreshToken);
+            }
+            else{
+                cookieService.deleteAllTokenCookie(response);
+                throw new CustomException(AuthErrorCode.AUTHENTICATION_FAILED);
+            }
         }
-        Long memberId = jwtService.getMemberFromRefreshToken(refreshToken).getId();
-        if(authService.isRefreshTokenNotReplaced(memberId, refreshToken)){
-            // 토큰 갱신
-            String newAccessToken = jwtService.createAccessToken(memberId);
-            String newRefreshToken = jwtService.createRefreshToken(memberId);
-            authService.saveRefreshToken(memberId, newRefreshToken);
-            response.addCookie(cookieService.createAccessTokenCookie(newAccessToken));
-            response.addCookie(cookieService.createRefreshTokenCookie(newRefreshToken));
-            return new RenewToken(newAccessToken, newRefreshToken);
+        else{
+            cookieService.deleteAllTokenCookie(response);
+            throw new CustomException(AuthErrorCode.AUTHENTICATION_FAILED);
         }
-        response.addCookie(cookieService.deleteAccessTokenCookie());
-        response.addCookie(cookieService.deleteRefreshTokenCookie());
-        throw new CustomException(AuthErrorCode.REFRESH_TOKEN_EXPIRED);
     }
 
     /**
