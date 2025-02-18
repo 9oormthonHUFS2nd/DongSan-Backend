@@ -1,64 +1,51 @@
 package com.dongsan.core.domains.bookmark;
 
-import com.dongsan.domains.bookmark.dto.BookmarksWithMarkedWalkwayDTO;
-import com.dongsan.domains.bookmark.entity.Bookmark;
-import com.dongsan.domains.bookmark.repository.BookmarkQueryDSLRepository;
-import com.dongsan.domains.bookmark.repository.BookmarkRepository;
-import com.dongsan.domains.bookmark.repository.MarkedWalkwayRepository;
-import com.dongsan.domains.member.entity.Member;
-import com.dongsan.domains.walkway.entity.Walkway;
-import com.dongsan.common.error.code.BookmarkErrorCode;
-import com.dongsan.common.error.exception.CustomException;
+import com.dongsan.core.support.error.CoreErrorCode;
+import com.dongsan.core.support.error.CoreException;
+import java.time.LocalDateTime;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import java.util.Map;
+import org.springframework.stereotype.Component;
 
-@Service
-@RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Component
 public class BookmarkReader {
     private final BookmarkRepository bookmarkRepository;
-    private final BookmarkQueryDSLRepository bookmarkQueryDSLRepository;
-    private final MarkedWalkwayRepository markedWalkwayRepository;
 
-    public List<Bookmark> getUserBookmarks(Bookmark bookmark, Long memberId, Integer size) {
-        return bookmarkQueryDSLRepository.getBookmarks(bookmark, memberId, size);
-    }
-
-    public void hasSameBookmarkName(Long memberId, String name){
-        boolean exist = bookmarkRepository.existsByMemberIdAndName(memberId, name);
-        if(exist){
-            throw new CustomException(BookmarkErrorCode.SAME_BOOKMARK_NAME_EXIST);
-        }
+    public BookmarkReader(BookmarkRepository bookmarkRepository) {
+        this.bookmarkRepository = bookmarkRepository;
     }
 
     public Bookmark getBookmark(Long bookmarkId){
         return bookmarkRepository.findById(bookmarkId).orElseThrow(
-                () -> new CustomException(BookmarkErrorCode.BOOKMARK_NOT_EXIST)
+                () -> new CoreException(CoreErrorCode.BOOKMARK_NOT_EXIST)
         );
-    }
-
-    public void isOwnerOfBookmark(Member member, Bookmark bookmark) {
-        // 북마크 생성자가 아니면
-        if(!bookmark.getMember().getId().equals(member.getId())){
-            throw new CustomException(BookmarkErrorCode.NOT_BOOKMARK_OWNER);
-        }
     }
 
     public boolean existsById(Long bookmarkId){
         return bookmarkRepository.existsById(bookmarkId);
     }
 
-    /**
-     * 북마크에 포함된 산책로인지 확인
-     */
-    public boolean isWalkwayAdded(Bookmark bookmark, Walkway walkway) {
-        return markedWalkwayRepository.existsByBookmarkIdAndWalkwayId(bookmark.getId(), walkway.getId());
+    public LocalDateTime getBookmarkedDate(Long bookmarkId, Long walkwayId) {
+        return bookmarkRepository.getBookmarkedDate(bookmarkId, walkwayId).orElseThrow(() -> new CoreException(CoreErrorCode.WALKWAY_NOT_EXIST_IN_BOOKMARK));
+    }
+
+    public List<MarkedWalkway> getBookmarkWalkway(Long bookmarkId, int size, LocalDateTime lastCreatedAt, Long memberId) {
+        return bookmarkRepository.getBookmarkWalkways(bookmarkId, size, lastCreatedAt, memberId);
+    }
+
+    public List<Bookmark> getUserBookmarkNames(LocalDateTime lastCreatedAt, Long memberId, Integer size) {
+        return bookmarkRepository.getUserBookmarks(size, lastCreatedAt, memberId);
     }
 
     public List<BookmarksWithMarkedWalkwayDTO> getBookmarksWithMarkedWalkway(Long walkwayId, Long memberId, Bookmark bookmark, Integer size) {
         return bookmarkQueryDSLRepository.getBookmarksWithMarkedWalkway(walkwayId, memberId, bookmark, size);
     }
 
+    public boolean existsByMemberIdAndWalkwayId(Long memberId, Long walkwayId) {
+        return bookmarkRepository.existsByMemberIdAndWalkwayId(memberId, walkwayId);
+    }
+
+    public Map<Long, Boolean> existsMarkedWalkway(Long walkwayId, List<Long> bookmarkIds) {
+        return bookmarkRepository.existsMarkedWalkway(walkwayId, bookmarkIds);
+    }
 }

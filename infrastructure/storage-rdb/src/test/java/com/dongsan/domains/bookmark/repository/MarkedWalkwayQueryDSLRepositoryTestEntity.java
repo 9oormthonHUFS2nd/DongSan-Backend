@@ -9,7 +9,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.dongsan.common.support.RepositoryTest;
 import com.dongsan.rdb.domains.bookmark.BookmarkEntity;
-import com.dongsan.rdb.domains.bookmark.MarkedWalkway;
+import com.dongsan.rdb.domains.bookmark.MarkedWalkwayEntity;
+import com.dongsan.rdb.domains.bookmark.MarkedWalkwayQueryDSLRepository;
 import com.dongsan.rdb.domains.member.MemberEntity;
 import com.dongsan.rdb.domains.walkway.entity.WalkwayEntity;
 import com.dongsan.rdb.domains.walkway.enums.ExposeLevel;
@@ -44,7 +45,7 @@ class MarkedWalkwayQueryDSLRepositoryTestEntity extends RepositoryTest {
             em.persist(bookmarkEntity);
             for(int i=0; i<5; i++){
                 WalkwayEntity walkwayEntity = createWalkway(memberEntity);
-                MarkedWalkway markedWalkway = createMarkedWalkway(walkwayEntity, bookmarkEntity);
+                MarkedWalkwayEntity markedWalkway = createMarkedWalkway(walkwayEntity, bookmarkEntity);
                 em.persist(walkwayEntity);
                 em.persist(markedWalkway);
             }
@@ -68,7 +69,7 @@ class MarkedWalkwayQueryDSLRepositoryTestEntity extends RepositoryTest {
             Long memberId = memberEntity.getId();
 
             // when
-            List<MarkedWalkway> result = markedWalkwayQueryDSLRepository.getBookmarkWalkway(bookmarkId, size, lastCreatedAt,
+            List<MarkedWalkwayEntity> result = markedWalkwayQueryDSLRepository.getBookmarkWalkway(bookmarkId, size, lastCreatedAt,
                     memberId);
 
             // then
@@ -92,18 +93,18 @@ class MarkedWalkwayQueryDSLRepositoryTestEntity extends RepositoryTest {
             Long memberId = memberEntity.getId();
 
             // when
-            List<MarkedWalkway> result = markedWalkwayQueryDSLRepository.getBookmarkWalkway(bookmarkId, size, lastCreatedAt,
+            List<MarkedWalkwayEntity> result = markedWalkwayQueryDSLRepository.getBookmarkWalkway(bookmarkId, size, lastCreatedAt,
                     memberId);
 
             // then
             for(int i=0; i<result.size(); i++){
-                MarkedWalkway markedWalkway = result.get(i);
+                MarkedWalkwayEntity markedWalkway = result.get(i);
                 assertThat(markedWalkway.getBookmarkEntity().getId()).isEqualTo(bookmarkId);
                 assertThat(markedWalkway.getCreatedAt()).isBefore(lastCreatedAt);
             }
             for(int i=0; i<result.size()-1; i++){
-                MarkedWalkway after = result.get(i);
-                MarkedWalkway prev = result.get(i+1);
+                MarkedWalkwayEntity after = result.get(i);
+                MarkedWalkwayEntity prev = result.get(i+1);
                 assertThat(after.getCreatedAt()).isAfterOrEqualTo(prev.getCreatedAt());
             }
         }
@@ -118,18 +119,18 @@ class MarkedWalkwayQueryDSLRepositoryTestEntity extends RepositoryTest {
             Long memberId = memberEntity.getId();
 
             // when
-            List<MarkedWalkway> result = markedWalkwayQueryDSLRepository.getBookmarkWalkway(bookmarkId, size, lastCreatedAt,
+            List<MarkedWalkwayEntity> result = markedWalkwayQueryDSLRepository.getBookmarkWalkway(bookmarkId, size, lastCreatedAt,
                     memberId);
 
             // then
             assertThat(result).hasSize(size);
             for(int i=0; i<result.size(); i++){
-                MarkedWalkway markedWalkway = result.get(i);
+                MarkedWalkwayEntity markedWalkway = result.get(i);
                 assertThat(markedWalkway.getBookmarkEntity().getId()).isEqualTo(bookmarkId);
             }
             for(int i=0; i<result.size()-1; i++){
-                MarkedWalkway after = result.get(i);
-                MarkedWalkway prev = result.get(i+1);
+                MarkedWalkwayEntity after = result.get(i);
+                MarkedWalkwayEntity prev = result.get(i+1);
                 assertThat(after.getCreatedAt()).isAfterOrEqualTo(prev.getCreatedAt());
             }
         }
@@ -153,7 +154,7 @@ class MarkedWalkwayQueryDSLRepositoryTestEntity extends RepositoryTest {
             walkway = createWalkway(member);
             em.persist(walkway);
 
-            MarkedWalkway markedWalkway = createMarkedWalkway(walkway, bookmark);
+            MarkedWalkwayEntity markedWalkway = createMarkedWalkway(walkway, bookmark);
             em.persist(markedWalkway);
         }
 

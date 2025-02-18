@@ -22,6 +22,10 @@ public class ApiResponse<T> {
         this.errors = errors;
     }
 
+    public static <T> ApiResponse<T> success(){
+        return new ApiResponse<>(true, null, SUCCESS_MESSAGE, null, null);
+    }
+
     public static <T> ApiResponse<T> success(T data){
         return new ApiResponse<>(true, null, SUCCESS_MESSAGE, data, null);
     }

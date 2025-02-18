@@ -1,5 +1,6 @@
 package com.dongsan.core.domains.walkway;
 
+import com.dongsan.core.support.util.Author;
 import com.dongsan.core.domains.walkway.enums.ExposeLevel;
 import com.dongsan.core.support.error.CoreErrorCode;
 import com.dongsan.core.support.error.CoreException;
@@ -17,10 +18,5 @@ public record Walkway(
         Author author,
         ExposeLevel exposeLevel
 ) {
-    public void validateOwner(Long memberId) {
-        if (!this.author.authorId().equals(memberId)) {
-            throw new CoreException(CoreErrorCode.NOT_WALKWAY_OWNER);
-        }
-    }
 
 }

@@ -98,7 +98,7 @@ public class JwtService {
                 .get("memberId", Long.class);
         return memberRepository.findById(memberId).orElseThrow(() -> {
             log.error("[AUTH] token에서 해당 id를 가진 member를 찾을 수 없습니다. memberId : {}", memberId);
-            return new CoreException(ApiException.AUTHENTICATION_FAILED);
+            return new ApiException(ApiErrorCode.AUTHENTICATION_FAILED);
         });
     }
 

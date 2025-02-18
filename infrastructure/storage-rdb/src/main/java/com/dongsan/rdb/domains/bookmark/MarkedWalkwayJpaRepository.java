@@ -8,15 +8,15 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface MarkedWalkwayJpaRepository extends JpaRepository<MarkedWalkway, Long> {
+public interface MarkedWalkwayJpaRepository extends JpaRepository<MarkedWalkwayEntity, Long> {
     boolean existsByBookmarkIdAndWalkwayId(Long bookmarkId, Long walkwayId);
     void deleteByBookmarkIdAndWalkwayId(Long bookmarkId, Long walkwayId);
 
     @Modifying(flushAutomatically = true, clearAutomatically = true)
-    @Query("delete from MarkedWalkway mw where mw.bookmark.id = :bookmarkId")
+    @Query("delete from MarkedWalkwayEntity mw where mw.bookmark.id = :bookmarkId")
     void deleteAllByBookmarkId(@Param("bookmarkId") Long bookmarkId);
 
     int countByBookmarkId(Long bookmarkId);
-    Optional<MarkedWalkway> findByBookmarkIdAndWalkwayId(Long bookmarkId, Long walkwayId);
+    Optional<MarkedWalkwayEntity> findByBookmarkIdAndWalkwayId(Long bookmarkId, Long walkwayId);
 
 }

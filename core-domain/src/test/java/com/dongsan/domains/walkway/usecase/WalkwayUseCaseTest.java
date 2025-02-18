@@ -90,7 +90,7 @@ class WalkwayUseCaseTest {
 
             Walkway walkway = WalkwayFixture.createWalkwayWithId(1L, member);
 
-            when(memberReader.getMember(member.getId())).thenReturn(member);
+            when(memberReader.readMember(member.getId())).thenReturn(member);
             when(imageReader.getImage(imageId)).thenReturn(image);
             when(walkwayCommandService.createWalkway(any()))
                     .thenReturn(walkway);

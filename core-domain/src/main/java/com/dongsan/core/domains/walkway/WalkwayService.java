@@ -5,6 +5,7 @@ import com.dongsan.core.domains.walkway.enums.WalkwaySort;
 import com.dongsan.core.domains.walkway.service.WalkwayReader;
 import com.dongsan.core.domains.walkway.service.WalkwayValidator;
 import com.dongsan.core.domains.walkway.service.WalkwayWriter;
+import com.dongsan.core.support.util.CursorPagingResponse;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -42,14 +43,14 @@ public class WalkwayService {
         walkwayWriter.updateWalkway(updateWalkway);
     }
 
-    public List<Walkway> searchWalkway(String sortType, SearchWalkwayQuery searchWalkwayQuery) {
+    public CursorPagingResponse<Walkway> searchWalkway(String sortType, SearchWalkwayQuery searchWalkwayQuery) {
         if (searchWalkwayQuery.lastWalkwayId() != null) {
             walkwayValidator.validateWalkwayExists(searchWalkwayQuery.lastWalkwayId());
         }
 
         WalkwaySort sort = WalkwaySort.typeOf(sortType);
-
-        return walkwayReader.searchWalkway(searchWalkwayQuery, sort);
+        List<Walkway> walkways = walkwayReader.searchWalkway(searchWalkwayQuery, sort);
+        return CursorPagingResponse.from(walkways, searchWalkwayQuery.size());
     }
 
     public boolean existsLikedWalkway(Long memberId, Long walkwayId) {

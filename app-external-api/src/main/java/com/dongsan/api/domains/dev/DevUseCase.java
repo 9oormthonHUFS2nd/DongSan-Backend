@@ -30,7 +30,7 @@ public class DevUseCase {
     @Transactional
 <<<<<<< HEAD:app-external-api/src/main/java/com/dongsan/api/domains/dev/DevUseCase.java
     public GenerateTokenResponse generateToken(Long memberId){
-        memberReader.getMember(memberId);
+        memberReader.readMember(memberId);
 =======
     public void generateToken(Long memberId, HttpServletRequest httpServletRequest, HttpServletResponse response){
         memberQueryService.getMember(memberId);

@@ -14,6 +14,7 @@ import com.dongsan.api.domains.walkway.dto.response.GetWalkwayResponse;
 import com.dongsan.api.domains.walkway.dto.response.SearchWalkwayResponse;
 import com.dongsan.api.domains.walkway.mapper.WalkwayMapper;
 import com.dongsan.api.support.response.ApiResponse;
+import com.dongsan.core.domains.bookmark.Bookmark;
 import com.dongsan.core.domains.bookmark.BookmarkService;
 import com.dongsan.core.domains.image.Image;
 import com.dongsan.core.domains.image.ImageService;
@@ -24,6 +25,8 @@ import com.dongsan.core.domains.walkway.UpdateWalkway;
 import com.dongsan.core.domains.walkway.Walkway;
 import com.dongsan.core.domains.walkway.WalkwayHistory;
 import com.dongsan.core.domains.walkway.WalkwayService;
+import com.dongsan.core.support.util.CursorPagingRequest;
+import com.dongsan.core.support.util.CursorPagingResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
@@ -62,6 +65,7 @@ public class WalkwayController {
         this.imageService = imageService;
     }
 
+
     @Operation(summary = "산책로 등록")
     @PostMapping("")
     public ApiResponse<CreateWalkwayResponse> createWalkway(
@@ -85,7 +89,6 @@ public class WalkwayController {
         return ApiResponse.success(new CreateWalkwayCourseImageRequest(imageId));
     }
 
-    // todo : 북마크 여부 추가
     @Operation(summary = "산책로 단건 조회")
     @GetMapping("/{walkwayId}")
     public ApiResponse<GetWalkwayResponse> getWalkway(
@@ -94,7 +97,8 @@ public class WalkwayController {
     ) {
         Walkway walkway = walkwayService.getWalkway(walkwayId);
         boolean isLike = walkwayService.existsLikedWalkway(customOAuth2User.getMemberId(), walkwayId);
-        return ApiResponse.success(new GetWalkwayResponse(walkway, isLike, false));
+        boolean isMarked = bookmarkService.existsMarkedWalkway(customOAuth2User.getMemberId(), walkwayId);
+        return ApiResponse.success(new GetWalkwayResponse(walkway, isLike, isMarked));
     }
 
     @Operation(summary = "북마크 목록 보기(산책로 마크 여부 포함)")
@@ -105,9 +109,17 @@ public class WalkwayController {
             @RequestParam(required = false, defaultValue = "10") Integer size,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {
-        return ApiResponse.success(
-                bookmarkService.getBookmarksWithMarkedWalkway(customOAuth2User.getMemberId(), walkwayId, lastId, size));
+        CursorPagingResponse<Bookmark> response =
+                bookmarkService.getUserBookmarksName(customOAuth2User.getMemberId(), new CursorPagingRequest(lastId, size));
+
+        List<Long> ids = response.data().stream()
+                .map(Bookmark::bookmarkId)
+                .toList();
+
+        Map<Long, Boolean> isMarked = bookmarkService.existsMarkedWalkways(walkwayId, ids);
+        return ApiResponse.success(new BookmarksWithMarkedWalkwayResponse(response, isMarked));
     }
+
     @Operation(summary = "산책로 수정")
     @PutMapping("/{walkwayId}")
     public ApiResponse<Void> updateWalkway(
@@ -132,16 +144,15 @@ public class WalkwayController {
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {
         SearchWalkwayQuery searchWalkwayQuery
-                = new SearchWalkwayQuery(customOAuth2User.getMemberId(), longitude, latitude, distance, lastId, size);
-        List<Walkway> walkways
-                = walkwayService.searchWalkway(sort, searchWalkwayQuery);
+                = new SearchWalkwayQuery(customOAuth2User.getMemberId(), longitude, latitude, distance, lastId, size + 1);
+        CursorPagingResponse<Walkway> response = walkwayService.searchWalkway(sort, searchWalkwayQuery);
 
-        List<Long> walkwayIds = walkways.stream()
+        List<Long> walkwayIds = response.data().stream()
                 .map(Walkway::walkwayId)
                 .toList();
 
         Map<Long, Boolean> isLiked = walkwayService.existsLikedWalkways(customOAuth2User.getMemberId(), walkwayIds);
-        return ApiResponse.success(new SearchWalkwayResponse(walkways, isLiked, size));
+        return ApiResponse.success(new SearchWalkwayResponse(response, isLiked));
     }
 
     @Operation(summary = "산책로 이용 기록")

@@ -28,7 +28,7 @@ public class ReviewService {
 
     @Transactional
     public CreateReviewResponse createReview(Long memberId, Long walkwayId, CreateReviewRequest createReviewRequest) {
-        Member member = memberReader.getMember(memberId);
+        Member member = memberReader.readMember(memberId);
         Walkway walkway = walkwayQueryService.getWalkway(walkwayId);
 
         WalkwayHistory walkwayHistory

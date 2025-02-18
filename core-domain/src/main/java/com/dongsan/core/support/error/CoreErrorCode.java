@@ -26,7 +26,11 @@ public enum CoreErrorCode {
     LIKED_WALKWAY_NOT_FOUND(NOT_FOUND, "WALKWAY-07", "좋아하는 산책로로 저장하지 않은 산책로 입니다."),
     CANT_CREATE_WALKWAY(BAD_REQUEST, "WALKWAY-08", "산책로를 생성할 수 없습니다."),
     CANT_CREATE_LIKED_WALKWAY(BAD_REQUEST, "WALKWAY-09", "산책로 좋아요를 생성할 수 없습니다."),
-    CANT_DELETE_LIKED_WALKWAY(BAD_REQUEST, "WALKWAY-09", "산책로 좋아요를 삭제할 수 없습니다."),
+    CANT_DELETE_LIKED_WALKWAY(BAD_REQUEST, "WALKWAY-10", "산책로 좋아요를 삭제할 수 없습니다."),
+    HISTORY_NOT_FOUND(NOT_FOUND, "WALKWAY-11", "산책로를 이용한 기록이 없습니다."),
+    NOT_ENOUGH_DISTANCE(FORBIDDEN, "WALKWAY-12", "충분히 산책하지 않았습니다."),
+    ALREADY_REVIEWED(CONFLICT, "WALKWAY-13", "이미 리뷰를 작성하였습니다."),
+    INVALID_ACCESS(FORBIDDEN, "WALKWAY-14", "기록의 산책로와 유저가 다릅니다."),
 
     // member
     MEMBER_NOT_FOUND(NOT_FOUND, "MEMBER-01", "해당 회원이 존재하지 않습니다."),

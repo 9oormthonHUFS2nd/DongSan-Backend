@@ -1,25 +1,15 @@
 package com.dongsan.api.domains.auth.usecase;
 
-<<<<<<< HEAD:app-external-api/src/main/java/com/dongsan/api/domains/auth/usecase/AuthUseCase.java
+import com.dongsan.api.domains.auth.service.CookieService;
 import com.dongsan.api.domains.auth.service.JwtService;
-import com.dongsan.core.support.error.CoreException;
+import com.dongsan.api.support.error.ApiErrorCode;
+import com.dongsan.api.support.error.ApiException;
 import com.dongsan.core.domains.auth.AuthService;
-=======
-import com.dongsan.common.annotation.UseCase;
-import com.dongsan.common.error.code.AuthErrorCode;
-import com.dongsan.common.error.exception.CustomException;
-import com.dongsan.domains.auth.AuthService;
-import com.dongsan.domains.auth.service.CookieService;
-import com.dongsan.domains.auth.service.JwtService;
 import com.dongsan.domains.dev.dto.response.GetTokenRemaining;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
->>>>>>> 496a334bff8928cf4a3a20bc45dce34b0046eae7:app-external-api/src/main/java/com/dongsan/domains/auth/usecase/AuthUseCase.java
-import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 
-@Transactional
-@RequiredArgsConstructor
+//@Transactional
 public class AuthUseCase {
     private final AuthService authService;
     private final JwtService jwtService;
@@ -41,7 +31,7 @@ public class AuthUseCase {
      */
     public void renewToken(String refreshToken, HttpServletRequest request, HttpServletResponse response) {
         if(jwtService.isRefreshTokenExpired(refreshToken)){
-            throw new CoreException(AuthErrorCode.REFRESH_TOKEN_EXPIRED);
+            throw new ApiException(ApiErrorCode.REFRESH_TOKEN_EXPIRED);
         }
         Long memberId = jwtService.getMemberFromRefreshToken(refreshToken).getId();
         if(authService.isRefreshTokenNotReplaced(memberId, refreshToken)){
@@ -52,7 +42,7 @@ public class AuthUseCase {
             response.addCookie(cookieService.createAccessTokenCookie(newAccessToken, request));
             response.addCookie(cookieService.createRefreshTokenCookie(newRefreshToken, request));
         }
-        throw new CoreException(AuthErrorCode.REFRESH_TOKEN_EXPIRED);
+        throw new ApiException(ApiErrorCode.REFRESH_TOKEN_EXPIRED);
     }
 
     /**
