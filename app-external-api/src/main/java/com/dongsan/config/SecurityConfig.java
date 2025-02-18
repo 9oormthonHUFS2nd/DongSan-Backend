@@ -1,10 +1,12 @@
 package com.dongsan.config;
 
+import com.dongsan.domains.auth.AuthService;
 import com.dongsan.domains.auth.security.filter.AuthFilter;
 import com.dongsan.domains.auth.security.handler.CustomAccessDeniedHandler;
 import com.dongsan.domains.auth.security.handler.CustomAuthenticationEntryPoint;
 import com.dongsan.domains.auth.security.oauth2.handler.CustomSuccessHandler;
 import com.dongsan.domains.auth.security.oauth2.service.CustomOAuthUserService;
+import com.dongsan.domains.auth.service.CookieService;
 import com.dongsan.domains.auth.service.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -58,7 +60,8 @@ public class SecurityConfig {
                         "http://api.dongsanwalk.site:8080",
                         "https://dongsanwalk.site",
                         "https://www.dongsanwalk.site",
-                        "https://api.dongsanwalk.site"
+                        "https://api.dongsanwalk.site",
+                        "http://front.dongsanwalk.site:3000"
                 )
         );
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
@@ -94,7 +97,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain jwtSecurityFilterChain(HttpSecurity http, JwtService jwtService,
+    public SecurityFilterChain jwtSecurityFilterChain(HttpSecurity http, JwtService jwtService, CookieService cookieService, AuthService authService,
                                                       CustomAuthenticationEntryPoint customAuthenticationEntryPoint)
             throws Exception {
         http
@@ -113,7 +116,7 @@ public class SecurityConfig {
                  * shouldNotFilter 로 jwt 필터에서 해당 경로를 타지 않도록 해주거나
                  * 아래처럼 컴포넌트로 등록하지 않고, 수동으로 등록하는 방법을 사용할 수 있다.
                  */
-                .addFilterBefore(new AuthFilter(jwtService),
+                .addFilterBefore(new AuthFilter(jwtService, cookieService, authService),
                         UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         // Admin 경로에 있어야 하는 role
