@@ -102,4 +102,34 @@ class WalkwayHistoryUseCaseTest {
             assertThat(result).hasSize(3);
         }
     }
+
+    @Nested
+    @DisplayName("getUserWalkwayHistories 메서드는")
+    class Describe_getUserWalkwayHistories {
+
+        @Test
+        @DisplayName("공개된 산책로인 경우, 리뷰 가능한 WalkwayHistory 목록을 반환한다.")
+        void it_returns_walkway_histories() {
+            // given
+            Long walkwayHistoryId = 1L;
+            Long memberId = 1L;
+            int size = 10;
+            WalkwayHistory walkwayHistory = WalkwayHistoryFixture.createWalkwayHistoryWithId(walkwayHistoryId, null, null);
+
+            List<WalkwayHistory> histories = new ArrayList<>();
+            for (int i = 0; i < 3; i++) {
+                histories.add(WalkwayHistoryFixture.createWalkwayHistory(null, null));
+            }
+
+            when(walkwayHistoryQueryService.getById(walkwayHistoryId)).thenReturn(walkwayHistory);
+            when(walkwayHistoryQueryService.getUserCanReviewWalkwayHistories(memberId, size, walkwayHistory.getCreatedAt()))
+                    .thenReturn(histories);
+
+            // when
+            List<WalkwayHistory> result = walkwayHistoryUseCase.getUserWalkwayHistories(memberId, walkwayHistoryId, size);
+
+            // then
+            assertThat(result).hasSize(3);
+        }
+    }
 }

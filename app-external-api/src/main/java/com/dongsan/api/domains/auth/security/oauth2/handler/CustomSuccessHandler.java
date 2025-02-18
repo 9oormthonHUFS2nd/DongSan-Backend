@@ -24,10 +24,10 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private final CookieService cookieService;
     private final AuthService authService;
 
-    @Value("${frontend.dev-redirect-url}")
+    @Value("${frontend.prod-redirect-url}")
     private String devRedirectUrl;
 
-    @Value("${frontend.prod-redirect-url}")
+    @Value("${frontend.dev-redirect-url}")
     private String prodRedirectUrl;
 
     @Override
@@ -38,22 +38,19 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         String accessToken = jwtService.createAccessToken(memberId);
         String refreshToken = jwtService.createRefreshToken(memberId);
-
-        // refreshToken 저장
+        response.addCookie(cookieService.createAccessTokenCookie(accessToken));
+        response.addCookie(cookieService.createRefreshTokenCookie(refreshToken));
         authService.saveRefreshToken(memberId, refreshToken);
 
-        response.addCookie(cookieService.createAccessTokenCookie(accessToken, request));
-        response.addCookie(cookieService.createRefreshTokenCookie(refreshToken, request));
-
-        // 주소 분기
         String redirectUrl;
-        String origin = request.getHeader("Origin");
-        log.info("[cookie : origin] " + origin);
-        if (origin != null && origin.contains("localhost")) {
+        String referer = request.getHeader("Referer");
+        log.info("[cookie : referer] " + referer);
+        if (referer.contains("front.dongsanwalk.site")) {
             redirectUrl = devRedirectUrl;
         } else {
             redirectUrl = prodRedirectUrl;
         }
+
         response.sendRedirect(redirectUrl);
     }
 }

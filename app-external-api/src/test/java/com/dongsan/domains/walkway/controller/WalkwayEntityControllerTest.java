@@ -137,8 +137,8 @@ class WalkwayEntityControllerTest {
                     1L,
                     "testName",
                     "testMemo",
-                    4.2,
-                    20,
+                    10.0,
+                    600,
                     List.of("하나", "둘"),
                     ExposeLevel.PUBLIC,
                     course
@@ -428,10 +428,11 @@ class WalkwayEntityControllerTest {
             // Given
             Long walkwayId = 1L;
             Long memberId = member.getId();
+            Walkway walkway = WalkwayFixture.createWalkwayWithId(1L, null);
 
             List<WalkwayHistory> histories = List.of(
-                    WalkwayHistoryFixture.createWalkwayHistoryWithId(1L, null, null),
-                    WalkwayHistoryFixture.createWalkwayHistoryWithId(2L, null, null)
+                    WalkwayHistoryFixture.createWalkwayHistoryWithId(1L, null, walkway),
+                    WalkwayHistoryFixture.createWalkwayHistoryWithId(2L, null, walkway)
             );
 
             when(walkwayHistoryUseCase.getWalkwayHistories(memberId, walkwayId)).thenReturn(histories);

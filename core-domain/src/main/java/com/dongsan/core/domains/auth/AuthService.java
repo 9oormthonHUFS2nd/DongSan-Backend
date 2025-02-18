@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 public class AuthService {
     private final AuthRepository authRepository;
 
-    public void logout(Long memberId) {
+    public void deleteRefreshToken(Long memberId) {
         authRepository.deleteRefreshToken(memberId);
     }
 

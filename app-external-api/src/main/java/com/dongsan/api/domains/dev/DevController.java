@@ -2,13 +2,17 @@ package com.dongsan.api.domains.dev;
 
 import com.dongsan.core.domains.auth.AuthService;
 import com.dongsan.domains.auth.usecase.AuthUseCase;
+<<<<<<< HEAD:app-external-api/src/main/java/com/dongsan/api/domains/dev/DevController.java
 import com.dongsan.domains.dev.dto.request.CheckTokenExpire;
+=======
+import com.dongsan.domains.dev.dto.request.GenerateTokenRequest;
+import com.dongsan.domains.dev.dto.response.GetMemberInfoResponse;
+>>>>>>> 920be9371ff304630f249d16536e70a3e734d4d6:app-external-api/src/main/java/com/dongsan/domains/dev/controller/DevController.java
 import com.dongsan.domains.dev.dto.response.GetTokenRemaining;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.constraints.NotBlank;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,20 +44,19 @@ public class DevController {
     @Operation(summary = "개발용 토큰 발급")
     @PostMapping("/token")
     public ResponseEntity<Void> generateToken(
-            @RequestBody GenerateTokenRequest request,
-            HttpServletRequest httpServletRequest,
+            @RequestBody GenerateTokenRequest dto,
             HttpServletResponse httpServletResponse
     ){
-        devUseCase.generateToken(request.memberId(), httpServletRequest, httpServletResponse);
+        devUseCase.generateToken(dto.memberId(), httpServletResponse);
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "accessToken으로 member 정보 확인하기")
     @GetMapping("/members")
     public ResponseEntity<SuccessResponse<GetMemberInfoResponse>> getMemberInfo(
-            @RequestParam @NotBlank String accessToken
+            HttpServletRequest request
     ){
-        GetMemberInfoResponse response = devUseCase.getMemberInfo(accessToken);
+        GetMemberInfoResponse response = devUseCase.getMemberInfo(request);
         return ResponseFactory.ok(response);
     }
 
@@ -71,9 +74,9 @@ public class DevController {
     @Operation(summary = "access token, refresh token의 만료기간 확인")
     @PostMapping("/token/expired")
     public ResponseEntity<SuccessResponse<GetTokenRemaining>> checkTokenExpire(
-            @RequestBody CheckTokenExpire tokens
+            HttpServletRequest request
     ){
-        GetTokenRemaining response = authUseCase.checkTokenExpire(tokens.accessToken(), tokens.refreshToken());
+        GetTokenRemaining response = authUseCase.checkTokenExpire(request);
         return ResponseFactory.ok(response);
     }
 
