@@ -4,15 +4,14 @@ import com.dongsan.common.apiResponse.ResponseFactory;
 import com.dongsan.common.apiResponse.SuccessResponse;
 import com.dongsan.domains.auth.AuthService;
 import com.dongsan.domains.auth.usecase.AuthUseCase;
-import com.dongsan.domains.dev.dto.request.CheckTokenExpire;
 import com.dongsan.domains.dev.dto.request.GenerateTokenRequest;
 import com.dongsan.domains.dev.dto.response.GetMemberInfoResponse;
 import com.dongsan.domains.dev.dto.response.GetTokenRemaining;
 import com.dongsan.domains.dev.usecase.DevUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.constraints.NotBlank;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -54,9 +53,9 @@ public class DevController {
     @Operation(summary = "accessToken으로 member 정보 확인하기")
     @GetMapping("/members")
     public ResponseEntity<SuccessResponse<GetMemberInfoResponse>> getMemberInfo(
-            @RequestParam @NotBlank String accessToken
+            HttpServletRequest request
     ){
-        GetMemberInfoResponse response = devUseCase.getMemberInfo(accessToken);
+        GetMemberInfoResponse response = devUseCase.getMemberInfo(request);
         return ResponseFactory.ok(response);
     }
 
@@ -74,9 +73,9 @@ public class DevController {
     @Operation(summary = "access token, refresh token의 만료기간 확인")
     @PostMapping("/token/expired")
     public ResponseEntity<SuccessResponse<GetTokenRemaining>> checkTokenExpire(
-            @RequestBody CheckTokenExpire tokens
+            HttpServletRequest request
     ){
-        GetTokenRemaining response = authUseCase.checkTokenExpire(tokens.accessToken(), tokens.refreshToken());
+        GetTokenRemaining response = authUseCase.checkTokenExpire(request);
         return ResponseFactory.ok(response);
     }
 

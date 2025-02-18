@@ -11,6 +11,7 @@ import com.dongsan.domains.dev.mapper.DevMapper;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.user.service.MemberQueryService;
 import com.dongsan.service.S3FileService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +38,8 @@ public class DevUseCase {
     }
 
     @Transactional
-    public GetMemberInfoResponse getMemberInfo(String accessToken){
+    public GetMemberInfoResponse getMemberInfo(HttpServletRequest request){
+        String accessToken = cookieService.getAccessTokenFromCookie(request);
         if(jwtService.isAccessTokenExpired(accessToken)){
             throw new CustomException(AuthErrorCode.ACCESS_TOKEN_EXPIRED);
         }
