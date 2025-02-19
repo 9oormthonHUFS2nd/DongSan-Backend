@@ -1,6 +1,6 @@
 package com.dongsan.api.domains.bookmark;
 
-import com.dongsan.api.domains.auth.security.oauth2.dto.CustomOAuth2User;
+import com.dongsan.api.domains.auth.security.oauth2.CustomOAuth2User;
 import com.dongsan.api.support.response.ApiResponse;
 import com.dongsan.api.support.validation.annotation.ExistBookmark;
 import com.dongsan.api.support.validation.annotation.ExistWalkway;

@@ -1,4 +1,4 @@
-package com.dongsan.domains.dev.dto.response;
+package com.dongsan.core.domains.auth;
 
 public record GetTokenRemaining(
         boolean accessTokenExpired,

@@ -1,6 +1,6 @@
 package com.dongsan.api.config;
 
-import com.dongsan.api.domains.auth.security.oauth2.enums.SocialType;
+import com.dongsan.api.domains.auth.security.oauth2.SocialType;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;

@@ -1,4 +1,4 @@
-package com.dongsan.api.domains.auth.enums;
+package com.dongsan.api.domains.auth;
 
 public enum TokenType {
     ACCESS,

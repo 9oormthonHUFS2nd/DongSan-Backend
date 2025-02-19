@@ -1,4 +1,4 @@
-package com.dongsan.domains.dev.dto.request;
+package com.dongsan.api.domains.dev;
 
 public record CheckTokenExpire(
         String accessToken,

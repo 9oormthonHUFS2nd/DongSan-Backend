@@ -1,14 +1,17 @@
 package com.dongsan.cache;
 
+import com.dongsan.core.domains.auth.TokenRepository;
 import java.util.concurrent.TimeUnit;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
-@Component
-@RequiredArgsConstructor
-public class AuthRepository {
+@Repository
+public class TokenCacheRepository implements TokenRepository {
     private final StringRedisTemplate stringRedisTemplate;
+
+    public TokenCacheRepository(StringRedisTemplate stringRedisTemplate) {
+        this.stringRedisTemplate = stringRedisTemplate;
+    }
 
     /**
      * refresh token 저장
@@ -17,6 +20,7 @@ public class AuthRepository {
      * @param memberId      key
      * @param refreshToken  value
      */
+    @Override
     public void saveRefreshToken(Long memberId, String refreshToken) {
         String key = generateRefreshTokenKey(memberId);
         stringRedisTemplate.opsForValue().set(key, refreshToken, 15, TimeUnit.DAYS);
@@ -26,6 +30,7 @@ public class AuthRepository {
      * refresh token 삭제
      * @param memberId  key
      */
+    @Override
     public void deleteRefreshToken(Long memberId){
         String key = generateRefreshTokenKey(memberId);
         stringRedisTemplate.delete(key);
@@ -36,6 +41,7 @@ public class AuthRepository {
      * @param memberId  Key
      * @return  value (Refresh token, 없으면 Null)
      */
+    @Override
     public String getRefreshToken(Long memberId){
         String key = generateRefreshTokenKey(memberId);
         return stringRedisTemplate.opsForValue().get(key);
@@ -47,6 +53,7 @@ public class AuthRepository {
      * @param refreshToken  비교할 Refresh token
      * @return      동일하면 true, 아니면 false, 키가 없으면 false
      */
+    @Override
     public boolean compareRefreshToken(Long memberId, String refreshToken){
         String key = generateRefreshTokenKey(memberId);
         String value = stringRedisTemplate.opsForValue().get(key);

@@ -1,20 +1,9 @@
-package com.dongsan.api.domains.auth.service;
+package com.dongsan.api.domains.auth;
 
-<<<<<<< HEAD:app-external-api/src/main/java/com/dongsan/api/domains/auth/service/JwtService.java
-import com.dongsan.api.domains.auth.enums.TokenType;
 import com.dongsan.api.support.error.ApiErrorCode;
 import com.dongsan.api.support.error.ApiException;
-import com.dongsan.api.support.error.SystemErrorCode;
-import com.dongsan.core.support.error.CoreException;
-=======
-import com.dongsan.common.error.code.AuthErrorCode;
-import com.dongsan.common.error.code.SystemErrorCode;
-import com.dongsan.common.error.exception.CustomException;
-import com.dongsan.domains.auth.AuthService;
-import com.dongsan.domains.auth.enums.TokenType;
->>>>>>> 920be9371ff304630f249d16536e70a3e734d4d6:app-external-api/src/main/java/com/dongsan/domains/auth/service/JwtService.java
-import com.dongsan.domains.member.entity.Member;
-import com.dongsan.domains.member.repository.MemberRepository;
+import com.dongsan.core.domains.member.Member;
+import com.dongsan.core.domains.member.MemberReader;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -29,7 +18,6 @@ import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Date;
 import javax.crypto.SecretKey;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,11 +26,10 @@ import org.springframework.util.StringUtils;
 
 @Service
 public class JwtService {
-    private static final Logger log = LoggerFactory.getLogger(JwtService.class);
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
-    private final MemberRepository memberRepository;
-    private final AuthService authService;
+    private static final Logger log = LoggerFactory.getLogger(JwtService.class);
+
     @Value("${jwt.access.secret}")
     private String accessTokenSecret;
     @Value("${jwt.access.expires-in}")
@@ -54,8 +41,10 @@ public class JwtService {
     private SecretKey accessTokenSecretKey;
     private SecretKey refreshTokenSecretKey;
 
-    public JwtService(MemberRepository memberRepository) {
-        this.memberRepository = memberRepository;
+    private final MemberReader memberReader;
+
+    public JwtService(MemberReader memberReader) {
+        this.memberReader = memberReader;
     }
 
     @PostConstruct
@@ -64,22 +53,6 @@ public class JwtService {
         refreshTokenSecretKey = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(refreshTokenSecret));
     }
 
-<<<<<<< HEAD:app-external-api/src/main/java/com/dongsan/api/domains/auth/service/JwtService.java
-    /**
-     * 헤더에서 Access Token 추출
-     */
-    public String getAccessTokenFromHeader(HttpServletRequest request){
-        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
-        if(StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)){
-            return bearerToken.substring(BEARER_PREFIX.length());
-        }
-        log.info("[AUTH] 헤더에서 access token을 찾을 수 없다.");
-        throw new ApiException(ApiErrorCode.ACCESS_TOKEN_NOT_FOUND);
-    }
-
-
-=======
->>>>>>> 920be9371ff304630f249d16536e70a3e734d4d6:app-external-api/src/main/java/com/dongsan/domains/auth/service/JwtService.java
     public String createAccessToken(Long memberId){
         return createToken(memberId, accessTokenExpiresIn, accessTokenSecretKey);
     }
@@ -108,10 +81,7 @@ public class JwtService {
     private Member getMember(String token, SecretKey secretKey){
         Long memberId = extractAll(token, secretKey)
                 .get("memberId", Long.class);
-        return memberRepository.findById(memberId).orElseThrow(() -> {
-            log.error("[AUTH] token에서 해당 id를 가진 member를 찾을 수 없습니다. memberId : {}", memberId);
-            return new ApiException(ApiErrorCode.AUTHENTICATION_FAILED);
-        });
+        return memberReader.readOptionalMember(memberId).orElseThrow(() -> new ApiException(ApiErrorCode.AUTHENTICATION_FAILED));
     }
 
     public boolean isAccessTokenExpired(String accessToken){
@@ -125,17 +95,7 @@ public class JwtService {
     private boolean isTokenExpired(String token, SecretKey secretKey, TokenType tokenType) {
         if(token == null) return true;
         long remainingTime = getRemainingTimeMillis(token, secretKey);
-<<<<<<< HEAD:app-external-api/src/main/java/com/dongsan/api/domains/auth/service/JwtService.java
-        if(remainingTime == 0){
-            switch (tokenType) {
-                case ACCESS -> throw new ApiException(ApiErrorCode.ACCESS_TOKEN_EXPIRED);
-                case REFRESH -> throw new ApiException(ApiErrorCode.REFRESH_TOKEN_EXPIRED);
-            }
-        }
-        return false;
-=======
         return remainingTime == 0;
->>>>>>> 920be9371ff304630f249d16536e70a3e734d4d6:app-external-api/src/main/java/com/dongsan/domains/auth/service/JwtService.java
     }
 
     public long getRemainingTimeMillis(String token, SecretKey secretKey){
@@ -159,7 +119,7 @@ public class JwtService {
                 throw new ApiException(ApiErrorCode.UNSUPPORTED_TOKEN);
             } else {
                 log.error("[AUTH_ERROR] JWT 토큰 만료 검사중 알 수 없는 오류 발생: {}", e.getMessage());
-                throw new ApiException(SystemErrorCode.INTERNAL_SERVER_ERROR);
+                throw new ApiException(ApiErrorCode.JWT_VALIDATION_ERROR);
             }
         }
     }
@@ -196,8 +156,7 @@ public class JwtService {
             return bearerToken.substring(BEARER_PREFIX.length());
         }
         log.info("[AUTH] 헤더에서 access token을 찾을 수 없다.");
-        throw new CustomException(AuthErrorCode.ACCESS_TOKEN_NOT_FOUND);
+        throw new ApiException(ApiErrorCode.ACCESS_TOKEN_NOT_FOUND);
     }
-
 
 }

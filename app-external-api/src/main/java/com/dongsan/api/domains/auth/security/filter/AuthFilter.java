@@ -1,16 +1,13 @@
 package com.dongsan.api.domains.auth.security.filter;
 
-<<<<<<< HEAD:app-external-api/src/main/java/com/dongsan/api/domains/auth/security/filter/AuthFilter.java
-import com.dongsan.api.domains.auth.security.oauth2.dto.CustomOAuth2User;
-import com.dongsan.api.domains.auth.service.JwtService;
-=======
-import com.dongsan.common.error.code.AuthErrorCode;
-import com.dongsan.domains.auth.AuthService;
-import com.dongsan.domains.auth.security.oauth2.dto.CustomOAuth2User;
-import com.dongsan.domains.auth.service.CookieService;
-import com.dongsan.domains.auth.service.JwtService;
->>>>>>> 920be9371ff304630f249d16536e70a3e734d4d6:app-external-api/src/main/java/com/dongsan/domains/auth/security/filter/AuthFilter.java
-import com.dongsan.domains.member.entity.Member;
+import com.dongsan.api.domains.auth.CookieService;
+import com.dongsan.api.domains.auth.JwtService;
+import com.dongsan.api.domains.auth.security.oauth2.CustomOAuth2User;
+import com.dongsan.api.support.error.ApiErrorCode;
+import com.dongsan.api.support.error.ApiException;
+import com.dongsan.core.domains.auth.TokenReader;
+import com.dongsan.core.domains.auth.TokenWriter;
+import com.dongsan.core.domains.member.Member;
 import com.dongsan.core.support.error.CoreException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -19,19 +16,27 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-@RequiredArgsConstructor
-@Slf4j
 public class AuthFilter extends OncePerRequestFilter {
+    private static final Logger log = LoggerFactory.getLogger(AuthFilter.class);
     private final JwtService jwtService;
     private final CookieService cookieService;
-    private final AuthService authService;
+    private final TokenReader tokenReader;
+    private final TokenWriter tokenWriter;
+
+    public AuthFilter(JwtService jwtService, CookieService cookieService,
+                      TokenReader tokenReader, TokenWriter tokenWriter) {
+        this.jwtService = jwtService;
+        this.cookieService = cookieService;
+        this.tokenReader = tokenReader;
+        this.tokenWriter = tokenWriter;
+    }
 
     /**
      * 필터 안 타는 것들 여기에 작성
@@ -68,22 +73,22 @@ public class AuthFilter extends OncePerRequestFilter {
                 String refreshToken = cookieService.getRefreshTokenFromCookie(request);
                 if (!jwtService.isRefreshTokenExpired(refreshToken)) {
                     Member member = jwtService.getMemberFromRefreshToken(refreshToken);
-                    if (authService.isRefreshTokenNotReplaced(member.getId(), refreshToken)) {
-                        String newAccessToken = jwtService.createAccessToken(member.getId());
-                        String newRefreshToken = jwtService.createRefreshToken(member.getId());
+                    if (tokenReader.isRefreshTokenNotReplaced(member.id(), refreshToken)) {
+                        String newAccessToken = jwtService.createAccessToken(member.id());
+                        String newRefreshToken = jwtService.createRefreshToken(member.id());
                         response.addCookie(cookieService.createAccessTokenCookie(newAccessToken));
                         response.addCookie(cookieService.createRefreshTokenCookie(newRefreshToken));
-                        authService.saveRefreshToken(member.getId(), newRefreshToken);
+                        tokenWriter.saveRefreshToken(member.id(), newRefreshToken);
                         authenticateUser(member);
                     }
                     else{
                         cookieService.deleteAllTokenCookie(response);
-                        throw new CustomException(AuthErrorCode.AUTHENTICATION_FAILED);
+                        throw new ApiException(ApiErrorCode.AUTHENTICATION_FAILED);
                     }
                 }
                 else{
                     cookieService.deleteAllTokenCookie(response);
-                    throw new CustomException(AuthErrorCode.AUTHENTICATION_FAILED);
+                    throw new ApiException(ApiErrorCode.AUTHENTICATION_FAILED);
                 }
             }
             else{
@@ -101,7 +106,7 @@ public class AuthFilter extends OncePerRequestFilter {
     }
 
     private void authenticateUser(Member member) {
-        log.info("[AUTH] auth filter 사용자 정보, email : {}", member.getEmail());
+        log.info("[AUTH] auth filter 사용자 정보, email : {}", member.email());
         CustomOAuth2User customOAuth2User = new CustomOAuth2User(member);
         Authentication authentication = new UsernamePasswordAuthenticationToken(
                 customOAuth2User,

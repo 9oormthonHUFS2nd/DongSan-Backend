@@ -1,17 +1,19 @@
-package com.dongsan.api.domains.auth.security.oauth2.dto;
+package com.dongsan.api.domains.auth.security.oauth2;
 
-import com.dongsan.domains.member.entity.Member;
-import com.dongsan.domains.member.enums.MemberRole;
+import com.dongsan.core.domains.member.Member;
+import com.dongsan.core.domains.member.MemberRole;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-@RequiredArgsConstructor
 public class CustomOAuth2User implements OAuth2User {
     private final Member member;
+
+    public CustomOAuth2User(Member member) {
+        this.member = member;
+    }
 
     @Override
     public <A> A getAttribute(String name) {
@@ -21,43 +23,43 @@ public class CustomOAuth2User implements OAuth2User {
     @Override
     public Map<String, Object> getAttributes() {
         return Map.of(
-                "email", member.getEmail(),
-                "nickname", member.getNickname(),
-                "profileImageUrl", member.getProfileImageUrl(),
-                "role", member.getRole()
+                "email", member.email(),
+                "nickname", member.nickname(),
+                "profileImageUrl", member.profileImageUrl(),
+                "role", member.role()
         );
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> collection = new ArrayList<>();
-        collection.add((GrantedAuthority) () -> member.getRole()
+        collection.add((GrantedAuthority) () -> member.role()
                 .getDescription());
         return collection;
     }
 
     @Override
     public String getName() {
-        return member.getEmail();
+        return member.email();
     }
 
     public Long getMemberId(){
-        return member.getId();
+        return member.id();
     }
 
     public String getEmail(){
-        return member.getEmail();
+        return member.email();
     }
 
     public String getNickname(){
-        return member.getNickname();
+        return member.nickname();
     }
 
     public String getProfileImageUrl(){
-        return member.getProfileImageUrl();
+        return member.profileImageUrl();
     }
 
     public MemberRole getRole(){
-        return member.getRole();
+        return member.role();
     }
 }
