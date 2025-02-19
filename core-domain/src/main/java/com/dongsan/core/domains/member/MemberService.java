@@ -1,21 +1,27 @@
 package com.dongsan.core.domains.member;
 
-import com.dongsan.core.domains.bookmark.BookmarkReader;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 @Service
 public class MemberService {
-
     private final MemberReader memberReader;
-    private final BookmarkReader bookmarkReader;
+    private final MemberWriter memberWriter;
 
-    public MemberService(MemberReader memberReader, BookmarkReader bookmarkReader) {
+    public MemberService(MemberReader memberReader, MemberWriter memberWriter) {
         this.memberReader = memberReader;
-        this.bookmarkReader = bookmarkReader;
+        this.memberWriter = memberWriter;
     }
 
     public Member getMember(Long memberId) {
         return memberReader.readMember(memberId);
     }
 
+    public Optional<Member> getOptionalMemberByEmail(String email){
+        return memberReader.readOptionalMemberByEmail(email);
+    }
+
+    public Member save(String email, String nickname, String profileImageUrl, MemberRole role){
+        return memberWriter.save(email, nickname, profileImageUrl, role);
+    }
 }

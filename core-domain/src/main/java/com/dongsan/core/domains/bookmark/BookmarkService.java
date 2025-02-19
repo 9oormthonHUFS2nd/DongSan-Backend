@@ -1,5 +1,7 @@
 package com.dongsan.core.domains.bookmark;
 
+import com.dongsan.core.support.error.CoreErrorCode;
+import com.dongsan.core.support.error.CoreException;
 import com.dongsan.core.support.util.CursorPagingRequest;
 import com.dongsan.core.support.util.CursorPagingResponse;
 import com.dongsan.core.domains.walkway.Walkway;
@@ -78,18 +80,14 @@ public class BookmarkService {
         return CursorPagingResponse.from(bookmarks, paging.size());
     }
 
-    public BookmarksWithMarkedWalkwayResponse getBookmarksWithMarkedWalkway(Long memberId, Long walkwayId, Long lastId, Integer size) {
-        if (!walkwayQueryService.existsWalkway(walkwayId)) {
-            throw new CustomException(WalkwayErrorCode.WALKWAY_NOT_FOUND);
+    public CursorPagingResponse<BookmarkWithMarkedStatus> getBookmarksWithMarkedWalkway(Long memberId, Long walkwayId, CursorPagingRequest paging) {
+        if (!walkwayReader.existsWalkway(walkwayId)) {
+            throw new CoreException(CoreErrorCode.WALKWAY_NOT_FOUND);
         }
-
-        Bookmark bookmark = null;
-        if (lastId != null) {
-            bookmark = bookmarkReader.getBookmark(lastId);
-        }
-
-        List<BookmarksWithMarkedWalkwayDTO> bookmarks = bookmarkReader.getBookmarksWithMarkedWalkway(walkwayId, memberId, bookmark, size);
-        return BookmarksWithMarkedWalkwayMapper.toBookmarksWithMarkedWalkwayResponse(bookmarks, size);
+        LocalDateTime createdAt = paging.lastId() == null ? null : bookmarkReader.getBookmark(paging.lastId()).createdAt();
+        List<BookmarkWithMarkedStatus> bookmarks = bookmarkReader.getBookmarksWithMarkedStatus(walkwayId, memberId, createdAt,
+                paging.size());
+        return CursorPagingResponse.from(bookmarks, paging.size());
     }
 
 }

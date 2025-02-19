@@ -1,7 +1,7 @@
 package com.dongsan.api.domains.walkway;
 
 <<<<<<< HEAD:app-external-api/src/main/java/com/dongsan/api/domains/walkway/UserWalkwayController.java
-import com.dongsan.api.domains.auth.security.oauth2.dto.CustomOAuth2User;
+import com.dongsan.api.domains.auth.security.oauth2.CustomOAuth2User;
 import com.dongsan.core.domains.walkway.WalkwayListResponse;
 import com.dongsan.core.domains.walkway.UserWalkwayUseCase;
 =======

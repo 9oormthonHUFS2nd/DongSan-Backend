@@ -1,10 +1,10 @@
 package com.dongsan.api.domains.walkway;
 
-import com.dongsan.api.domains.auth.security.oauth2.dto.CustomOAuth2User;
-import com.dongsan.api.domains.bookmark.BookmarksWithMarkedWalkwayResponse;
-import com.dongsan.api.domains.image.S3UseCase;
+import com.dongsan.api.domains.auth.security.oauth2.CustomOAuth2User;
+import com.dongsan.api.domains.image.ImageService;
 import com.dongsan.api.domains.walkway.dto.request.CreateWalkwayRequest;
 import com.dongsan.api.domains.walkway.dto.request.UpdateWalkwayRequest;
+import com.dongsan.api.domains.walkway.dto.response.BookmarksWithMarkedWalkwayResponse;
 import com.dongsan.api.domains.walkway.dto.response.CreateWalkwayCourseImageRequest;
 import com.dongsan.api.domains.walkway.dto.response.CreateWalkwayResponse;
 import com.dongsan.api.domains.walkway.dto.response.GetWalkwayResponse;
@@ -12,13 +12,15 @@ import com.dongsan.api.domains.walkway.dto.response.SearchWalkwayResponse;
 import com.dongsan.api.domains.walkway.mapper.WalkwayMapper;
 import com.dongsan.api.support.response.ApiResponse;
 import com.dongsan.core.domains.bookmark.BookmarkService;
+import com.dongsan.core.domains.bookmark.BookmarkWithMarkedStatus;
 import com.dongsan.core.domains.image.Image;
-import com.dongsan.core.domains.image.ImageService;
 import com.dongsan.core.domains.walkway.CreateWalkway;
 import com.dongsan.core.domains.walkway.SearchWalkwayQuery;
 import com.dongsan.core.domains.walkway.UpdateWalkway;
 import com.dongsan.core.domains.walkway.Walkway;
 import com.dongsan.core.domains.walkway.WalkwayService;
+import com.dongsan.core.support.util.CursorPagingRequest;
+import com.dongsan.core.support.util.CursorPagingResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
@@ -46,11 +48,11 @@ public class WalkwayController {
 
     private final WalkwayService walkwayService;
     private final BookmarkService bookmarkService;
-    private final S3UseCase s3UseCase;
-    private final ImageService imageService;
+    private final ImageService s3UseCase;
+    private final com.dongsan.core.domains.image.ImageService imageService;
 
     @Autowired
-    public WalkwayController(WalkwayService walkwayService, BookmarkService bookmarkService, S3UseCase s3UseCase, ImageService imageService) {
+    public WalkwayController(WalkwayService walkwayService, BookmarkService bookmarkService, ImageService s3UseCase, com.dongsan.core.domains.image.ImageService imageService) {
         this.walkwayService = walkwayService;
         this.bookmarkService = bookmarkService;
         this.s3UseCase = s3UseCase;
@@ -100,8 +102,8 @@ public class WalkwayController {
             @RequestParam(required = false, defaultValue = "10") Integer size,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {
-        return ApiResponse.success(
-                bookmarkService.getBookmarksWithMarkedWalkway(customOAuth2User.getMemberId(), walkwayId, lastId, size));
+        CursorPagingResponse<BookmarkWithMarkedStatus> response = bookmarkService.getBookmarksWithMarkedWalkway(customOAuth2User.getMemberId(), walkwayId, new CursorPagingRequest(lastId, size));
+        return ApiResponse.success(new BookmarksWithMarkedWalkwayResponse(response));
     }
     @Operation(summary = "산책로 수정")
     @PutMapping("/{walkwayId}")

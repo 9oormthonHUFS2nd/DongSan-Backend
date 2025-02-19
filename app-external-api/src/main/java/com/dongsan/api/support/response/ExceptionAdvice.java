@@ -26,6 +26,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @RestControllerAdvice(annotations = {RestController.class})
 public class ExceptionAdvice extends ResponseEntityExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(ExceptionAdvice.class);
+
     @ExceptionHandler(value = CoreException.class)
     public ResponseEntity<ApiResponse> handleCoreException(CoreException e) {
         CoreErrorCode errorCode = e.getErrorCode();

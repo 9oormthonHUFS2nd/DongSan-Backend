@@ -1,6 +1,5 @@
 package com.dongsan.core.domains.walkway.service;
 
-
 import com.dongsan.core.domains.walkway.SearchWalkwayQuery;
 import com.dongsan.core.domains.walkway.Walkway;
 import com.dongsan.core.domains.walkway.WalkwayRepository;
@@ -36,11 +35,6 @@ public class WalkwayReader {
         return walkwayRepository.existsWalkway(walkwayId);
     }
 
-//    public List<Walkway> getBookmarkWalkway(Bookmark bookmark, Integer size, LocalDateTime lastCreatedAt, Long memberId) {
-//        return markedWalkwayQueryDSLRepository.getBookmarkWalkway(bookmark.getId(), size, lastCreatedAt, memberId)
-//                .stream().map(MarkedWalkway::getWalkway).toList();
-//    }
-
     public List<Walkway> searchWalkway(SearchWalkwayQuery searchWalkwayQuery, WalkwaySort sort) {
         return searchWalkwayFactory.getService(sort).search(searchWalkwayQuery);
     }
@@ -53,13 +47,18 @@ public class WalkwayReader {
         return walkwayRepository.existsLikedWalkways(memberId, walkwayIds);
     }
 
+    public List<Walkway> getUserLikedWalkway(Long memberId, Integer size, LocalDateTime lastCreatedAt) {
+        return walkwayRepository.getUserLikedWalkway(memberId, size, lastCreatedAt);
+    }
+
 //    public LikedWalkway getLikedWalkway(Long memberId, Long walkwayId) {
 //        return walkwayRepository.getLikedWalkway(memberId, walkwayId);
 //    }
 
-    public List<Walkway> getUserLikedWalkway(Long memberId, Integer size, LocalDateTime lastCreatedAt) {
-        return walkwayRepository.getUserLikedWalkway(memberId, size, lastCreatedAt);
-    }
+//    public List<Walkway> getBookmarkWalkway(Bookmark bookmark, Integer size, LocalDateTime lastCreatedAt, Long memberId) {
+//        return markedWalkwayQueryDSLRepository.getBookmarkWalkway(bookmark.getId(), size, lastCreatedAt, memberId)
+//                .stream().map(MarkedWalkway::getWalkway).toList();
+//    }
 
 
 //    public boolean isMarkedWalkway(Long walkwayId, Long memberId) {

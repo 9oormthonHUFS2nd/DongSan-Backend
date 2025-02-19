@@ -10,21 +10,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
-@RequiredArgsConstructor
-@Transactional
-@Slf4j
 public class S3FileService {
-    private final AmazonS3 amazonS3;
+    private static final Logger log = LoggerFactory.getLogger(S3FileService.class);
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
+    private final AmazonS3 amazonS3;
+
+    public S3FileService(AmazonS3 amazonS3) {
+        this.amazonS3 = amazonS3;
+    }
 
     // 파일 Null 확인
     private void checkFileIsNull(MultipartFile file){
@@ -32,7 +33,6 @@ public class S3FileService {
             throw new RuntimeException("file is Empty");
         }
     }
-
 
     // 단일 파일 저장
     public String saveFile(MultipartFile file) {
