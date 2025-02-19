@@ -30,4 +30,6 @@ public interface BookmarkRepository {
     List<MarkedWalkway> getBookmarkWalkways(Long bookmarkId, int size, LocalDateTime lastCreatedAt, Long memberId);
 
     List<Bookmark> getUserBookmarks(Integer size, LocalDateTime lastCreatedAt, Long memberId);
+
+    List<BookmarkWithMarkedStatus> getBookmarksWithMarkedWalkway(Long walkwayId, Long memberId, LocalDateTime createdAt, Integer size);
 }

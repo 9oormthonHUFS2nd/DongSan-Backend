@@ -46,4 +46,5 @@ public class BookmarkEntity extends BaseEntity {
     public Bookmark toBookmark(){
         return new Bookmark(id, name, new Author(memberEntity.getId()), getCreatedAt());
     }
+
 }
