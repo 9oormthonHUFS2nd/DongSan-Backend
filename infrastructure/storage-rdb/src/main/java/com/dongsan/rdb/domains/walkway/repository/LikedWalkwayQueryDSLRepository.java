@@ -2,7 +2,7 @@ package com.dongsan.rdb.domains.walkway.repository;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
 
-import com.dongsan.core.domains.walkway.enums.ExposeLevel;
+import com.dongsan.core.domains.walkway.ExposeLevel;
 import com.dongsan.domains.walkway.entity.QLikedWalkway;
 import com.dongsan.rdb.domains.walkway.entity.LikedWalkwayEntity;
 import com.querydsl.core.types.dsl.BooleanExpression;

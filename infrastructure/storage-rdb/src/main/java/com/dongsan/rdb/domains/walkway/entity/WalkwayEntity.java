@@ -1,14 +1,14 @@
 package com.dongsan.rdb.domains.walkway.entity;
 
+import com.dongsan.core.domains.review.ReviewedWalkway;
 import com.dongsan.core.support.util.Author;
 import com.dongsan.core.domains.walkway.CourseInfo;
 import com.dongsan.core.domains.walkway.CreateWalkway;
 import com.dongsan.core.domains.walkway.Stat;
 import com.dongsan.core.domains.walkway.Walkway;
-import com.dongsan.core.domains.walkway.enums.ExposeLevel;
+import com.dongsan.core.domains.walkway.ExposeLevel;
 import com.dongsan.rdb.domains.common.entity.BaseEntity;
 import com.dongsan.rdb.domains.member.MemberEntity;
-import com.dongsan.rdb.domains.review.RatingCount;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -136,17 +136,13 @@ public class WalkwayEntity extends BaseEntity {
         return new Walkway(id, name, getCreatedAt(), memo, stat, hashtags, courseInfo, author, exposeLevel);
     }
 
-    public void updateRatingAndReviewCount(List<RatingCount> ratingCounts) {
-        // 총 리뷰 수 계산
-        this.reviewCount = (int) ratingCounts.stream()
-                .mapToLong(RatingCount::count)
-                .sum();
-        // 평점 평균 계산 (소수점 한자리)
-        this.rating = Math.floor(
-                ratingCounts.stream()
-                        .mapToDouble(ratingCount -> ratingCount.rating() * ratingCount.count())
-                        .sum() / this.reviewCount * 10
-        ) / 10.0;
+    public ReviewedWalkway toReviewedWalkway() {
+        return new ReviewedWalkway(id, name);
+    }
+
+    public void updateRatingAndReviewCount(Double rating, Integer reviewCount) {
+        this.reviewCount = reviewCount;
+        this.rating = rating;
     }
 
     public void increaseLikeCount() {

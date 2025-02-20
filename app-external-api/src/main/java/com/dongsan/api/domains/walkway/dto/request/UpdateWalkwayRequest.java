@@ -1,6 +1,6 @@
 package com.dongsan.api.domains.walkway.dto.request;
 
-import com.dongsan.core.domains.walkway.enums.ExposeLevel;
+import com.dongsan.core.domains.walkway.ExposeLevel;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
 

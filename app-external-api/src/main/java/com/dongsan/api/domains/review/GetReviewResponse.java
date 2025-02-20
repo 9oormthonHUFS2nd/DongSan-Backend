@@ -1,20 +1,17 @@
 package com.dongsan.api.domains.review;
 
-import com.dongsan.domains.review.entity.Review;
+import com.dongsan.core.domains.review.Review;
+import com.dongsan.core.support.util.CursorPagingResponse;
 import java.util.List;
-import lombok.Builder;
 
-@Builder
 public record GetReviewResponse(
         List<ReviewInfo> reviews,
         boolean hasNext
 ) {
-    public static GetReviewResponse from(List<Review> reviews, boolean hasNext){
-        return new GetReviewResponse(reviews.stream().map(ReviewInfo::new).toList(),
-                hasNext);
+    public static GetReviewResponse from(CursorPagingResponse<Review> cursorPagingResponse){
+        return new GetReviewResponse(cursorPagingResponse.data().stream().map(ReviewInfo::new).toList(), cursorPagingResponse.hasNext());
     }
 
-    @Builder
     public record ReviewInfo(
             Long reviewId,
             Long walkwayId,
@@ -25,12 +22,12 @@ public record GetReviewResponse(
     ){
         public ReviewInfo(Review review){
             this(
-                    review.getId(),
-                    review.getWalkway().getId(),
-                    review.getWalkway().getName(),
-                    review.getCreatedAt().toString(),
-                    review.getRating().intValue(),
-                    review.getContent()
+                    review.reviewId(),
+                    review.reviewedWalkway().walkwayId(),
+                    review.reviewedWalkway().walkwayName(),
+                    review.createdAt().toString(),
+                    review.rating(),
+                    review.content()
             );
         }
     }

@@ -1,10 +1,12 @@
 package com.dongsan.rdb.domains.bookmark;
 
+import static com.querydsl.core.group.GroupBy.groupBy;
+
 import com.dongsan.core.domains.bookmark.Bookmark;
 import com.dongsan.core.domains.bookmark.BookmarkRepository;
 import com.dongsan.core.domains.bookmark.BookmarkWithMarkedStatus;
 import com.dongsan.core.domains.bookmark.MarkedWalkway;
-import com.dongsan.core.domains.walkway.enums.ExposeLevel;
+import com.dongsan.core.domains.walkway.ExposeLevel;
 import com.dongsan.rdb.domains.bookmark.entity.QBookmark;
 import com.dongsan.rdb.domains.bookmark.entity.QMarkedWalkway;
 import com.dongsan.rdb.domains.common.entity.BaseEntity;
@@ -17,6 +19,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
@@ -102,6 +105,7 @@ public class BookmarkCoreRepository implements BookmarkRepository {
                 BaseEntity::getCreatedAt);
     }
 
+
     @Override
     public List<MarkedWalkway> getBookmarkWalkways(Long bookmarkId, int size,
                                                    LocalDateTime lastCreatedAt, Long memberId) {
@@ -161,6 +165,27 @@ public class BookmarkCoreRepository implements BookmarkRepository {
 
     private BooleanExpression bookmarkCreatedAtLt(LocalDateTime lastCreatedAt){
         return lastCreatedAt == null ? null : bookmark.createdAt.lt(lastCreatedAt);
+    }
+
+    public Map<Long, Boolean> existsMarkedWalkway(Long walkwayId, List<Long> bookmarkIds) {
+        return queryFactory.from(markedWalkway)
+                .where(
+                        markedWalkway.walkway.id.eq(walkwayId),
+                        markedWalkway.bookmark.id.in(bookmarkIds)
+                )
+                .transform(groupBy(markedWalkway.bookmark.id).as(markedWalkway.isNotNull()));
+    }
+
+    @Override
+    public boolean existsByMemberIdAndWalkwayId(Long memberId, Long walkwayId) {
+        return queryFactory
+                .selectOne()
+                .from(markedWalkway)
+                .where(
+                        markedWalkway.walkway.id.eq(walkwayId),
+                        markedWalkway.bookmark.member.id.eq(memberId)
+                )
+                .fetchFirst() != null;
     }
 
 }

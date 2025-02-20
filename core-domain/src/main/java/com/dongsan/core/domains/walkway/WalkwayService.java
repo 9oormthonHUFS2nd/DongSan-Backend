@@ -1,10 +1,7 @@
 package com.dongsan.core.domains.walkway;
 
 
-import com.dongsan.core.domains.walkway.enums.WalkwaySort;
-import com.dongsan.core.domains.walkway.service.WalkwayReader;
-import com.dongsan.core.domains.walkway.service.WalkwayValidator;
-import com.dongsan.core.domains.walkway.service.WalkwayWriter;
+import com.dongsan.core.support.util.CursorPagingResponse;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +28,7 @@ public class WalkwayService {
     }
 
     public Walkway getWalkway(Long walkwayId) {
+        walkwayValidator.validateWalkwayExists(walkwayId);
         return walkwayReader.getWalkway(walkwayId);
     }
 
@@ -41,14 +39,14 @@ public class WalkwayService {
         walkwayWriter.updateWalkway(updateWalkway);
     }
 
-    public List<Walkway> searchWalkway(String sortType, SearchWalkwayQuery searchWalkwayQuery) {
+    public CursorPagingResponse<Walkway> searchWalkway(String sortType, SearchWalkwayQuery searchWalkwayQuery) {
         if (searchWalkwayQuery.lastWalkwayId() != null) {
             walkwayValidator.validateWalkwayExists(searchWalkwayQuery.lastWalkwayId());
         }
 
         WalkwaySort sort = WalkwaySort.typeOf(sortType);
-
-        return walkwayReader.searchWalkway(searchWalkwayQuery, sort);
+        List<Walkway> walkways = walkwayReader.searchWalkway(searchWalkwayQuery, sort);
+        return CursorPagingResponse.from(walkways, searchWalkwayQuery.size());
     }
 
     public boolean existsLikedWalkway(Long memberId, Long walkwayId) {
@@ -113,5 +111,31 @@ public class WalkwayService {
             walkways.remove(walkways.size()-1);
         }
         return walkways;
+    }
+
+    @Transactional
+    public Long createWalkwayHistory(CreateWalkwayHistory createWalkwayHistory) {
+        walkwayValidator.validateWalkwayExists(createWalkwayHistory.walkwayId());
+        return walkwayWriter.saveWalkwayHistory(createWalkwayHistory);
+    }
+
+    public List<WalkwayHistory> getCanReviewWalkwayHistory(Long walkwayId, Long memberId) {
+        walkwayValidator.validateWalkwayPrivate(walkwayId);
+        return walkwayReader.getCanReviewWalkwayHistory(walkwayId, memberId);
+    }
+
+    public List<WalkwayHistory> getUserCanReviewWalkwayHistory(Long lastWalkwayHistoryId, Long memberId, int size) {
+        LocalDateTime lastCreatedAt = null;
+        if (lastWalkwayHistoryId != null) {
+            WalkwayHistory walkwayHistory = walkwayReader.getWalkwayHistory(lastWalkwayHistoryId);
+            lastCreatedAt = walkwayHistory.createdAt();
+        }
+
+        return walkwayReader.getUserCanReviewWalkwayHistory(memberId, size, lastCreatedAt);
+    }
+
+    public boolean isCanReview(Long walkwayHistoryId) {
+        WalkwayHistory walkwayHistory = walkwayReader.getWalkwayHistory(walkwayHistoryId);
+        return walkwayHistory.distance() >= walkwayHistory.walkway().courseInfo().distance();
     }
 }

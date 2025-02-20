@@ -1,4 +1,4 @@
-package com.dongsan.domains.walkway.dto.response;
+package com.dongsan.api.domains.walkway.dto.response;
 
 public record CreateWalkwayHistoryResponse(
         Long walkwayHistoryId,

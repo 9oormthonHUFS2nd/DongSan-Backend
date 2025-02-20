@@ -2,6 +2,7 @@ package com.dongsan.core.domains.bookmark;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
@@ -32,4 +33,8 @@ public interface BookmarkRepository {
     List<Bookmark> getUserBookmarks(Integer size, LocalDateTime lastCreatedAt, Long memberId);
 
     List<BookmarkWithMarkedStatus> getBookmarksWithMarkedWalkway(Long walkwayId, Long memberId, LocalDateTime createdAt, Integer size);
+
+    boolean existsByMemberIdAndWalkwayId(Long memberId, Long walkwayId);
+
+    Map<Long, Boolean> existsMarkedWalkway(Long walkwayId, List<Long> bookmarkIds);
 }

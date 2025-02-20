@@ -2,6 +2,7 @@ package com.dongsan.api.domains.walkway.dto.response;
 
 import com.dongsan.api.domains.walkway.dto.WalkwayCoordinate;
 import com.dongsan.core.domains.walkway.Walkway;
+import com.dongsan.core.support.util.CursorPagingResponse;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
@@ -10,12 +11,12 @@ public record SearchWalkwayResponse(
         List<WalkwayResponse> walkways,
         Boolean hasNext
 ) {
-    public SearchWalkwayResponse(List<Walkway> walkways, Map<Long, Boolean> isLiked, Integer size) {
+    public SearchWalkwayResponse(CursorPagingResponse<Walkway> response, Map<Long, Boolean> isLiked) {
         this(
-                walkways.stream()
+                response.data().stream()
                         .map(walkway -> new WalkwayResponse(walkway, isLiked.get(walkway.walkwayId())))
                         .toList(),
-                walkways.size() == size
+                response.hasNext()
         );
     }
 

@@ -18,7 +18,7 @@ import com.dongsan.domains.walkway.controller.dto.response.GetWalkwayRatingRespo
 import com.dongsan.domains.walkway.controller.dto.response.GetWalkwayReviewsResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.core.domains.review.ReviewMapper;
-import com.dongsan.core.domains.walkway.service.WalkwayReader;
+import com.dongsan.core.domains.walkway.WalkwayReader;
 import com.dongsan.core.domains.review.ReviewService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fixture.WalkwayFixture;

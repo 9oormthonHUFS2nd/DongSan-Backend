@@ -1,4 +1,4 @@
-package com.dongsan.domains.walkway.dto.request;
+package com.dongsan.api.domains.walkway.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 

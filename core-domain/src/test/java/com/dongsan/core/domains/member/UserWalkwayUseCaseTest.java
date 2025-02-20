@@ -11,7 +11,7 @@
 //import com.dongsan.core.domains.walkway.WalkwayListResponse.WalkwayResponse;
 //import com.dongsan.domains.walkway.entity.Walkway;
 //import com.dongsan.core.domains.walkway.service.LikedWalkwayReader;
-//import com.dongsan.core.domains.walkway.service.WalkwayReader;
+//import com.dongsan.core.domains.walkway.WalkwayReader;
 //import java.time.LocalDateTime;
 //import java.util.Collections;
 //import java.util.List;

@@ -26,7 +26,7 @@
 //import com.dongsan.domains.member.entity.Member;
 //import com.dongsan.core.domains.member.MemberReader;
 //import com.dongsan.domains.walkway.entity.Walkway;
-//import com.dongsan.core.domains.walkway.service.WalkwayReader;
+//import com.dongsan.core.domains.walkway.WalkwayReader;
 //import java.time.LocalDateTime;
 //import java.util.ArrayList;
 //import java.util.List;

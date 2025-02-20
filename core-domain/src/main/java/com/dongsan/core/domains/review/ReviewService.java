@@ -2,92 +2,95 @@ package com.dongsan.core.domains.review;
 
 import com.dongsan.core.domains.member.MemberReader;
 import com.dongsan.core.domains.walkway.Walkway;
-import com.dongsan.core.domains.walkway.enums.ExposeLevel;
-import com.dongsan.core.domains.walkway.enums.ReviewSort;
-import com.dongsan.core.domains.walkway.service.WalkwayReader;
-import com.dongsan.core.domains.walkway.service.WalkwayWriter;
-import com.dongsan.domains.walkway.service.WalkwayHistoryCommandService;
-import com.dongsan.domains.walkway.service.WalkwayHistoryQueryService;
-import java.lang.reflect.Member;
+import com.dongsan.core.domains.walkway.WalkwayHistory;
+import com.dongsan.core.domains.walkway.WalkwayHistoryValidator;
+import com.dongsan.core.domains.walkway.WalkwayReader;
+import com.dongsan.core.domains.walkway.WalkwayValidator;
+import com.dongsan.core.domains.walkway.WalkwayWriter;
+import com.dongsan.core.support.util.CursorPagingRequest;
+import com.dongsan.core.support.util.CursorPagingResponse;
+import java.util.List;
+import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Service
 public class ReviewService {
 
     private final ReviewWriter reviewWriter;
-    private final MemberReader memberReader;
-    private final WalkwayReader walkwayQueryService;
+    private final WalkwayReader walkwayReader;
     private final ReviewReader reviewReader;
-    private final WalkwayWriter walkwayCommandService;
-    private final ReviewCommandService reviewCommandService;
-    private final MemberQueryService memberQueryService;
-    private final WalkwayQueryService walkwayQueryService;
-    private final ReviewQueryService reviewQueryService;
-    private final WalkwayCommandService walkwayCommandService;
-    private final WalkwayHistoryQueryService walkwayHistoryQueryService;
-    private final WalkwayHistoryCommandService walkwayHistoryCommandService;
+    private final WalkwayWriter walkwayWriter;
+    private final WalkwayHistoryValidator walkwayHistoryValidator;
+    private final WalkwayValidator walkwayValidator;
+    @Autowired
+    public ReviewService(ReviewWriter reviewWriter, WalkwayReader walkwayReader,
+                         ReviewReader reviewReader, WalkwayWriter walkwayWriter,
+                         WalkwayHistoryValidator walkwayHistoryValidator, WalkwayValidator walkwayValidator) {
+        this.reviewWriter = reviewWriter;
+        this.walkwayReader = walkwayReader;
+        this.reviewReader = reviewReader;
+        this.walkwayWriter = walkwayWriter;
+        this.walkwayHistoryValidator = walkwayHistoryValidator;
+        this.walkwayValidator = walkwayValidator;
+    }
 
     @Transactional
-    public CreateReviewResponse createReview(Long memberId, Long walkwayId, CreateReviewRequest createReviewRequest) {
-        Member member = memberReader.readMember(memberId);
-        Walkway walkway = walkwayQueryService.getWalkway(walkwayId);
-
+    public Long createReview(CreateReview createReview) {
+        // 회원, 산책로, 이용기록 불러오기
+        walkwayValidator.validateWalkwayExists(createReview.walkwayId());
         WalkwayHistory walkwayHistory
-                = walkwayHistoryQueryService.getById(createReviewRequest.walkwayHistoryId());
+                = walkwayReader.getWalkwayHistory(createReview.walkwayHistoryId());
 
-        if (!walkwayHistory.getWalkway().equals(walkway) || !walkwayHistory.getMember().equals(member)) {
-            throw new CustomException(WalkwayHistoryErrorCode.INVALID_ACCESS);
+        // 이용 기록 검증
+        walkwayHistoryValidator.validateWalkwayAndMember(walkwayHistory, createReview.walkwayId(), createReview.memberId());
+        walkwayHistoryValidator.validateDistance(walkwayHistory);
+        walkwayHistoryValidator.validateIsReviewed(walkwayHistory);
+
+        // 이용기록 수정
+        walkwayWriter.updateWalkwayHistoryIsReviewed(createReview.walkwayHistoryId(), true);
+
+        // 리뷰 생성
+        Long reviewId = reviewWriter.createReview(createReview);
+
+        // 산책로 별점 수정
+        Map<Integer, Long> ratingCounts = reviewReader.getWalkwaysRating(createReview.walkwayId());
+        Double totalRating = ratingCounts.entrySet().stream()
+                .mapToDouble(entry -> entry.getKey() * entry.getValue())
+                .sum();
+        Integer totalReviewCount = (int) ratingCounts.values().stream()
+                .mapToLong(Long::longValue)
+                .sum();
+        Double avgRating = 0.0;
+        if (totalReviewCount > 0) {
+            avgRating = Math.round(totalRating / totalReviewCount * 10.0) / 10.0;
         }
 
-        if (walkway.getDistance() * 2/3 > walkwayHistory.getDistance()) {
-            throw new CustomException(WalkwayHistoryErrorCode.NOT_ENOUGH_DISTANCE);
-        }
+        walkwayWriter.updateWalkwayRating(totalReviewCount, avgRating, createReview.walkwayId());
 
-        if(walkwayHistory.getIsReviewed()) {
-            throw new CustomException(WalkwayHistoryErrorCode.ALREADY_REVIEWED);
-        }
-
-        walkwayHistory.updateIsReviewed();
-        walkwayHistoryCommandService.createWalkwayHistory(walkwayHistory);
-
-        Review review = ReviewMapper.toReview(createReviewRequest, walkway, member);
-        review = reviewWriter.createReview(review);
-
-        List<RatingCount> ratingCounts = reviewReader.getWalkwaysRating(walkwayId);
-        walkway.updateRatingAndReviewCount(ratingCounts);
-        walkwayCommandService.saveWalkway(walkway);
-
-        return ReviewMapper.toCreateReviewResponse(review);
+        return reviewId;
     }
 
     @Transactional(readOnly = true)
-    public GetWalkwayReviewsResponse getWalkwayReviews(String type, Long lastId, Long walkwayId, Integer size, Long memberId) {
-        Walkway walkway = walkwayQueryService.getWalkway(walkwayId);
-
-        if (walkway.getExposeLevel().equals(ExposeLevel.PRIVATE) && !walkway.getMember().getId().equals(memberId)) {
-            throw new CustomException(WalkwayErrorCode.WALKWAY_PRIVATE);
-        }
+    public CursorPagingResponse<Review> getWalkwayReviews(String type, Long walkwayId, Long memberId, CursorPagingRequest cursorPagingRequest) {
+        Walkway walkway = walkwayReader.getWalkway(walkwayId);
+        walkwayValidator.validateWalkwayAccess(walkway, memberId);
 
         Review review = null;
-        if (lastId != null) {
-            review = reviewReader.getReview(lastId);
+        if (cursorPagingRequest.lastId() != null) {
+            review = reviewReader.getReview(cursorPagingRequest.lastId());
         }
-
         ReviewSort sort = ReviewSort.typeOf(type);
-        List<Review> reviews = reviewReader.getWalkwayReviews(size, review, walkway, sort);
-
-        return ReviewMapper.toGetWalkwayReviewsResponse(reviews, size);
+        List<Review> reviews = reviewReader.getWalkwayReviews(cursorPagingRequest.size() + 1, review, walkwayId, sort);
+        return CursorPagingResponse.from(reviews, cursorPagingRequest.size());
     }
 
     @Transactional(readOnly = true)
-    public GetWalkwayRatingResponse getWalkwayRating(Long walkwayId, Long memberId) {
-        Walkway walkway = walkwayQueryService.getWalkway(walkwayId);
+    public Map<Integer, Long> getWalkwayRating(Long walkwayId, Long memberId) {
+        Walkway walkway = walkwayReader.getWalkway(walkwayId);
+        walkwayValidator.validateWalkwayAccess(walkway, memberId);
 
-        if (walkway.getExposeLevel().equals(ExposeLevel.PRIVATE) && !walkway.getMember().getId().equals(memberId)) {
-            throw new CustomException(WalkwayErrorCode.WALKWAY_PRIVATE);
-        }
-
-        List<RatingCount> ratingCounts = reviewReader.getWalkwaysRating(walkwayId);
-
-        return ReviewMapper.toGetWalkwayRatingResponse(ratingCounts, walkway);
+        return reviewReader.getWalkwaysRating(walkwayId);
     }
 }

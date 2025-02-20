@@ -4,6 +4,7 @@ import com.dongsan.core.support.error.CoreErrorCode;
 import com.dongsan.core.support.error.CoreException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -40,4 +41,11 @@ public class BookmarkReader {
         return bookmarkRepository.getBookmarksWithMarkedWalkway(walkwayId, memberId, createdAt, size);
     }
 
+    public boolean existsByMemberIdAndWalkwayId(Long memberId, Long walkwayId) {
+        return bookmarkRepository.existsByMemberIdAndWalkwayId(memberId, walkwayId);
+    }
+
+    public Map<Long, Boolean> existsMarkedWalkway(Long walkwayId, List<Long> bookmarkIds) {
+        return bookmarkRepository.existsMarkedWalkway(walkwayId, bookmarkIds);
+    }
 }

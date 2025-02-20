@@ -1,23 +1,24 @@
-package com.dongsan.domains.walkway.repository;
+package com.dongsan.rdb.domains.walkway.repository;
 
-import com.dongsan.domains.walkway.entity.QWalkwayHistory;
-import com.dongsan.domains.walkway.entity.WalkwayHistory;
-import com.dongsan.domains.walkway.enums.ExposeLevel;
+import com.dongsan.core.domains.walkway.ExposeLevel;
+import com.dongsan.rdb.domains.walkway.entity.WalkwayHistoryEntity;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDateTime;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 @Repository
-@RequiredArgsConstructor
 public class WalkwayHistoryQueryDSLRepository {
     private final JPAQueryFactory queryFactory;
 
+    public WalkwayHistoryQueryDSLRepository(JPAQueryFactory queryFactory) {
+        this.queryFactory = queryFactory;
+    }
+
     private QWalkwayHistory walkwayHistory = QWalkwayHistory.walkwayHistory;
 
-    public List<WalkwayHistory> getCanReviewWalkwayHistories(Long walkwayId, Long memberId) {
+    public List<WalkwayHistoryEntity> getCanReviewWalkwayHistories(Long walkwayId, Long memberId) {
         return queryFactory.selectFrom(walkwayHistory)
                 .join(walkwayHistory.walkway).fetchJoin()
                 .where(
@@ -30,7 +31,7 @@ public class WalkwayHistoryQueryDSLRepository {
                 .fetch();
     }
 
-    public List<WalkwayHistory> getUserCanReviewWalkwayHistories(Long memberId, int size, LocalDateTime lastCreatedAt) {
+    public List<WalkwayHistoryEntity> getUserCanReviewWalkwayHistories(Long memberId, int size, LocalDateTime lastCreatedAt) {
         return queryFactory.selectFrom(walkwayHistory)
                 .join(walkwayHistory.walkway).fetchJoin()
                 .where(

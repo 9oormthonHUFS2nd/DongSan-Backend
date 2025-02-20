@@ -1,6 +1,6 @@
-package com.dongsan.domains.walkway.dto.response;
+package com.dongsan.api.domains.walkway.dto.response;
 
-import com.dongsan.domains.walkway.entity.WalkwayHistory;
+import com.dongsan.core.domains.walkway.WalkwayHistory;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -35,23 +35,21 @@ public record GetWalkwayHistoriesResponse(
     ) {
         public CanReviewWalkwayHistory(WalkwayHistory walkwayHistory) {
             this(
-                    walkwayHistory.getWalkway().getId(),
-                    walkwayHistory.getWalkway().getName(),
-                    walkwayHistory.getWalkway().getCreatedAt().toLocalDate(),
-                    walkwayHistory.getWalkway().getDistance(),
-                    walkwayHistory.getWalkway().getCourseImageUrl(),
-                    walkwayHistory.getWalkway().getTime(),
-                    walkwayHistory.getWalkway().getMemo(),
-                    walkwayHistory.getWalkway().getLikeCount(),
-                    walkwayHistory.getWalkway().getReviewCount(),
-                    walkwayHistory.getWalkway().getRating(),
-                    walkwayHistory.getWalkway().getHashtagWalkways().stream()
-                            .map(h -> h.getHashtag().getName())
-                            .toList(),
-                    walkwayHistory.getId(),
-                    walkwayHistory.getCreatedAt(),
-                    walkwayHistory.getTime(),
-                    walkwayHistory.getDistance()
+                    walkwayHistory.walkway().walkwayId(),
+                    walkwayHistory.walkway().name(),
+                    walkwayHistory.walkway().createdAt().toLocalDate(),
+                    walkwayHistory.walkway().courseInfo().distance(),
+                    walkwayHistory.walkway().courseInfo().courseImageUrl(),
+                    walkwayHistory.walkway().courseInfo().time(),
+                    walkwayHistory.walkway().memo(),
+                    walkwayHistory.walkway().stat().likeCount(),
+                    walkwayHistory.walkway().stat().reviewCount(),
+                    walkwayHistory.walkway().stat().rating(),
+                    walkwayHistory.walkway().hashtags(),
+                    walkwayHistory.id(),
+                    walkwayHistory.createdAt(),
+                    walkwayHistory.time(),
+                    walkwayHistory.distance()
             );
         }
     }

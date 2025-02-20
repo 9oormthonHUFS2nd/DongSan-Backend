@@ -11,7 +11,7 @@
 //import com.dongsan.domains.walkway.entity.Walkway;
 //import com.dongsan.core.domains.walkway.service.LikedWalkwayWriter;
 //import com.dongsan.core.domains.walkway.service.LikedWalkwayReader;
-//import com.dongsan.core.domains.walkway.service.WalkwayReader;
+//import com.dongsan.core.domains.walkway.WalkwayReader;
 //import fixture.MemberFixture;
 //import fixture.WalkwayFixture;
 //import java.util.ArrayList;
