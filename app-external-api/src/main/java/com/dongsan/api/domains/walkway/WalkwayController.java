@@ -1,11 +1,10 @@
 package com.dongsan.api.domains.walkway;
 
-import com.dongsan.api.domains.auth.security.oauth2.dto.CustomOAuth2User;
-import com.dongsan.api.domains.bookmark.BookmarksWithMarkedWalkwayResponse;
-import com.dongsan.api.domains.image.S3UseCase;
+import com.dongsan.api.domains.auth.security.oauth2.CustomOAuth2User;
 import com.dongsan.api.domains.walkway.dto.request.CreateWalkwayHistoryRequest;
 import com.dongsan.api.domains.walkway.dto.request.CreateWalkwayRequest;
 import com.dongsan.api.domains.walkway.dto.request.UpdateWalkwayRequest;
+import com.dongsan.api.domains.walkway.dto.response.BookmarksWithMarkedWalkwayResponse;
 import com.dongsan.api.domains.walkway.dto.response.CreateWalkwayCourseImageRequest;
 import com.dongsan.api.domains.walkway.dto.response.CreateWalkwayHistoryResponse;
 import com.dongsan.api.domains.walkway.dto.response.CreateWalkwayResponse;
@@ -27,6 +26,7 @@ import com.dongsan.core.domains.walkway.WalkwayHistory;
 import com.dongsan.core.domains.walkway.WalkwayService;
 import com.dongsan.core.support.util.CursorPagingRequest;
 import com.dongsan.core.support.util.CursorPagingResponse;
+import com.dongsan.file.service.S3FileService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
@@ -54,14 +54,14 @@ public class WalkwayController {
 
     private final WalkwayService walkwayService;
     private final BookmarkService bookmarkService;
-    private final S3UseCase s3UseCase;
+    private final S3FileService s3FileService;
     private final ImageService imageService;
 
     @Autowired
-    public WalkwayController(WalkwayService walkwayService, BookmarkService bookmarkService, S3UseCase s3UseCase, ImageService imageService) {
+    public WalkwayController(WalkwayService walkwayService, BookmarkService bookmarkService, S3FileService s3FileService, ImageService imageService) {
         this.walkwayService = walkwayService;
         this.bookmarkService = bookmarkService;
-        this.s3UseCase = s3UseCase;
+        this.s3FileService = s3FileService;
         this.imageService = imageService;
     }
 
@@ -84,7 +84,7 @@ public class WalkwayController {
             @RequestPart("courseImage") MultipartFile courseImage,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {
-        String imageUrl = s3UseCase.uploadCourseImage(courseImage);
+        String imageUrl = s3FileService.saveFile(courseImage);
         Long imageId = imageService.createImage(imageUrl);
         return ApiResponse.success(new CreateWalkwayCourseImageRequest(imageId));
     }

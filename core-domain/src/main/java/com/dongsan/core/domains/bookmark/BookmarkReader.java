@@ -37,8 +37,8 @@ public class BookmarkReader {
         return bookmarkRepository.getUserBookmarks(size, lastCreatedAt, memberId);
     }
 
-    public List<BookmarksWithMarkedWalkwayDTO> getBookmarksWithMarkedWalkway(Long walkwayId, Long memberId, Bookmark bookmark, Integer size) {
-        return bookmarkQueryDSLRepository.getBookmarksWithMarkedWalkway(walkwayId, memberId, bookmark, size);
+    public List<BookmarkWithMarkedStatus> getBookmarksWithMarkedStatus(Long walkwayId, Long memberId, LocalDateTime createdAt, Integer size) {
+        return bookmarkRepository.getBookmarksWithMarkedWalkway(walkwayId, memberId, createdAt, size);
     }
 
     public boolean existsByMemberIdAndWalkwayId(Long memberId, Long walkwayId) {

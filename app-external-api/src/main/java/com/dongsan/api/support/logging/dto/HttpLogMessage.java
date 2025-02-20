@@ -1,6 +1,5 @@
 package com.dongsan.api.support.logging.dto;
 
-import lombok.Builder;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
@@ -8,7 +7,6 @@ import org.springframework.web.util.ContentCachingResponseWrapper;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
-@Builder
 public record HttpLogMessage(
         String httpMethod,
         String requestURI,
@@ -29,17 +27,17 @@ public record HttpLogMessage(
         String requestBody = new String(requestWrapper.getContentAsByteArray());
         String responseBody = new String(responseWrapper.getContentAsByteArray());
 
-        return HttpLogMessage.builder()
-                .httpMethod(requestWrapper.getMethod())
-                .requestURI(requestWrapper.getRequestURI())
-                .httpStatus(HttpStatus.valueOf(responseWrapper.getStatus()))
-                .clientIp(requestWrapper.getRemoteAddr())
-                .elapsedTime(elapsedTime)
-                .headers(headers)
-                .requestParam(requestWrapper.getQueryString())
-                .requestBody(requestBody)
-                .responseBody(responseBody)
-                .build();
+        return new HttpLogMessage(
+                requestWrapper.getMethod(),
+                requestWrapper.getRequestURI(),
+                HttpStatus.valueOf(responseWrapper.getStatus()),
+                requestWrapper.getRemoteAddr(),
+                elapsedTime,
+                headers,
+                requestWrapper.getQueryString(),
+                requestBody,
+                responseBody
+        );
     }
 
     public String toPrettierLog(){

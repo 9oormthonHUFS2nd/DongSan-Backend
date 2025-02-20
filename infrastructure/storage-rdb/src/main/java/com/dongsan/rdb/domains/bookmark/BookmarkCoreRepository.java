@@ -4,6 +4,7 @@ import static com.querydsl.core.group.GroupBy.groupBy;
 
 import com.dongsan.core.domains.bookmark.Bookmark;
 import com.dongsan.core.domains.bookmark.BookmarkRepository;
+import com.dongsan.core.domains.bookmark.BookmarkWithMarkedStatus;
 import com.dongsan.core.domains.bookmark.MarkedWalkway;
 import com.dongsan.core.domains.walkway.ExposeLevel;
 import com.dongsan.rdb.domains.bookmark.entity.QBookmark;
@@ -140,31 +141,31 @@ public class BookmarkCoreRepository implements BookmarkRepository {
         return bookmarkEntities.stream().map(BookmarkEntity::toBookmark).toList();
     }
 
-    private BooleanExpression bookmarkCreatedAtLt(LocalDateTime lastCreatedAt){
-        return lastCreatedAt != null ? bookmark.createdAt.lt(lastCreatedAt) : null;
-    }
-
-    public List<BookmarksWithMarkedWalkwayDTO> getBookmarksWithMarkedWalkway(Long walkwayId, Long memberId, BookmarkEntity lastBookmarkEntity, Integer size) {
-        return queryFactory.select(Projections.constructor(
+    @Override
+    public List<BookmarkWithMarkedStatus> getBookmarksWithMarkedWalkway(Long walkwayId, Long memberId,
+                                                                        LocalDateTime lastCreatedAt, Integer size) {
+        List<BookmarksWithMarkedWalkwayDTO> result = queryFactory.select(Projections.constructor(
                         BookmarksWithMarkedWalkwayDTO.class,
                         bookmark.id,
-                        bookmark.member.id,
                         bookmark.name,
+                        bookmark.createdAt,
                         markedWalkway.id
                 ))
                 .from(bookmark)
                 .leftJoin(markedWalkway)
                 .on(markedWalkway.walkway.id.eq(walkwayId).and(markedWalkway.bookmark.id.eq(bookmark.id)))
                 .where(bookmark.member.id.eq(memberId),
-                        lastBookmarkEntity == null
-                                ? null
-                                : bookmarkCreatedAtLt(lastBookmarkEntity.getCreatedAt())
-                )
+                        bookmarkCreatedAtLt(lastCreatedAt))
                 .limit(size)
                 .orderBy(bookmark.createdAt.desc())
                 .fetch();
+
+        return result.stream().map(BookmarksWithMarkedWalkwayDTO::toBookmarkWithMarkedStatus).toList();
     }
 
+    private BooleanExpression bookmarkCreatedAtLt(LocalDateTime lastCreatedAt){
+        return lastCreatedAt == null ? null : bookmark.createdAt.lt(lastCreatedAt);
+    }
 
     public Map<Long, Boolean> existsMarkedWalkway(Long walkwayId, List<Long> bookmarkIds) {
         return queryFactory.from(markedWalkway)

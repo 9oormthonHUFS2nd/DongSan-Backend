@@ -1,10 +1,10 @@
 package com.dongsan.api.domains.review;
 
-import com.dongsan.api.domains.auth.security.oauth2.dto.CustomOAuth2User;
 import com.dongsan.api.domains.walkway.dto.request.CreateReviewRequest;
 import com.dongsan.api.support.response.ApiResponse;
 import com.dongsan.core.domains.review.CreateReview;
 import com.dongsan.core.domains.review.Review;
+import com.dongsan.api.domains.auth.security.oauth2.CustomOAuth2User;
 import com.dongsan.core.domains.review.ReviewService;
 import com.dongsan.core.support.util.CursorPagingRequest;
 import com.dongsan.core.support.util.CursorPagingResponse;

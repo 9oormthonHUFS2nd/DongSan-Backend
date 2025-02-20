@@ -1,10 +1,15 @@
 package com.dongsan.api.domains.dev;
 
-import lombok.Builder;
+import com.dongsan.core.domains.member.Member;
 
-@Builder
 public record GetMemberInfoResponse(
         Long memberId,
         String email
 ) {
+    public GetMemberInfoResponse(Member member){
+        this(
+                member.id(),
+                member.email()
+        );
+    }
 }

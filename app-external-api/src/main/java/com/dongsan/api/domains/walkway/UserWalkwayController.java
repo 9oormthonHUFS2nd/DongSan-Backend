@@ -1,6 +1,6 @@
 package com.dongsan.api.domains.walkway;
 
-import com.dongsan.api.domains.auth.security.oauth2.dto.CustomOAuth2User;
+import com.dongsan.api.domains.auth.security.oauth2.CustomOAuth2User;
 import com.dongsan.api.domains.walkway.dto.response.GetWalkwayHistoriesResponse;
 import com.dongsan.api.domains.walkway.dto.response.WalkwayListResponse;
 import com.dongsan.api.support.response.ApiResponse;
