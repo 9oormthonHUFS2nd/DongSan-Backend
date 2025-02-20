@@ -1,6 +1,5 @@
 package com.dongsan.core.domains.walkway;
 
-import com.dongsan.core.domains.walkway.enums.ExposeLevel;
 import java.util.List;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.Point;

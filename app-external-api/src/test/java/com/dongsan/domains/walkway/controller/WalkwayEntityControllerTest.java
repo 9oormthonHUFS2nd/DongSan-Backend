@@ -39,7 +39,7 @@ import com.dongsan.domains.walkway.entity.Walkway;
 import com.dongsan.domains.walkway.entity.WalkwayHistory;
 import com.dongsan.domains.walkway.enums.ExposeLevel;
 <<<<<<< HEAD:app-external-api/src/test/java/com/dongsan/domains/walkway/controller/WalkwayEntityControllerTest.java
-import com.dongsan.core.domains.walkway.service.WalkwayReader;
+import com.dongsan.core.domains.walkway.WalkwayReader;
 import com.dongsan.core.domains.walkway.usecase.HashtagService;
 import com.dongsan.core.domains.walkway.usecase.LikedWalkwayService;
 import com.dongsan.core.domains.walkway.WalkwayService;

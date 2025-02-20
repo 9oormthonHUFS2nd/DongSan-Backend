@@ -1,15 +1,17 @@
-package com.dongsan.api.domains.walkway;
+package com.dongsan.api.domains.review;
 
 import com.dongsan.api.domains.auth.security.oauth2.dto.CustomOAuth2User;
-import com.dongsan.domains.walkway.controller.dto.request.CreateReviewRequest;
-import com.dongsan.domains.walkway.controller.dto.response.CreateReviewResponse;
-import com.dongsan.domains.walkway.controller.dto.response.GetWalkwayRatingResponse;
-import com.dongsan.domains.walkway.controller.dto.response.GetWalkwayReviewsResponse;
+import com.dongsan.api.domains.walkway.dto.request.CreateReviewRequest;
+import com.dongsan.api.support.response.ApiResponse;
+import com.dongsan.core.domains.review.CreateReview;
+import com.dongsan.core.domains.review.Review;
 import com.dongsan.core.domains.review.ReviewService;
+import com.dongsan.core.support.util.CursorPagingRequest;
+import com.dongsan.core.support.util.CursorPagingResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,41 +25,50 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/walkways")
 @Tag(name = "산책로 리뷰")
-@RequiredArgsConstructor
 @Validated
 public class ReviewController {
 
     private final ReviewService reviewService;
 
+    @Autowired
+    public ReviewController(ReviewService reviewService) {
+        this.reviewService = reviewService;
+    }
+
     @Operation(summary = "리뷰 작성")
     @PostMapping("/{walkwayId}/review")
-    public ResponseEntity<SuccessResponse<CreateReviewResponse>> createReview(
+    public ApiResponse<CreateReviewResponse> createReview(
             @PathVariable Long walkwayId,
-            @Validated @RequestBody CreateReviewRequest createReviewRequest,
+            @Validated @RequestBody CreateReviewRequest request,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {
-        return ResponseFactory.created(
-                reviewService.createReview(customOAuth2User.getMemberId(), walkwayId, createReviewRequest));
+        CreateReview createReview
+                = new CreateReview(customOAuth2User.getMemberId(), walkwayId, request.walkwayHistoryId(), request.rating(), request.content());
+        Long reviewId = reviewService.createReview(createReview);
+        return ApiResponse.success(new CreateReviewResponse(reviewId));
     }
 
     @Operation(summary = "리뷰 내용 보기")
     @GetMapping("/{walkwayId}/review/content")
-    public ResponseEntity<SuccessResponse<GetWalkwayReviewsResponse>> getWalkwayReviews(
+    public ApiResponse<GetWalkwayReviewsResponse> getWalkwayReviews(
             @PathVariable Long walkwayId,
             @RequestParam String sort,
             @RequestParam(required = false) Long lastId,
             @RequestParam(required = false, defaultValue = "10") Integer size,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {
-        return ResponseFactory.ok(reviewService.getWalkwayReviews(sort, lastId, walkwayId, size, customOAuth2User.getMemberId()));
+        CursorPagingResponse<Review> cursorPagingResponse
+                = reviewService.getWalkwayReviews(sort, walkwayId, customOAuth2User.getMemberId(), new CursorPagingRequest(lastId, size));
+        return ApiResponse.success(new GetWalkwayReviewsResponse(cursorPagingResponse));
     }
 
     @Operation(summary = "리뷰 별점 보기")
     @GetMapping("/{walkwayId}/review/rating")
-    public ResponseEntity<SuccessResponse<GetWalkwayRatingResponse>> getWalkwaysRating(
+    public ApiResponse<GetWalkwayRatingResponse> getWalkwaysRating(
             @PathVariable Long walkwayId,
             @AuthenticationPrincipal CustomOAuth2User customOAuth2User
     ) {
-        return ResponseFactory.ok(reviewService.getWalkwayRating(walkwayId, customOAuth2User.getMemberId()));
+        Map<Integer, Long> ratingCounts = reviewService.getWalkwayRating(walkwayId, customOAuth2User.getMemberId());
+        return ApiResponse.success(GetWalkwayRatingResponse.from(ratingCounts));
     }
 }

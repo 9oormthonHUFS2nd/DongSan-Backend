@@ -45,8 +45,8 @@ public class WalkwayHistoryEntity extends BaseEntity {
         this.isReviewed = false;
     }
 
-    public void updateIsReviewed() {
-        this.isReviewed = true;
+    public void updateIsReviewed(boolean isReviewed) {
+        this.isReviewed = isReviewed;
     }
 
     public Long getId() {

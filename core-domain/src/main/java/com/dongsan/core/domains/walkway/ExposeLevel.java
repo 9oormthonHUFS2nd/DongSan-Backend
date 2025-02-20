@@ -1,4 +1,4 @@
-package com.dongsan.core.domains.walkway.enums;
+package com.dongsan.core.domains.walkway;
 
 import java.util.Arrays;
 

@@ -15,7 +15,7 @@
 //import com.dongsan.core.domains.bookmark.BookmarkReader;
 //import com.dongsan.core.domains.bookmark.BookmarkService;
 //import com.dongsan.domains.member.entity.Member;
-//import com.dongsan.core.domains.walkway.service.WalkwayReader;
+//import com.dongsan.core.domains.walkway.WalkwayReader;
 //import com.fasterxml.jackson.databind.ObjectMapper;
 //import java.time.LocalDateTime;
 //import java.util.List;

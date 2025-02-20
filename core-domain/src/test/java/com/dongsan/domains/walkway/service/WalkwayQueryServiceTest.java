@@ -10,7 +10,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.dongsan.core.domains.walkway.service.WalkwayReader;
+import com.dongsan.core.domains.walkway.WalkwayReader;
 import com.dongsan.common.error.exception.CustomException;
 import com.dongsan.domains.bookmark.entity.Bookmark;
 import com.dongsan.domains.bookmark.entity.MarkedWalkway;
@@ -18,7 +18,7 @@ import com.dongsan.domains.bookmark.repository.MarkedWalkwayQueryDSLRepository;
 import com.dongsan.domains.member.entity.Member;
 import com.dongsan.domains.walkway.dto.response.SearchWalkwayResult;
 import com.dongsan.domains.walkway.entity.Walkway;
-import com.dongsan.core.domains.walkway.enums.WalkwaySort;
+import com.dongsan.core.domains.walkway.WalkwaySort;
 import com.dongsan.domains.walkway.repository.WalkwayQueryDSLRepository;
 import com.dongsan.domains.walkway.repository.WalkwayRepository;
 import com.dongsan.core.domains.walkway.service.factory.SearchWalkwayServiceFactory;

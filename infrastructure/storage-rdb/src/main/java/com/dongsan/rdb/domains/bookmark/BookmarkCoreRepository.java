@@ -5,7 +5,7 @@ import static com.querydsl.core.group.GroupBy.groupBy;
 import com.dongsan.core.domains.bookmark.Bookmark;
 import com.dongsan.core.domains.bookmark.BookmarkRepository;
 import com.dongsan.core.domains.bookmark.MarkedWalkway;
-import com.dongsan.core.domains.walkway.enums.ExposeLevel;
+import com.dongsan.core.domains.walkway.ExposeLevel;
 import com.dongsan.rdb.domains.bookmark.entity.QBookmark;
 import com.dongsan.rdb.domains.bookmark.entity.QMarkedWalkway;
 import com.dongsan.rdb.domains.common.entity.BaseEntity;

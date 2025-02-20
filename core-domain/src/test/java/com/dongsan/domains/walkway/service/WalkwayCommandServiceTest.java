@@ -2,7 +2,7 @@
 //
 //import static org.mockito.Mockito.when;
 //
-//import com.dongsan.core.domains.walkway.service.WalkwayWriter;
+//import com.dongsan.core.domains.walkway.WalkwayWriter;
 //import com.dongsan.domains.member.entity.Member;
 //import com.dongsan.domains.walkway.entity.Walkway;
 //import com.dongsan.domains.walkway.repository.WalkwayRepository;

@@ -3,7 +3,7 @@ package com.dongsan.api.domains.walkway.dto.response;
 import com.dongsan.api.domains.walkway.dto.WalkwayCoordinate;
 import com.dongsan.api.domains.walkway.mapper.LineStringMapper;
 import com.dongsan.core.domains.walkway.Walkway;
-import com.dongsan.core.domains.walkway.enums.ExposeLevel;
+import com.dongsan.core.domains.walkway.ExposeLevel;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 

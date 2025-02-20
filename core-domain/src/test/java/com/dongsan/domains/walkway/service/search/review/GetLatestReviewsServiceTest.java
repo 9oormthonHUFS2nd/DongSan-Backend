@@ -7,7 +7,7 @@
 //import com.dongsan.domains.review.entity.Review;
 //import com.dongsan.domains.review.repository.ReviewQueryDSLRepository;
 //import com.dongsan.domains.walkway.entity.Walkway;
-//import com.dongsan.core.domains.walkway.enums.ReviewSort;
+//import com.dongsan.core.domains.review.ReviewSort;
 //import fixture.ReviewFixture;
 //import fixture.WalkwayFixture;
 //import java.util.ArrayList;

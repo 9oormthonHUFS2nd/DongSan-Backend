@@ -1,8 +1,5 @@
-package com.dongsan.core.domains.walkway.service;
+package com.dongsan.core.domains.walkway;
 
-import com.dongsan.core.domains.walkway.Walkway;
-import com.dongsan.core.domains.walkway.WalkwayRepository;
-import com.dongsan.core.domains.walkway.enums.ExposeLevel;
 import com.dongsan.core.support.error.CoreErrorCode;
 import com.dongsan.core.support.error.CoreException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +33,12 @@ public class WalkwayValidator {
                 .orElseThrow(() -> new CoreException(CoreErrorCode.WALKWAY_NOT_FOUND));
 
         if (walkway.exposeLevel().equals(ExposeLevel.PRIVATE)) {
+            throw new CoreException(CoreErrorCode.WALKWAY_PRIVATE);
+        }
+    }
+
+    public void validateWalkwayAccess(Walkway walkway, Long memberId) {
+        if (walkway.exposeLevel().equals(ExposeLevel.PRIVATE) && !walkway.author().authorId().equals(memberId)) {
             throw new CoreException(CoreErrorCode.WALKWAY_PRIVATE);
         }
     }

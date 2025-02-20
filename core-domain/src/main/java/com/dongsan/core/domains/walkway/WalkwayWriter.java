@@ -1,4 +1,4 @@
-package com.dongsan.core.domains.walkway.service;
+package com.dongsan.core.domains.walkway;
 
 
 import com.dongsan.core.domains.walkway.CreateWalkway;
@@ -25,8 +25,7 @@ public class WalkwayWriter {
     private final WalkwayRepository walkwayRepository;
 
     public Long saveWalkway(CreateWalkway createWalkway) {
-        return walkwayRepository.saveWalkway(createWalkway)
-                .orElseThrow(() -> new CoreException(CoreErrorCode.CANT_CREATE_WALKWAY));
+        return walkwayRepository.saveWalkway(createWalkway);
     }
 
     public void updateWalkway(UpdateWalkway updateWalkway) {
@@ -34,17 +33,22 @@ public class WalkwayWriter {
     }
 
     public void saveLikedWalkway(Long memberId, Long walkwayId) {
-        walkwayRepository.saveLikedWalkway(memberId, walkwayId)
-                .orElseThrow(() -> new CoreException(CoreErrorCode.CANT_CREATE_LIKED_WALKWAY));
+        walkwayRepository.saveLikedWalkway(memberId, walkwayId);
     }
 
     public void deleteLikedWalkway(Long memberId, Long walkwayId) {
-        walkwayRepository.deleteLikedWalkway(memberId, walkwayId)
-                .orElseThrow(() -> new CoreException(CoreErrorCode.CANT_DELETE_LIKED_WALKWAY));
+        walkwayRepository.deleteLikedWalkway(memberId, walkwayId);
     }
 
     public Long saveWalkwayHistory(CreateWalkwayHistory createWalkwayHistory) {
-        return walkwayRepository.saveWalkwayHistory(createWalkwayHistory)
-                .orElseThrow(() -> new CoreException(CoreErrorCode.CANT_CREATE_WALKWAY_HISTORY));
+        return walkwayRepository.saveWalkwayHistory(createWalkwayHistory);
+    }
+
+    public void updateWalkwayHistoryIsReviewed(Long walkwayHistoryId, boolean isReviewed) {
+        walkwayRepository.updateWalkwayHistoryIsReviewed(walkwayHistoryId, isReviewed);
+    }
+
+    public void updateWalkwayRating(Integer reviewCount, Double rating, Long walkwayId) {
+        walkwayRepository.updateWalkwayRating(reviewCount, rating, walkwayId);
     }
 }

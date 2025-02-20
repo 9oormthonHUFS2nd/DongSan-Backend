@@ -7,7 +7,7 @@
 //import com.dongsan.domains.walkway.dto.request.SearchWalkwayQuery;
 //import com.dongsan.domains.walkway.dto.response.SearchWalkwayResult;
 //import com.dongsan.domains.walkway.entity.Walkway;
-//import com.dongsan.core.domains.walkway.enums.WalkwaySort;
+//import com.dongsan.core.domains.walkway.WalkwaySort;
 //import com.dongsan.domains.walkway.repository.WalkwayQueryDSLRepository;
 //import java.util.ArrayList;
 //import java.util.List;

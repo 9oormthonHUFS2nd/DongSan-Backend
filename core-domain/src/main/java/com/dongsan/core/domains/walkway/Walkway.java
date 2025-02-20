@@ -1,9 +1,6 @@
 package com.dongsan.core.domains.walkway;
 
 import com.dongsan.core.support.util.Author;
-import com.dongsan.core.domains.walkway.enums.ExposeLevel;
-import com.dongsan.core.support.error.CoreErrorCode;
-import com.dongsan.core.support.error.CoreException;
 import java.time.LocalDateTime;
 import java.util.List;
 

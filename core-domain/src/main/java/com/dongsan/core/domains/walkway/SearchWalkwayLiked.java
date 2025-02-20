@@ -1,9 +1,5 @@
-package com.dongsan.core.domains.walkway.service.search.walkway;
+package com.dongsan.core.domains.walkway;
 
-import com.dongsan.core.domains.walkway.SearchWalkwayQuery;
-import com.dongsan.core.domains.walkway.Walkway;
-import com.dongsan.core.domains.walkway.WalkwayRepository;
-import com.dongsan.core.domains.walkway.enums.WalkwaySort;
 import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

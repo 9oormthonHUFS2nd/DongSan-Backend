@@ -40,6 +40,10 @@ public class MemberEntity extends BaseEntity {
         return id;
     }
 
+    public String getNickname() {
+        return nickname;
+    }
+
     public Member toMember(){
         return new Member(id, email, nickname, profileImageUrl, role);
     }

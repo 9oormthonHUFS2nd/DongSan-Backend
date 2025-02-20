@@ -1,10 +1,6 @@
 package com.dongsan.core.domains.walkway;
 
 
-import com.dongsan.core.domains.walkway.enums.WalkwaySort;
-import com.dongsan.core.domains.walkway.service.WalkwayReader;
-import com.dongsan.core.domains.walkway.service.WalkwayValidator;
-import com.dongsan.core.domains.walkway.service.WalkwayWriter;
 import com.dongsan.core.support.util.CursorPagingResponse;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -119,6 +115,7 @@ public class WalkwayService {
 
     @Transactional
     public Long createWalkwayHistory(CreateWalkwayHistory createWalkwayHistory) {
+        walkwayValidator.validateWalkwayExists(createWalkwayHistory.walkwayId());
         return walkwayWriter.saveWalkwayHistory(createWalkwayHistory);
     }
 
@@ -128,8 +125,13 @@ public class WalkwayService {
     }
 
     public List<WalkwayHistory> getUserCanReviewWalkwayHistory(Long lastWalkwayHistoryId, Long memberId, int size) {
-        WalkwayHistory walkwayHistory = walkwayReader.getWalkwayHistory(lastWalkwayHistoryId);
-        return walkwayReader.getUserCanReviewWalkwayHistory(memberId, size, walkwayHistory.createdAt());
+        LocalDateTime lastCreatedAt = null;
+        if (lastWalkwayHistoryId != null) {
+            WalkwayHistory walkwayHistory = walkwayReader.getWalkwayHistory(lastWalkwayHistoryId);
+            lastCreatedAt = walkwayHistory.createdAt();
+        }
+
+        return walkwayReader.getUserCanReviewWalkwayHistory(memberId, size, lastCreatedAt);
     }
 
     public boolean isCanReview(Long walkwayHistoryId) {

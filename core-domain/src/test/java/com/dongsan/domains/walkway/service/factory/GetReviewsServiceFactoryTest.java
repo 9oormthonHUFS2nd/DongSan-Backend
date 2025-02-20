@@ -3,7 +3,7 @@
 //import static org.assertj.core.api.Assertions.assertThat;
 //import static org.mockito.Mockito.when;
 //
-//import com.dongsan.core.domains.walkway.enums.ReviewSort;
+//import com.dongsan.core.domains.review.ReviewSort;
 //import com.dongsan.core.domains.walkway.service.factory.GetReviewsServiceFactory;
 //import com.dongsan.core.domains.review.GetLatestReviewsService;
 //import com.dongsan.core.domains.review.GetRatingReviewsService;

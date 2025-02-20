@@ -4,7 +4,7 @@ package com.dongsan.rdb.domains.walkway.repository;
 import static com.dongsan.domains.walkway.entity.QLikedWalkway.likedWalkwayEntity;
 
 import com.dongsan.core.domains.walkway.SearchWalkwayQuery;
-import com.dongsan.core.domains.walkway.enums.ExposeLevel;
+import com.dongsan.core.domains.walkway.ExposeLevel;
 import com.dongsan.rdb.domains.walkway.entity.WalkwayEntity;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;

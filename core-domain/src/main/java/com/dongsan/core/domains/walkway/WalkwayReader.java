@@ -1,12 +1,6 @@
-package com.dongsan.core.domains.walkway.service;
+package com.dongsan.core.domains.walkway;
 
 
-import com.dongsan.core.domains.walkway.SearchWalkwayQuery;
-import com.dongsan.core.domains.walkway.Walkway;
-import com.dongsan.core.domains.walkway.WalkwayHistory;
-import com.dongsan.core.domains.walkway.WalkwayRepository;
-import com.dongsan.core.domains.walkway.enums.WalkwaySort;
-import com.dongsan.core.domains.walkway.service.factory.SearchWalkwayFactory;
 import com.dongsan.core.support.error.CoreErrorCode;
 import com.dongsan.core.support.error.CoreException;
 import java.time.LocalDateTime;
@@ -81,5 +75,9 @@ public class WalkwayReader {
 
     public List<WalkwayHistory> getUserCanReviewWalkwayHistory(Long memberId, int size, LocalDateTime lastCreatedAt) {
         return walkwayRepository.getUserCanReviewWalkwayHistory(memberId, size, lastCreatedAt);
+    }
+
+    public void updateWalkwayRating(Integer reviewCount, Double rating, Long walkwayId) {
+        walkwayRepository.updateWalkwayRating(reviewCount, rating, walkwayId);
     }
 }

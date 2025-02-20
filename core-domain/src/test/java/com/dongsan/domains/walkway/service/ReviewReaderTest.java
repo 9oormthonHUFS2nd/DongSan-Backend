@@ -10,7 +10,7 @@
 //import com.dongsan.domains.review.repository.ReviewQueryDSLRepository;
 //import com.dongsan.domains.review.repository.ReviewRepository;
 //import com.dongsan.domains.walkway.entity.Walkway;
-//import com.dongsan.core.domains.walkway.enums.ReviewSort;
+//import com.dongsan.core.domains.review.ReviewSort;
 //import com.dongsan.core.domains.walkway.service.factory.GetReviewsServiceFactory;
 //import com.dongsan.core.domains.review.GetReviewsService;
 //import fixture.WalkwayFixture;

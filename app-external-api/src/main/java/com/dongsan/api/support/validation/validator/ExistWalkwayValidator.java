@@ -1,7 +1,7 @@
 package com.dongsan.api.support.validation.validator;
 
 import com.dongsan.api.support.validation.annotation.ExistWalkway;
-import com.dongsan.core.domains.walkway.service.WalkwayReader;
+import com.dongsan.core.domains.walkway.WalkwayReader;
 import com.dongsan.common.error.code.WalkwayErrorCode;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;

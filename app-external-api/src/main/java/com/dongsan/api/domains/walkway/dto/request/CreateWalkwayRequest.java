@@ -1,7 +1,7 @@
 package com.dongsan.api.domains.walkway.dto.request;
 
 import com.dongsan.api.domains.walkway.dto.WalkwayCoordinate;
-import com.dongsan.core.domains.walkway.enums.ExposeLevel;
+import com.dongsan.core.domains.walkway.ExposeLevel;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;

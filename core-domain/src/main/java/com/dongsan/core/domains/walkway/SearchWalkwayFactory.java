@@ -1,7 +1,5 @@
-package com.dongsan.core.domains.walkway.service.factory;
+package com.dongsan.core.domains.walkway;
 
-import com.dongsan.core.domains.walkway.enums.WalkwaySort;
-import com.dongsan.core.domains.walkway.service.search.walkway.SearchWalkway;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;

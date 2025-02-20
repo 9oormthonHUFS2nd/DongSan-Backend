@@ -17,11 +17,11 @@ import com.dongsan.core.domains.walkway.dto.response.GetWalkwayRatingResponse;
 import com.dongsan.core.domains.walkway.dto.response.GetWalkwayReviewsResponse;
 import com.dongsan.domains.walkway.entity.Walkway;
 <<<<<<< HEAD:core-domain/src/test/java/com/dongsan/domains/walkway/usecase/ReviewServiceTest.java
-import com.dongsan.core.domains.walkway.enums.ReviewSort;
+import com.dongsan.core.domains.review.ReviewSort;
 import com.dongsan.core.domains.review.ReviewWriter;
 import com.dongsan.core.domains.review.ReviewReader;
-import com.dongsan.core.domains.walkway.service.WalkwayWriter;
-import com.dongsan.core.domains.walkway.service.WalkwayReader;
+import com.dongsan.core.domains.walkway.WalkwayWriter;
+import com.dongsan.core.domains.walkway.WalkwayReader;
 =======
 import com.dongsan.domains.walkway.entity.WalkwayHistory;
 import com.dongsan.domains.walkway.enums.ReviewSort;

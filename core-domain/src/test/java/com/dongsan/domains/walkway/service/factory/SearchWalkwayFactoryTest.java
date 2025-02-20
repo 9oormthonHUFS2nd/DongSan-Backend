@@ -2,7 +2,7 @@
 //
 //import static org.assertj.core.api.Assertions.assertThat;
 //
-//import com.dongsan.core.domains.walkway.enums.WalkwaySort;
+//import com.dongsan.core.domains.walkway.WalkwaySort;
 //import com.dongsan.core.domains.walkway.service.factory.SearchWalkwayFactory;
 //import com.dongsan.core.domains.walkway.service.search.walkway.SearchWalkwayLiked;
 //import com.dongsan.core.domains.walkway.service.search.walkway.SearchWalkwayRating;

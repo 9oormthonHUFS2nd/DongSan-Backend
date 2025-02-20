@@ -1,32 +1,38 @@
 package com.dongsan.core.domains.review;
 
-import com.dongsan.domains.review.entity.Review;
+import com.dongsan.core.support.util.CursorPagingRequest;
+import com.dongsan.core.support.util.CursorPagingResponse;
 import java.time.LocalDateTime;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@RequiredArgsConstructor
+@Service
 public class UserReviewService {
     private final ReviewReader reviewReader;
+    private final ReviewValidator reviewValidator;
+
+    @Autowired
+    public UserReviewService(ReviewReader reviewReader, ReviewValidator reviewValidator) {
+        this.reviewReader = reviewReader;
+        this.reviewValidator = reviewValidator;
+    }
 
     @Transactional(readOnly = true)
-    public GetReviewResponse getReviews(Integer size, Long reviewId, Long memberId) {
+    public CursorPagingResponse<Review> getReviews(CursorPagingRequest cursorPagingRequest, Long memberId) {
         LocalDateTime lastCreatedAt = null;
-        if(reviewId != null){
+        if(cursorPagingRequest.lastId() != null){
             // reviewId 검증
             // 1. 존재하는 reviewId 인지
-            Review review = reviewReader.getReview(reviewId);
+            Review review = reviewReader.getReview(cursorPagingRequest.lastId());
             // 2. 내가 작성한 review 인지 아닌지
-            reviewReader.isReviewOwner(review.getId(), memberId);
-            lastCreatedAt = review.getCreatedAt();
+            reviewValidator.isReviewOwner(review.reviewId(), memberId);
+            lastCreatedAt = review.createdAt();
         }
-        List<Review> reviews = reviewReader.getReviews(size+1, lastCreatedAt, memberId);
-        boolean hasNext = reviews.size() > size;
-        if(hasNext){
-            reviews.remove(reviews.size()-1);
-        }
-        return GetReviewResponse.from(reviews, hasNext);
+        List<Review> reviews = reviewReader.getUserReviews(cursorPagingRequest.size()+1, lastCreatedAt, memberId);
+
+        return CursorPagingResponse.from(reviews, cursorPagingRequest.size());
     }
 
 

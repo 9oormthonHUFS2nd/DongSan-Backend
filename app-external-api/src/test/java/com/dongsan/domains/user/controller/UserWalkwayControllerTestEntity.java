@@ -14,7 +14,7 @@
 //import com.dongsan.core.domains.walkway.WalkwayListResponse;
 //import com.dongsan.core.domains.walkway.UserWalkwayUseCase;
 //import com.dongsan.domains.walkway.entity.Walkway;
-//import com.dongsan.core.domains.walkway.service.WalkwayReader;
+//import com.dongsan.core.domains.walkway.WalkwayReader;
 //import java.util.List;
 //import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.DisplayName;

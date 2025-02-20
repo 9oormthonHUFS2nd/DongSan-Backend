@@ -55,12 +55,10 @@ public class WalkwayCoreJpaRepository implements WalkwayRepository {
 
     // 생성용 dto만들기
     @Override
-    public Optional<Long> saveWalkway(CreateWalkway createWalkway) {
-        return memberJpaRepository.findById(createWalkway.memberId())
-                .map(memberEntity -> {
-                    WalkwayEntity walkwayEntity = new WalkwayEntity(createWalkway, memberEntity);
-                    return walkwayJpaRepository.save(walkwayEntity).getId();
-                });
+    public Long saveWalkway(CreateWalkway createWalkway) {
+        MemberEntity memberEntity = memberJpaRepository.getReferenceById(createWalkway.memberId());
+        WalkwayEntity walkwayEntity = new WalkwayEntity(createWalkway, memberEntity);
+        return walkwayJpaRepository.save(walkwayEntity).getId();
     }
 
     @Override
@@ -70,12 +68,10 @@ public class WalkwayCoreJpaRepository implements WalkwayRepository {
     }
 
     @Override
-    public Optional<Long> updateWalkway(UpdateWalkway updateWalkway) {
-        return walkwayJpaRepository.findById(updateWalkway.walkwayId())
-                .map(walkwayEntity -> {
-                    walkwayEntity.updateWalkway(updateWalkway.name(), updateWalkway.memo(), updateWalkway.exposeLevel(), updateWalkway.hashtags());
-                    return walkwayJpaRepository.save(walkwayEntity).getId();
-                });
+    public void updateWalkway(UpdateWalkway updateWalkway) {
+        WalkwayEntity walkwayEntity = walkwayJpaRepository.getReferenceById(updateWalkway.walkwayId());
+        walkwayEntity.updateWalkway(updateWalkway.name(), updateWalkway.memo(), updateWalkway.exposeLevel(), updateWalkway.hashtags());
+        walkwayJpaRepository.save(walkwayEntity);
     }
 
     @Override
@@ -126,41 +122,35 @@ public class WalkwayCoreJpaRepository implements WalkwayRepository {
     }
 
     @Override
+    public void updateWalkwayRating(Integer reviewCount, Double rating, Long walkwayId) {
+        WalkwayEntity walkwayEntity = walkwayJpaRepository.getReferenceById(walkwayId);
+        walkwayEntity.updateRatingAndReviewCount(rating, reviewCount);
+        walkwayJpaRepository.save(walkwayEntity);
+    }
+
+    @Override
     public Map<Long, Boolean> existsLikedWalkways(Long memberId, List<Long> walkwayIds) {
         return likedWalkwayQueryDSLRepository.existsLikedWalkways(memberId, walkwayIds);
     }
 
     @Override
-    public Optional<Long> saveLikedWalkway(Long memberId, Long walkwayId) {
-        Optional<MemberEntity> memberEntityOptional = memberJpaRepository.findById(memberId);
-        Optional<WalkwayEntity> walkwayEntityOptional = walkwayJpaRepository.findById(walkwayId);
-        if (memberEntityOptional.isEmpty() || walkwayEntityOptional.isEmpty()) {
-            return Optional.empty();
-        }
-
-        MemberEntity memberEntity = memberEntityOptional.get();
-        WalkwayEntity walkwayEntity = walkwayEntityOptional.get();
+    public Long saveLikedWalkway(Long memberId, Long walkwayId) {
+        MemberEntity memberEntity = memberJpaRepository.getReferenceById(memberId);
+        WalkwayEntity walkwayEntity = walkwayJpaRepository.getReferenceById(walkwayId);
 
         walkwayEntity.increaseLikeCount();
         walkwayJpaRepository.save(walkwayEntity);
 
         LikedWalkwayEntity likedWalkwayEntity = likedWalkwayJpaRepository.save(new LikedWalkwayEntity(memberEntity, walkwayEntity));
-        return Optional.of(likedWalkwayEntity.getId());
+        return likedWalkwayEntity.getId();
     }
 
     @Override
-    public Optional<Long> deleteLikedWalkway(Long memberId, Long walkwayId) {
-        Optional<WalkwayEntity> walkwayEntityOptional = walkwayJpaRepository.findById(walkwayId);
-        if (walkwayEntityOptional.isEmpty() || !memberJpaRepository.existsById(memberId)) {
-            return Optional.empty();
-        }
-
-        WalkwayEntity lastWalkwayEntity = walkwayEntityOptional.get();
-        lastWalkwayEntity.decreaseLikeCount();
-        walkwayJpaRepository.save(lastWalkwayEntity);
+    public void deleteLikedWalkway(Long memberId, Long walkwayId) {
+        WalkwayEntity walkwayEntity = walkwayJpaRepository.getReferenceById(walkwayId);
+        walkwayEntity.decreaseLikeCount();
+        walkwayJpaRepository.save(walkwayEntity);
         likedWalkwayJpaRepository.deleteByMemberIdAndWalkwayId(memberId, walkwayId);
-
-        return Optional.of(walkwayId);
     }
 
 //    @Override
@@ -172,20 +162,14 @@ public class WalkwayCoreJpaRepository implements WalkwayRepository {
 
 
     @Override
-    public Optional<Long> saveWalkwayHistory(CreateWalkwayHistory createWalkwayHistory) {
-        Optional<MemberEntity> memberEntityOptional = memberJpaRepository.findById(createWalkwayHistory.memberId());
-        Optional<WalkwayEntity> walkwayEntityOptional = walkwayJpaRepository.findById(createWalkwayHistory.walkwayId());
-        if (memberEntityOptional.isEmpty() || walkwayEntityOptional.isEmpty()) {
-            return Optional.empty();
-        }
-
-        MemberEntity memberEntity = memberEntityOptional.get();
-        WalkwayEntity walkwayEntity = walkwayEntityOptional.get();
+    public Long saveWalkwayHistory(CreateWalkwayHistory createWalkwayHistory) {
+        MemberEntity memberEntity = memberJpaRepository.getReferenceById(createWalkwayHistory.memberId());
+        WalkwayEntity walkwayEntity = walkwayJpaRepository.getReferenceById(createWalkwayHistory.walkwayId());
 
         WalkwayHistoryEntity walkwayHistoryEntity
                 = new WalkwayHistoryEntity(memberEntity, walkwayEntity, createWalkwayHistory.distance(), createWalkwayHistory.time());
         walkwayHistoryJpaRepository.save(walkwayHistoryEntity);
-        return Optional.of(walkwayHistoryEntity.getId());
+        return walkwayHistoryEntity.getId();
     }
 
     @Override
@@ -208,5 +192,12 @@ public class WalkwayCoreJpaRepository implements WalkwayRepository {
     public Optional<WalkwayHistory> getWalkwayHistory(Long walkwayHistoryId) {
         return walkwayHistoryJpaRepository.findById(walkwayHistoryId)
                 .map(WalkwayHistoryEntity::toWalkwayHistory);
+    }
+
+    @Override
+    public void updateWalkwayHistoryIsReviewed(Long walkwayHistoryId, boolean isReviewed) {
+        WalkwayHistoryEntity walkwayHistory = walkwayHistoryJpaRepository.getReferenceById(walkwayHistoryId);
+        walkwayHistory.updateIsReviewed(isReviewed);
+        walkwayHistoryJpaRepository.save(walkwayHistory);
     }
 }

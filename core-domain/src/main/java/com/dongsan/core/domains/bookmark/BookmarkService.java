@@ -3,7 +3,7 @@ package com.dongsan.core.domains.bookmark;
 import com.dongsan.core.support.util.CursorPagingRequest;
 import com.dongsan.core.support.util.CursorPagingResponse;
 import com.dongsan.core.domains.walkway.Walkway;
-import com.dongsan.core.domains.walkway.service.WalkwayReader;
+import com.dongsan.core.domains.walkway.WalkwayReader;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
